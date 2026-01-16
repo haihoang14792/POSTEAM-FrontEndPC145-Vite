@@ -9,6 +9,24 @@ import { ColorModeProvider } from './context/ColorModeContext'; // Import ColorM
 import { NoColorModeProvider } from './context/NoColorModeContext'; // Import NoColorModeProvider
 import './index.scss';
 
+// --- BẮT ĐẦU CẤU HÌNH DAYJS ---
+import dayjs from 'dayjs';
+import 'dayjs/locale/vi'; // Import tiếng Việt
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
+
+// Kích hoạt các plugins cần thiết
+dayjs.extend(customParseFormat);
+dayjs.extend(relativeTime);
+dayjs.extend(weekday);
+dayjs.extend(localeData);
+
+// Set ngôn ngữ mặc định là Tiếng Việt
+dayjs.locale('vi');
+// --- KẾT THÚC CẤU HÌNH DAYJS ---
+
 const root = createRoot(document.getElementById('root'));
 
 root.render(
