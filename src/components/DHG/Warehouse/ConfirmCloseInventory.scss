@@ -1,0 +1,99 @@
+// .confirm-close-inventory-modal {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-color: rgba(0,0,0,0.5); // overlay mờ
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   z-index: 999;
+// }
+
+
+.confirm-close-inventory-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); // overlay mờ
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.confirm-modal-content {
+  background-color: #fff;
+  padding: 24px 32px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  animation: slideUp 0.3s ease-in-out;
+}
+
+.confirm-modal-content p {
+  font-size: 1.125rem;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.confirm-modal-content .btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #e0e0e0;
+  color: #333;
+
+  &:hover {
+    background-color: #c7c7c7;
+  }
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: #fff;
+
+  &:hover {
+    background-color: #218838;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.confirm-modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}

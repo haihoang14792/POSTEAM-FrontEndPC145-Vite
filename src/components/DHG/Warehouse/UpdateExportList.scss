@@ -1,0 +1,41 @@
+.update-exportlist-modal {
+  .ant-modal-body {
+    padding: 16px 24px;
+  }
+
+  .ant-descriptions {
+    background: #fff;
+    border-radius: 6px;
+
+    .ant-descriptions-item {
+      padding: 8px 12px;
+
+      .ant-input,
+      .ant-input-number,
+      .ant-select,
+      textarea {
+        font-size: 13px;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .ant-descriptions-bordered .ant-descriptions-item-label {
+    background: #fafafa;
+    font-weight: 500;
+  }
+
+  .ant-form-item {
+    margin-bottom: 0; // Để input khớp hàng với text
+  }
+
+  .ant-input-number,
+  .ant-select,
+  textarea {
+    width: 100%;
+  }
+
+  textarea {
+    resize: none;
+  }
+}

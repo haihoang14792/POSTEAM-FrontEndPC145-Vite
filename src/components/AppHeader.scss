@@ -1,0 +1,14 @@
+/* 1. Ẩn caret của bootstrap dropdown */
+#theme-mode-dropdown.dropdown-toggle::after {
+  display: none !important;
+}
+
+/* 2. Ép dropdown-toggle / nav-link thành flex để căn giữa nội dung */
+#theme-mode-dropdown {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+  height: 80%;
+}

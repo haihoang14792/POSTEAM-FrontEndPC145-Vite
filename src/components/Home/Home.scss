@@ -1,0 +1,193 @@
+h1, h2, p, li {
+    text-align: left;
+  }
+
+.headerhome {
+    position: relative;
+    width: 100%;
+    height: 600px; /* Chiều cao của phần tử chứa bằng chiều cao của viewport, bạn có thể thay đổi nếu cần */
+    overflow: hidden; /* Ẩn phần nào đó của video nếu cần */
+  
+    .video-background {
+      position: absolute; /* Đặt video ở vị trí tuyệt đối để nó làm nền */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Đảm bảo video bao phủ toàn bộ container mà không bị kéo dãn */
+      z-index: 1; /* Đặt z-index thấp hơn văn bản để văn bản nằm trên video */
+    }
+  
+    .text-overlay {
+        position: absolute; /* Đặt văn bản ở vị trí tuyệt đối */
+        top: 50%; /* Canh giữa theo chiều dọc */
+        left: 50%; /* Canh giữa theo chiều ngang */
+        transform: translate(-50%, -50%); /* Đẩy văn bản về chính giữa */
+        color: white; /* Màu chữ của toàn bộ khối văn bản */
+        z-index: 2; /* Đặt z-index cao hơn video để văn bản nằm trên video */
+        text-align: center; /* Canh giữa văn bản */
+        padding: 20px;
+        border-radius: 5px; /* Bo tròn các góc của khối văn bản */
+        width: 80%; /* Đặt chiều rộng của khối văn bản */
+    
+        h1 {
+          font-size: 5rem; /* Kích thước chữ lớn cho tiêu đề */
+          color: #e51f1f; /* Màu chữ cho tiêu đề */
+          margin: 0; /* Xóa khoảng cách mặc định của tiêu đề */
+        }
+    
+        p {
+            font-size: 1.2rem; /* Kích thước chữ cho đoạn văn */
+            color: white; /* Màu chữ cho đoạn văn */
+            margin: 0; /* Xóa khoảng cách mặc định */
+            line-height: 1.5; /* Điều chỉnh khoảng cách giữa các dòng */
+          }
+      }
+  }
+  
+  @media (max-width: 768px) {
+  .headerhome {
+    height: 300px;
+
+    .text-overlay {
+      width: 90%;
+      padding: 10px;
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+
+    .video-background video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .container {
+    padding: 15px;
+
+    h1, h2 {
+      font-size: 1.2rem;
+    }
+
+    p, li {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    .space {
+      height: 10px;
+    }
+  }
+}
+
+// .headerhome {
+//   position: relative;
+//   width: 100%;
+//   height: 600px;
+//   overflow: hidden;
+
+//   .video-background {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//     z-index: 1;
+
+//     video {
+//       width: 100%;
+//       height: 100%;
+//       object-fit: cover;
+//       display: block;
+//     }
+//   }
+
+//   .text-overlay {
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//     color: white;
+//     z-index: 2;
+//     text-align: center;
+//     padding: 20px;
+//     width: 80%;
+
+//     h1 {
+//       font-size: 5rem;
+//       color: #e51f1f;
+//       margin: 0;
+//     }
+
+//     p {
+//       font-size: 1.2rem;
+//       color: white;
+//       margin: 0;
+//       line-height: 1.5;
+//     }
+//   }
+// }
+
+// /* Giao diện cho điện thoại */
+// @media (max-width: 768px) {
+//   .headerhome {
+//     height: 300px;
+
+//     .text-overlay {
+//       width: 90%;
+//       padding: 10px;
+
+//       h1 {
+//         font-size: 2rem;
+//       }
+
+//       p {
+//         font-size: 0.9rem;
+//         line-height: 1.4;
+//       }
+//     }
+
+//     .video-background {
+//       video {
+//         width: 100%;
+//         height: 100%;
+//         object-fit: cover;
+//         display: block;
+//       }
+//     }
+//   }
+
+//   .container {
+//     padding: 15px;
+
+//     h1, h2 {
+//       font-size: 1.2rem;
+//     }
+
+//     p, li {
+//       font-size: 0.95rem;
+//       line-height: 1.6;
+//     }
+
+//     ul {
+//       padding-left: 20px;
+//     }
+
+//     .space {
+//       height: 10px;
+//     }
+//   }
+// }
+

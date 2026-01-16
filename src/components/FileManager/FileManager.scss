@@ -1,0 +1,109 @@
+.file-manager-container {
+  background-color: #f8f9fa; // Màu nền xám nhẹ giống Drive
+  min-height: 80vh;
+
+  .drive-header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .drive-breadcrumb {
+    margin-bottom: 0;
+    font-weight: 500;
+    .breadcrumb-item {
+      cursor: pointer;
+      color: #5f6368;
+      &:hover { color: #1a73e8; }
+    }
+  }
+
+  .drop-zone {
+    border: 2px dashed transparent;
+    transition: all 0.2s;
+    &.active {
+      border-color: #1a73e8;
+      background-color: rgba(26, 115, 232, 0.05);
+    }
+  }
+
+  /* Grid View Styles */
+  .file-grid-item {
+    width: 200px;
+    height: 220px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    background: white;
+    transition: box-shadow 0.2s, transform 0.1s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: 0 4px 6px rgba(60, 64, 67, 0.15);
+      .item-actions { opacity: 1; }
+    }
+
+    .item-preview {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f1f3f4;
+      font-size: 3rem;
+      
+      img.thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .item-footer {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      height: 80px;
+      border-top: 1px solid #f1f3f4;
+
+      .item-icon { margin-right: 10px; font-size: 1.5rem; }
+      .item-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #3c4043;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+      }
+    }
+
+    .item-actions {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      opacity: 0; // Ẩn khi không hover
+      transition: opacity 0.2s;
+    }
+  }
+
+  /* List View Styles */
+  .file-list-row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #f1f3f4;
+    cursor: pointer;
+    background: white;
+
+    &:hover { background-color: #f8f9fa; }
+    
+    .list-icon { font-size: 1.5rem; width: 40px; text-align: center; margin-right: 1rem; }
+    .list-name { flex-grow: 1; font-weight: 500; color: #3c4043; }
+    .list-date { width: 150px; color: #5f6368; font-size: 0.85rem; }
+    .list-size { width: 100px; color: #5f6368; font-size: 0.85rem; }
+  }
+}

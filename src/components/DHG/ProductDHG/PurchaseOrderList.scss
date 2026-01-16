@@ -1,0 +1,318 @@
+// .purchase-order-container {
+//     padding: 20px;
+//     background-color: #f4f4f4;
+//     border-radius: 8px;
+// }
+
+// .header-actions {
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+//     margin-bottom: 20px;
+// }
+
+// .search-bar {
+//     display: flex;
+//     align-items: center;
+//     border: 1px solid #ccc;
+//     border-radius: 5px;
+//     padding: 5px 10px;
+//     background-color: white;
+// }
+
+// .search-bar input {
+//     border: none;
+//     outline: none;
+//     padding: 5px;
+//     width: 200px;
+// }
+
+// .split-container {
+//     display: flex;
+//     gap: 20px;
+// }
+
+// .panel-list-pol {
+//     width: 30%;
+//     background-color: white;
+//     padding: 15px;
+//     border-radius: 5px;
+// }
+
+// .panel-title {
+//     font-weight: bold;
+//     margin-bottom: 10px;
+//     color: black;
+// }
+
+// .supplier-item {
+//     padding: 10px;
+//     cursor: pointer;
+//     border-radius: 5px;
+//     margin-bottom: 5px;
+//     transition: background 0.3s;
+// }
+
+// .supplier-item.active {
+//   background-color: #1890ff;
+//    color: white !important;
+// }
+
+// .panel-details-pol {
+//     width: 70%;
+//     background-color: #fff;
+//     padding: 15px;
+//     border-radius: 5px;
+//     color: black;
+// }
+
+// .ant-table {
+//     margin-top: 15px;
+// }
+
+// .invoice-details p { margin: 0 0 9px; }
+
+
+// .panel-list-pol {
+//   width: 30%;
+//   background-color: white;
+//   padding: 15px;
+//   border-radius: 5px;
+//   overflow-y: auto;
+//   max-height: calc(100vh - 250px); // Điều chỉnh tùy theo layout tổng thể
+// }
+
+// .purchase-order-container {
+//   padding: 20px;
+//   background-color: #f4f4f4;
+//   border-radius: 8px;
+// }
+
+// .header-actions {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   margin-bottom: 20px;
+// }
+
+// .search-bar {
+//   display: flex;
+//   align-items: center;
+//   border: 1px solid #ccc;
+//   border-radius: 5px;
+//   padding: 5px 10px;
+//   background-color: white;
+// }
+
+// .search-bar input {
+//   border: none;
+//   outline: none;
+//   padding: 5px;
+//   width: 200px;
+// }
+
+// .split-container {
+//   display: flex;
+//   gap: 20px;
+// }
+
+// .panel-list-pol {
+//   width: 30%;
+//   background-color: white;
+//   padding: 15px;
+//   border-radius: 5px;
+//   overflow-y: auto;
+//   max-height: calc(100vh - 250px);
+
+//   /* Scrollbar styles - Chrome, Edge, Safari */
+//   scrollbar-width: thin;
+//   scrollbar-color: transparent transparent;
+// }
+
+// .panel-list-pol::-webkit-scrollbar {
+//   width: 6px;
+// }
+
+// .panel-list-pol::-webkit-scrollbar-thumb {
+//   background-color: transparent;
+//   border-radius: 10px;
+// }
+
+// .panel-list-pol:hover::-webkit-scrollbar-thumb {
+//   background-color: rgba(0, 0, 0, 0.2);
+// }
+
+// .panel-title {
+//   position: sticky;
+//   top: 0;
+//   background-color: white;
+//   padding: 10px 0;
+//   z-index: 1;
+//   font-weight: bold;
+//   color: black;
+//   border-bottom: 1px solid #eee;
+// }
+
+// .supplier-item {
+//   padding: 10px;
+//   cursor: pointer;
+//   border-radius: 5px;
+//   margin-bottom: 5px;
+//   transition: background 0.3s;
+// }
+
+// .supplier-item.active {
+//   background-color: #1890ff;
+//   color: white !important;
+// }
+
+// .panel-details-pol {
+//   width: 70%;
+//   background-color: #fff;
+//   padding: 15px;
+//   border-radius: 5px;
+//   color: black;
+// }
+
+// .ant-table {
+//   margin-top: 15px;
+// }
+
+// .invoice-details p {
+//   margin: 0 0 9px;
+// }
+
+
+
+
+/* Container chính */
+.purchase-order-container {
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+}
+
+/* Hàng chứa thanh tìm kiếm và các hành động */
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Thanh tìm kiếm */
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: white;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  padding: 5px;
+  width: 200px;
+}
+
+/* Layout chia đôi trái phải */
+.split-container {
+  display: flex;
+  gap: 20px;
+}
+
+/* Danh sách bên trái */
+
+.panel-list-pol {
+     width: 30%;
+  background-color: white;
+  border-radius: 5px;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+  position: relative;
+  z-index: 0; /* đảm bảo nền panel thấp hơn tab */
+}
+
+
+.panel-list-pol::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-list-pol::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+.panel-list-pol:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Tiêu đề danh sách bên trái */
+.panel-title {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  padding: 10px 0;
+  z-index: 1;
+  font-weight: bold;
+  color: black;
+  border-bottom: 1px solid #eee;
+}
+
+/* Danh sách nhà cung cấp */
+.supplier-item {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  transition: background 0.3s;
+}
+
+.supplier-item.active {
+  background-color: #1890ff;
+  color: white !important;
+}
+
+/* Phần chi tiết bên phải */
+.panel-details-pol {
+  width: 70%;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  color: black;
+}
+
+/* Bảng dữ liệu Ant Design */
+.ant-table {
+  margin-top: 15px;
+}
+
+/* Chi tiết hóa đơn */
+.invoice-details p {
+  margin: 0 0 9px;
+}
+
+/* Tabs cố định trên cùng */
+.fixed-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+  padding: 10px 15px; /* Thêm padding ngang */
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+
+/* Active tab màu xanh */
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1890ff !important;
+  font-weight: 600;
+}
+
+/* Gạch dưới tab */
+.ant-tabs-ink-bar {
+  background-color: #1890ff !important;
+}

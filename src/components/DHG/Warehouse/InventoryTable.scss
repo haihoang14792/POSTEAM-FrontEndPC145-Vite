@@ -1,0 +1,146 @@
+/* Giao diện sáng lên, hỗ trợ dark mode */
+.inventory-table-container {
+//    width: 100%;
+//   overflow-x: auto;
+//   background-color: var(--bg-color);
+//   color: var(--text-color);
+//   border-radius: 12px;
+//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+//   padding: 16px;
+//   transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw; /* chiếm toàn màn hình */
+  max-width: 98vw; /* bạn muốn to bao nhiêu tuỳ chỉnh ở đây */
+  padding: 24px; /* padding trong khung */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Biến tùy chỉnh theo chế độ sáng/tối */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1f2937; /* text-gray-800 */
+  --border-color: #e5e7eb;
+  --hover-bg: #f3f4f6;
+}
+
+[data-theme="dark"] {
+  --bg-color: #1e293b;
+  --text-color: #f1f5f9; /* text-slate-100 */
+  --border-color: #334155;
+  --hover-bg: #2d3748;
+}
+
+.inventory-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table-container th,
+.inventory-table-container td {
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.inventory-table-container th {
+  background-color: var(--hover-bg);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.inventory-table-container tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.inventory-table-container tr:hover {
+  background-color: var(--hover-bg);
+}
+
+.inventory-table-container .text-green-600 {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.inventory-table-container .text-blue-600 {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.inventory-table-container .text-red-600 {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.inventory-table-container .text-purple-600 {
+  color: #9333ea;
+  font-weight: 500;
+}
+// .inventory-table-container .ant-btn {
+//   height: 32px !important;
+//   display: inline-flex;
+//   align-items: center;
+// }
+.inventory-table-container .ant-btn {
+  margin-right: 12px;   /* cách đều nhau */
+  height: 32px !important;
+}
+.inventory-table-container .ant-btn:last-child {
+  margin-right: 0;     /* nút cuối không dư khoảng */
+}
+.inventory-table-container .mb-4 {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap !important; /* Không cho xuống hàng */
+}
+
+/* Nút hiện đại */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary {
+  background-color: #22c55e; // xanh lá cho Excel
+  color: white;
+}
+
+.btn-warning {
+  background-color: #f97316; // cam cho Chốt kho POS
+  color: white;
+}
+
+.btn-success {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}

@@ -1,0 +1,78 @@
+.container-kh {
+    padding: 20px;
+  }
+  
+  .container {
+    text-align: center;
+  }
+  .banner-image {
+    width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của container */
+    height: 500px; /* Giữ nguyên tỷ lệ hình ảnh */
+}
+
+
+  .customer-dhg {
+    list-style-type: none;
+    padding: 0;
+    display: grid; /* Thay đổi từ flex sang grid */
+    grid-template-columns: repeat(2, 1fr); /* Định nghĩa hai cột có kích thước bằng nhau */
+    grid-gap: 20px; /* Khoảng cách giữa các ô */
+    justify-items: center; /* Canh giữa các phần tử trong mỗi ô */
+  }
+  
+  .customer-item {
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-width: 300px; /* Giới hạn chiều rộng tối đa */
+  }
+  
+  /* Định vị từng phần tử trong grid */
+  .customer-item-1 {
+    grid-column: 1; /* Cột 1 */
+    grid-row: 1; /* Hàng 1 */
+  }
+  
+  .customer-item-2 {
+    grid-column: 2; /* Cột 2 */
+    grid-row: 1; /* Hàng 1 */
+  }
+  
+  .customer-item-3 {
+    grid-column: 1; /* Cột 1 */
+    grid-row: 2; /* Hàng 2 */
+  }
+  
+  .customer-item-4 {
+    grid-column: 2; /* Cột 2 */
+    grid-row: 2; /* Hàng 2 */
+  }
+  .customer-item-5 {
+    grid-column: 1; /* Cột 1 */
+    grid-row: 3; /* Hàng 3 */
+  }
+  .customer-item-6 {
+    grid-column: 2; /* Cột 2 */
+    grid-row: 3; /* Hàng 3 */
+  }
+  .customer-item-7 {
+    grid-column: 1; /* Cột 1 */
+    grid-row: 4; /* Hàng 4 */
+  }
+  .customer-item-8 {
+    grid-column: 2; /* Cột 2 */
+    grid-row: 4; /* Hàng 4 */
+  }
+  .mt-3 {
+    margin-top: 1.5rem; /* Tạo khoảng cách phía trên */
+    padding: 10px; /* Tạo khoảng cách bên trong phần tử */
+    border-radius: 8px; /* Làm tròn góc các đường viền */
+    // color: red;
+    text-align: center;
+  }
+  .center-text {
+    text-align: center;
+}
+  

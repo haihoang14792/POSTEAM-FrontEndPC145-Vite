@@ -1,0 +1,17 @@
+.calendar-controls {
+  margin-bottom: 16px;
+
+  span {
+    font-weight: 500;
+  }
+
+  .ant-select {
+    width: 100%;
+  }
+}
+
+.calendar-frame {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}

@@ -1,0 +1,128 @@
+.nav-header {
+  .bg-header {
+    background-color: #ffffff; // Màu nền trắng
+    height: 80px; // Đặt chiều cao cố định cho thanh điều hướng
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center; // Căn giữa theo chiều dọc
+    justify-content: space-between; // Giữ logo và các liên kết ở hai bên
+  }
+
+  .navbar {
+    width: 100%; // Đảm bảo thanh điều hướng chiếm hết chiều ngang
+    display: flex;
+    justify-content: space-between; // Căn đều logo và các liên kết hai bên
+    align-items: center; // Căn giữa theo chiều dọc
+
+    .navbar-brand {
+      display: flex;
+      align-items: center; // Căn giữa logo và tên thương hiệu theo chiều dọc
+      color: red !important; // Giữ nguyên màu của tên logo
+      font-weight: bold;
+      font-size: 1.5rem;
+
+      img {
+        margin-right: 10px; // Khoảng cách giữa logo và tên
+      }
+    }
+
+    .navbar-nav {
+      display: flex;
+      margin-left: auto; // Đẩy các liên kết về phía bên phải
+      align-items: center; // Căn giữa các liên kết theo chiều dọc
+
+      .nav-link {
+        color: #000000; // Chữ đen cho các liên kết
+        margin-right: 15px; // Khoảng cách giữa các liên kết
+        font-weight: 500;
+
+        &:hover {
+          color: #333333; // Đổi màu khi hover
+        }
+
+        &.active {
+          color: black !important;
+          border-bottom: 2px solid;
+        }
+      }
+    }
+
+    .dropdown-menu {
+      background-color: #ffffff !important; // Màu nền trắng cho menu thả xuống
+      border: none;
+
+      .dropdown-item {
+        color: #000000;
+        &:hover {
+          background-color: #f0f0f0;
+        }
+      }
+    }
+  }
+}
+.logo-img {
+  height: 40px;
+  width: auto;
+}
+
+
+@media (max-width: 768px) {
+  .nav-header {
+    .bg-header {
+      height: auto; // Cho phép tự co giãn chiều cao khi menu mở
+      padding: 0.5rem 0.75rem;
+    }
+
+    .navbar {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .navbar-brand {
+        font-size: 1.2rem;
+
+        img.logo-img {
+          height: 32px; // Nhỏ lại cho phù hợp mobile
+          margin-right: 8px;
+        }
+
+        .brand-name {
+          font-size: 1.2rem;
+        }
+      }
+
+      .navbar-toggler {
+        align-self: flex-end;
+      }
+
+      .navbar-collapse {
+        width: 100%;
+        padding-top: 0.5rem;
+
+        .navbar-nav {
+          flex-direction: column;
+          width: 100%;
+
+          .nav-link {
+            margin: 8px 0;
+            text-align: left;
+            padding-left: 0.5rem;
+            font-size: 1rem;
+          }
+        }
+      }
+
+      .nav-link,
+      .dropdown-menu .dropdown-item {
+        font-size: 1rem;
+      }
+
+      .dropdown-menu {
+        width: 100%;
+
+        .dropdown-item {
+          padding: 0.5rem 1rem;
+        }
+      }
+    }
+  }
+}

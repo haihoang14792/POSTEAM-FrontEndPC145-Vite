@@ -1,0 +1,183 @@
+// // /* AddSupplierModal.css */
+// // .add-exportlist-modal .ant-modal-content {
+// //     border-radius: 15px;
+// //     overflow: hidden;
+// //     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+// //     border: none;
+// //   }
+  
+// //   .modal-header {
+// //     background: linear-gradient(90deg, #007bff, #00c6ff);
+// //     padding: 20px 24px;
+// //     display: flex;
+// //     align-items: center;
+// //     color: #fff;
+// //     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+// //   }
+  
+// //   .modal-header .icon {
+// //     font-size: 26px;
+// //     margin-right: 10px;
+// //   }
+  
+// //   .modal-header .title {
+// //     font-size: 22px;
+// //     font-weight: 500;
+// //   }
+  
+// //   .modal-body {
+// //     padding: 30px;
+// //     background: #ffffff;
+// //   }
+  
+// //   .add-exportlist-modal .ant-modal-footer {
+// //     background: #f9f9f9;
+// //     border-top: 1px solid #eee;
+// //     padding: 16px 24px;
+// //     text-align: right;
+// //   }
+  
+// //   .form-item {
+// //     margin-bottom: 20px;
+// //   }
+  
+// //   .input {
+// //     border-radius: 8px;
+// //     border: 1px solid #ccc;
+// //     padding: 10px;
+// //     transition: border-color 0.3s ease;
+// //   }
+  
+// //   .input:focus,
+// //   .input:hover {
+// //     border-color: #007bff;
+// //   }
+// //   .serial-list {
+// //     display: flex;
+// //     flex-wrap: wrap;
+// //     gap: 6px;
+// //     padding: 8px;
+// //     background: #f9f9f9;
+// //     border-radius: 4px;
+// //     border: 1px solid #ccc;
+// //     max-height: 120px;
+// //     overflow-y: auto;
+// // }
+
+// // .serial-item {
+// //     background: #e6f4ff;
+// //     padding: 4px 8px;
+// //     border-radius: 4px;
+// //     font-size: 12px;
+// // }
+
+//   /* Modal tổng thể */
+// .add-exportlist-modal .ant-modal-content {
+//   border-radius: 12px;
+//   padding: 0;
+//   overflow: hidden;
+//   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+// }
+
+// /* Header modal */
+// .add-exportlist-modal .modal-header {
+//   display: flex;
+//   align-items: center;
+//   gap: 8px;
+//   background: linear-gradient(135deg, #1890ff, #40a9ff);
+//   padding: 16px 20px;
+//   color: white;
+//   font-size: 18px;
+//   font-weight: 600;
+// }
+
+// .add-exportlist-modal .modal-header .icon {
+//   font-size: 22px;
+// }
+
+// /* Nội dung bên trong */
+// .add-exportlist-modal .ant-modal-body {
+//   padding: 20px 24px;
+//   background: #fafafa;
+// }
+
+// /* Form label */
+// .add-exportlist-modal .ant-form-item-label > label {
+//   font-weight: 600;
+//   color: #444;
+// }
+
+// /* Input, Select, Number */
+// .add-exportlist-modal .ant-input,
+// .add-exportlist-modal .ant-select-selector,
+// .add-exportlist-modal .ant-input-number {
+//   border-radius: 6px !important;
+//   border-color: #d9d9d9;
+//   transition: all 0.3s ease;
+// }
+
+// .add-exportlist-modal .ant-input:focus,
+// .add-exportlist-modal .ant-select-focused .ant-select-selector,
+// .add-exportlist-modal .ant-input-number-focused {
+//   border-color: #1890ff !important;
+//   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+// }
+
+// /* Tồn kho */
+// .add-exportlist-modal .stock-info {
+//   font-size: 12px;
+//   font-weight: 500;
+//   margin-top: -6px;
+// }
+
+// .add-exportlist-modal .stock-info.green {
+//   color: #3f8600;
+// }
+
+// .add-exportlist-modal .stock-info.red {
+//   color: #cf1322;
+// }
+
+// /* Footer buttons */
+// .add-exportlist-modal .ant-modal-footer {
+//   padding: 12px 24px;
+//   border-top: 1px solid #f0f0f0;
+// }
+
+// .add-exportlist-modal .ant-btn-primary {
+//   background: #1890ff;
+//   border-radius: 6px;
+//   font-weight: 500;
+// }
+
+// .add-exportlist-modal .ant-btn-default {
+//   border-radius: 6px;
+// }
+
+// /* Giảm khoảng cách giữa input và tồn kho */
+// .add-exportlist-modal .stock-info {
+//   margin-top: 4px; /* trước là -6px hoặc mặc định, giờ sát hơn */
+//   font-size: 12px;
+//   font-weight: 500;
+//   line-height: 1.4;
+// }
+
+// /* Màu tồn kho */
+// .add-exportlist-modal .stock-info.green {
+//   color: #3f8600;
+// }
+
+// .add-exportlist-modal .stock-info.red {
+//   color: #cf1322;
+// }
+
+// /* Loại bỏ margin-bottom mặc định của Form.Item để tồn kho sát hơn */
+// .add-exportlist-modal .ant-form-item {
+//   margin-bottom: 12px; /* giảm từ 24px mặc định xuống 12px */
+// }
+// .add-exportlist-modal .serial-input {
+//   resize: none !important;
+//   overflow-y: auto !important;
+//   white-space: pre-wrap !important;
+//   word-break: break-word !important;
+// }
