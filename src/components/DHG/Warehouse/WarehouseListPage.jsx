@@ -1,165 +1,216 @@
 import React, { useEffect, useState } from 'react';
-import { fetchListWarehouse } from '../../../services/dhgServices';
+import {
+  Table,
+  Card,
+  Button,
+  Input,
+  Space,
+  Typography,
+  Tooltip,
+  Tag,
+  Row,
+  Col
+} from 'antd';
+import {
+  PlusOutlined,
+  FileExcelOutlined,
+  EditOutlined,
+  SearchOutlined,
+  HomeOutlined
+} from '@ant-design/icons';
 import * as XLSX from 'xlsx';
-import { FaFileExcel, FaSearch, FaBuilding, FaPlus, FaEdit } from 'react-icons/fa';
-import 'react-tabs/style/react-tabs.css';
-import './WarehouseListPage.scss';
+import { fetchListWarehouse } from '../../../services/dhgServices';
 import AddWarehouseListModal from './AddWarehouseListModal';
 import UpdateWarehouseListModal from './UpdateWarehouseListModal';
 
+// Không cần file SCSS phức tạp nữa, Ant Design đã lo phần giao diện
+// Bạn có thể giữ lại file SCSS để override nhỏ nếu cần
+
+const { Title } = Typography;
+
 const WarehouseListPage = () => {
   const [warehouses, setWarehouses] = useState([]);
-  const [selectedWarehouse, setSelectedWarehouse] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedWarehouse, setSelectedWarehouse] = useState(null);
+
+  // State quản lý Modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
 
   useEffect(() => {
-    const loadWarehouses = async () => {
-      try {
-        const warehouseData = await fetchListWarehouse();
-        console.log("Data nhận từ API:", warehouseData);
-        setWarehouses(warehouseData.data);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
     loadWarehouses();
   }, []);
 
-
+  const loadWarehouses = async () => {
+    setLoading(true);
+    try {
+      const warehouseData = await fetchListWarehouse();
+      // Thêm key cho mỗi item để Antd Table hoạt động tốt nhất
+      const mappedData = warehouseData.data.map(item => ({ ...item, key: item.id }));
+      setWarehouses(mappedData);
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách kho:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleExport = () => {
     const ws = XLSX.utils.json_to_sheet(
       warehouses.map(warehouse => ({
+        "ID": warehouse.id,
         "Tên kho": warehouse.attributes.NameKho,
-        "Mô tả kho": warehouse.attributes.DescriptionKho,
-        "Kiểu kho": warehouse.attributes.TypeKho,
-        "Địa chỉ kho": warehouse.attributes.Address
+        "Mô tả": warehouse.attributes.DescriptionKho,
+        "Loại kho": warehouse.attributes.TypeKho,
+        "Địa chỉ": warehouse.attributes.Address
       }))
     );
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Warehouses");
-    XLSX.writeFile(wb, "Suppliers_List.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "Danh sách kho");
+    XLSX.writeFile(wb, "Danh_sach_kho.xlsx");
   };
 
-  const handleAddSupplier = () => {
-    setIsModalVisible(true);
-  };
+  // --- Cấu hình cột cho bảng Ant Design ---
+  const columns = [
+    {
+      title: 'STT',
+      key: 'index',
+      width: 60,
+      align: 'center',
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: 'Tên Kho',
+      dataIndex: ['attributes', 'NameKho'],
+      key: 'name',
+      render: (text) => <span style={{ fontWeight: 600, color: '#1890ff' }}>{text}</span>,
+      sorter: (a, b) => a.attributes.NameKho.localeCompare(b.attributes.NameKho),
+    },
+    {
+      title: 'Loại Kho',
+      dataIndex: ['attributes', 'TypeKho'],
+      key: 'type',
+      render: (type) => (
+        <Tag color={type === 'Kho tổng' ? 'geekblue' : 'green'}>
+          {type || 'N/A'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Địa chỉ',
+      dataIndex: ['attributes', 'Address'],
+      key: 'address',
+      render: (text) => <span><HomeOutlined style={{ marginRight: 5 }} />{text}</span>
+    },
+    {
+      title: 'Mô tả',
+      dataIndex: ['attributes', 'DescriptionKho'],
+      key: 'description',
+      ellipsis: true, // Tự động cắt ngắn nếu quá dài
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      align: 'center',
+      width: 100,
+      render: (_, record) => (
+        <Tooltip title="Chỉnh sửa thông tin kho">
+          <Button
+            type="primary"
+            ghost
+            icon={<EditOutlined />}
+            onClick={() => {
+              setSelectedWarehouse(record);
+              setIsUpdateModalVisible(true);
+            }}
+          />
+        </Tooltip>
+      ),
+    },
+  ];
 
-  // Callback nhận dữ liệu warehouse mới từ modal thêm
-  const handleModalOk = (newWarehouseData) => {
-    setWarehouses(prev => [...prev, newWarehouseData]);
-    setIsModalVisible(false);
-  };
-
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  // Mở modal cập nhật
-  const handleUpdateWarehouse = () => {
-    if (selectedWarehouse) {
-      setIsUpdateModalVisible(true);
-    }
-  };
-
-  // Callback sau khi cập nhật warehouse thành công
-  const handleUpdateModalOk = (updatedWarehouseData) => {
-    setWarehouses(prev =>
-      prev.map(warehouse =>
-        warehouse.id === updatedWarehouseData.id ? updatedWarehouseData : warehouse
-      )
-    );
-    setSelectedWarehouse(updatedWarehouseData);
-    setIsUpdateModalVisible(false);
-  };
-
-  const handleUpdateModalCancel = () => {
-    setIsUpdateModalVisible(false);
-  };
-
-  const filteredWarehouses = warehouses.filter(warehouse => {
-    const name = warehouse.attributes.NameKho?.toLowerCase().trim() || "";
-    const search = searchTerm.trim().toLowerCase();
-    return name.includes(search);
-  });
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  // Lọc dữ liệu trước khi hiển thị
+  const filteredData = warehouses.filter(item =>
+    item.attributes.NameKho?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.attributes.Address?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="warehouse-container-ware">
-      <div className="header-actions">
-        <div className="search-bar">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Tìm kiếm kho..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={(e) => e.target.select()}
-          />
-        </div>
-        <button onClick={handleExport} className="btn btn-primary">
-          <FaFileExcel /> Xuất Excel
-        </button>
-        <button onClick={handleAddSupplier} className="btn btn-success">
-          <FaPlus /> Thêm kho
-        </button>
-      </div>
+    <div style={{ padding: '20px' }}>
+      <Card
+        bordered={false}
+        style={{ borderRadius: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+      >
+        {/* Header: Tiêu đề và các nút thao tác */}
+        <Row gutter={[16, 16]} justify="space-between" align="middle" style={{ marginBottom: 20 }}>
+          <Col xs={24} md={8}>
+            <Title level={3} style={{ margin: 0 }}>Quản lý Kho hàng</Title>
+          </Col>
 
-      <div className="split-container-ware">
-        <div className="panel-list-ware">
-          <h3 className="panel-title">Kho</h3>
-          <ul>
-            {filteredWarehouses.map(warehouse => (
-              <li
-                key={warehouse.id}
-                className={`warehouse-item ${selectedWarehouse?.id === warehouse.id ? 'active' : ''}`}
-                onClick={() => setSelectedWarehouse(warehouse)}
-              >
-                <FaBuilding className="warehouse-icon" /> {warehouse.attributes.NameKho}
-              </li>
-            ))}
-          </ul>
-        </div>
+          <Col xs={24} md={16}>
+            <Row gutter={[10, 10]} justify="end">
+              <Col xs={24} sm={10} md={12}>
+                <Input
+                  placeholder="Tìm kiếm theo tên hoặc địa chỉ..."
+                  prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  allowClear
+                />
+              </Col>
+              <Col>
+                <Space>
+                  <Button
+                    onClick={handleExport}
+                    icon={<FileExcelOutlined />}
+                    style={{ backgroundColor: '#217346', color: 'white', borderColor: '#217346' }}
+                  >
+                    Xuất Excel
+                  </Button>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => setIsModalVisible(true)}
+                  >
+                    Thêm mới
+                  </Button>
+                </Space>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
-        <div className="panel-details-ware">
-          <h3 className="panel-title">Chi tiết kho</h3>
-          {selectedWarehouse ? (
-            <div className="warehouse-details">
-              <p><strong>Tên kho:</strong> {selectedWarehouse.attributes.NameKho}</p>
-              <p><strong>Mô tả kho:</strong> {selectedWarehouse.attributes.DescriptionKho}</p>
-              <p><strong>Kiểu kho:</strong> {selectedWarehouse.attributes.TypeKho}</p>
-              <p><strong>Địa chỉ:</strong> {selectedWarehouse.attributes.Address}</p>
-              <button onClick={handleUpdateWarehouse} className="btn btn-warning">
-                <FaEdit /> Cập nhật tên kho
-              </button>
-            </div>
-          ) : (
-            <p>Chọn kho để xem chi tiết</p>
-          )}
-        </div>
-      </div>
+        {/* Body: Bảng dữ liệu */}
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          loading={loading}
+          pagination={{ pageSize: 10, showSizeChanger: true }}
+          rowKey="id"
+          locale={{ emptyText: 'Không có dữ liệu kho' }}
+        />
+      </Card>
 
-      {/* Modal thêm nhà cung cấp */}
+      {/* --- Giữ nguyên logic Modal của bạn --- */}
       <AddWarehouseListModal
         isModalOpen={isModalVisible}
-        onCancel={handleModalCancel}
-        onCreated={handleModalOk}
+        onCancel={() => setIsModalVisible(false)}
+        onCreated={(newData) => {
+          setWarehouses([...warehouses, { ...newData, key: newData.id }]); // Cập nhật và đóng modal
+          setIsModalVisible(false);
+          // Có thể gọi lại loadWarehouses() nếu muốn fetch mới hoàn toàn
+        }}
       />
 
-      {/* Modal cập nhật nhà cung cấp */}
       <UpdateWarehouseListModal
         isModalOpen={isUpdateModalVisible}
-        onCancel={handleUpdateModalCancel}
+        onCancel={() => setIsUpdateModalVisible(false)}
         warehouseData={selectedWarehouse}
-        onUpdated={handleUpdateModalOk}
+        onUpdated={(updatedData) => {
+          setWarehouses(warehouses.map(w => w.id === updatedData.id ? updatedData : w));
+          setIsUpdateModalVisible(false);
+        }}
       />
     </div>
   );
