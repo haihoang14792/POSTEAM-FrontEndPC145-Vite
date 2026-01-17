@@ -30,15 +30,22 @@
 //     current: 1,
 //     pageSize: 10,
 //   });
+//   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
 //   useEffect(() => {
 //     loadCustomers();
+
+//     // Lắng nghe thay đổi kích thước màn hình
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth < 768);
+//     };
+//     window.addEventListener('resize', handleResize);
+//     return () => window.removeEventListener('resize', handleResize);
 //   }, []);
 
 //   const loadCustomers = async () => {
 //     try {
 //       const data = await fetchListCustomer();
-//       // Bỏ lọc chỉ Family Mart, lấy toàn bộ danh sách
 //       const sorted = data.data.sort(
 //         (a, b) =>
 //           (a.attributes.StoreID || '').localeCompare(b.attributes.StoreID || '')
@@ -83,8 +90,10 @@
 //           (store.attributes.Status ? 'Mở' : 'Đóng') === values.status
 //       );
 //     }
-//      if (values.Customer) {
-//       results = results.filter((t) => t?.attributes?.Customer === values.Customer);
+//     if (values.Customer) {
+//       results = results.filter(
+//         (t) => t?.attributes?.Customer === values.Customer
+//       );
 //     }
 //     if (values.searchText) {
 //       const searchLower = values.searchText.toLowerCase();
@@ -112,7 +121,7 @@
 //       render: (_, __, index) =>
 //         (pagination.current - 1) * pagination.pageSize + index + 1,
 //     },
-//         {
+//     {
 //       title: 'Khách hàng',
 //       dataIndex: ['attributes', 'Customer'],
 //       width: 120,
@@ -165,6 +174,7 @@
 
 //   return (
 //     <div className="familymart-container">
+//       {/* <h2>Danh sách khách hàng</h2> */}
 //       {/* Form lọc */}
 //       <Form
 //         form={form}
@@ -172,16 +182,17 @@
 //         onFinish={handleSearch}
 //         style={{ marginBottom: 20, flexWrap: 'wrap' }}
 //       >
-//             <Form.Item name="Customer">
-//   <Select placeholder="-- Khách hàng --" style={{ width: 160 }} allowClear>
-//     {[...new Set(customers.map((i) => i.attributes.Customer))].map((customer) => (
-//       <Select.Option key={customer} value={customer}>
-//         {customer}
-//       </Select.Option>
-//     ))}
-//   </Select>
-// </Form.Item>
-
+//         <Form.Item name="Customer">
+//           <Select placeholder="-- Khách hàng --" style={{ width: 160 }} allowClear>
+//             {[...new Set(customers.map((i) => i.attributes.Customer))].map(
+//               (customer) => (
+//                 <Select.Option key={customer} value={customer}>
+//                   {customer}
+//                 </Select.Option>
+//               )
+//             )}
+//           </Select>
+//         </Form.Item>
 
 //         <Form.Item name="status">
 //           <Select placeholder="-- Trạng thái --" style={{ width: 160 }} allowClear>
@@ -208,19 +219,48 @@
 //         </Form.Item>
 //       </Form>
 
-//       {/* Bảng */}
-//       <Table
-//         columns={columns}
-//         dataSource={filteredCustomers}
-//         rowKey="id"
-//         pagination={{
-//           ...pagination,
-//           onChange: (page, pageSize) => {
-//             setPagination({ current: page, pageSize });
-//           },
-//         }}
-//         scroll={{ x: 900 }}
-//       />
+//       {/* Hiển thị bảng hoặc card tùy kích thước màn hình */}
+//       {!isMobile ? (
+//         <Table
+//           columns={columns}
+//           dataSource={filteredCustomers}
+//           rowKey="id"
+//           pagination={{
+//             ...pagination,
+//             onChange: (page, pageSize) => {
+//               setPagination({ current: page, pageSize });
+//             },
+//           }}
+//           scroll={{ x: 900 }}
+//         />
+//       ) : (
+//         <div className="customer-cards">
+//           {filteredCustomers.map((item, idx) => (
+//             <div key={item.id} className="customer-card">
+//               <p>
+//                 <b>#{idx + 1}</b> {item.attributes.Customer}
+//               </p>
+//               <p><b>Mã cửa hàng:</b> {item.attributes.StoreID}</p>
+//               <p><b>Địa chỉ:</b> {item.attributes.Address}</p>
+//               <p><b>Số điện thoại:</b> {item.attributes.Phone}</p>
+//               <Tag color={item.attributes.Status ? 'green' : 'red'}>
+//                 {item.attributes.Status ? 'Mở' : 'Đóng'}
+//               </Tag>
+//               <div style={{ marginTop: 6 }}>
+//                 <Button
+//                   size="small"
+//                   onClick={() => {
+//                     setSelectedStore(item);
+//                     setIsDetailModalOpen(true);
+//                   }}
+//                 >
+//                   Chi tiết
+//                 </Button>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       )}
 
 //       {/* Modal chi tiết */}
 //       <Modal
@@ -257,6 +297,7 @@
 // };
 
 // export default CustomersList;
+
 
 import React, { useEffect, useState } from 'react';
 import { fetchListCustomer } from '../../../services/strapiServices';
@@ -306,10 +347,15 @@ const CustomersList = () => {
   const loadCustomers = async () => {
     try {
       const data = await fetchListCustomer();
-      const sorted = data.data.sort(
+      // Strapi v5: response có thể là mảng trực tiếp hoặc { data: [...] }
+      const customersData = Array.isArray(data) ? data : (data.data || []);
+
+      const sorted = customersData.sort(
         (a, b) =>
-          (a.attributes.StoreID || '').localeCompare(b.attributes.StoreID || '')
+          // Sửa: bỏ .attributes
+          (a.StoreID || '').localeCompare(b.StoreID || '')
       );
+
       setCustomers(sorted);
       setFilteredCustomers(sorted);
       setLoading(false);
@@ -330,10 +376,11 @@ const CustomersList = () => {
     }
     const ws = XLSX.utils.json_to_sheet(
       filteredCustomers.map((store) => ({
-        'Mã cửa hàng': store.attributes.StoreID,
-        'Địa chỉ': store.attributes.Address,
-        'Số điện thoại': store.attributes.Phone,
-        'Trạng thái': store.attributes.Status ? 'Mở' : 'Đóng',
+        // Sửa: bỏ .attributes
+        'Mã cửa hàng': store.StoreID,
+        'Địa chỉ': store.Address,
+        'Số điện thoại': store.Phone,
+        'Trạng thái': store.Status ? 'Mở' : 'Đóng',
       }))
     );
     const wb = XLSX.utils.book_new();
@@ -347,20 +394,23 @@ const CustomersList = () => {
     if (values.status && values.status !== 'Tất cả') {
       results = results.filter(
         (store) =>
-          (store.attributes.Status ? 'Mở' : 'Đóng') === values.status
+          // Sửa: bỏ .attributes
+          (store.Status ? 'Mở' : 'Đóng') === values.status
       );
     }
     if (values.Customer) {
       results = results.filter(
-        (t) => t?.attributes?.Customer === values.Customer
+        // Sửa: bỏ .attributes
+        (t) => t.Customer === values.Customer
       );
     }
     if (values.searchText) {
       const searchLower = values.searchText.toLowerCase();
       results = results.filter(
         (store) =>
-          store.attributes.StoreID?.toLowerCase().includes(searchLower) ||
-          store.attributes.Address?.toLowerCase().includes(searchLower)
+          // Sửa: bỏ .attributes
+          store.StoreID?.toLowerCase().includes(searchLower) ||
+          store.Address?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -383,28 +433,28 @@ const CustomersList = () => {
     },
     {
       title: 'Khách hàng',
-      dataIndex: ['attributes', 'Customer'],
+      dataIndex: 'Customer', // Sửa: bỏ ["attributes", ...]
       width: 120,
     },
     {
       title: 'Mã cửa hàng',
-      dataIndex: ['attributes', 'StoreID'],
+      dataIndex: 'StoreID', // Sửa: bỏ ["attributes", ...]
       width: 120,
     },
     {
       title: 'Địa chỉ',
-      dataIndex: ['attributes', 'Address'],
+      dataIndex: 'Address', // Sửa: bỏ ["attributes", ...]
       width: 300,
       ellipsis: true,
     },
     {
       title: 'Số điện thoại',
-      dataIndex: ['attributes', 'Phone'],
+      dataIndex: 'Phone', // Sửa: bỏ ["attributes", ...]
       width: 150,
     },
     {
       title: 'Trạng thái',
-      dataIndex: ['attributes', 'Status'],
+      dataIndex: 'Status', // Sửa: bỏ ["attributes", ...]
       width: 120,
       render: (status) => (
         <Tag color={status ? 'green' : 'red'}>{status ? 'Mở' : 'Đóng'}</Tag>
@@ -444,7 +494,7 @@ const CustomersList = () => {
       >
         <Form.Item name="Customer">
           <Select placeholder="-- Khách hàng --" style={{ width: 160 }} allowClear>
-            {[...new Set(customers.map((i) => i.attributes.Customer))].map(
+            {[...new Set(customers.map((i) => i.Customer))].map( // Sửa: bỏ .attributes
               (customer) => (
                 <Select.Option key={customer} value={customer}>
                   {customer}
@@ -498,13 +548,14 @@ const CustomersList = () => {
           {filteredCustomers.map((item, idx) => (
             <div key={item.id} className="customer-card">
               <p>
-                <b>#{idx + 1}</b> {item.attributes.Customer}
+                {/* Sửa: bỏ .attributes */}
+                <b>#{idx + 1}</b> {item.Customer}
               </p>
-              <p><b>Mã cửa hàng:</b> {item.attributes.StoreID}</p>
-              <p><b>Địa chỉ:</b> {item.attributes.Address}</p>
-              <p><b>Số điện thoại:</b> {item.attributes.Phone}</p>
-              <Tag color={item.attributes.Status ? 'green' : 'red'}>
-                {item.attributes.Status ? 'Mở' : 'Đóng'}
+              <p><b>Mã cửa hàng:</b> {item.StoreID}</p> {/* Sửa: bỏ .attributes */}
+              <p><b>Địa chỉ:</b> {item.Address}</p> {/* Sửa: bỏ .attributes */}
+              <p><b>Số điện thoại:</b> {item.Phone}</p> {/* Sửa: bỏ .attributes */}
+              <Tag color={item.Status ? 'green' : 'red'}> {/* Sửa: bỏ .attributes */}
+                {item.Status ? 'Mở' : 'Đóng'} {/* Sửa: bỏ .attributes */}
               </Tag>
               <div style={{ marginTop: 6 }}>
                 <Button
@@ -533,21 +584,21 @@ const CustomersList = () => {
         {selectedStore && (
           <Descriptions bordered column={1} size="small">
             <Descriptions.Item label="Mã cửa hàng">
-              {selectedStore.attributes.StoreID}
+              {selectedStore.StoreID} {/* Sửa: bỏ .attributes */}
             </Descriptions.Item>
             <Descriptions.Item label="Địa chỉ">
-              {selectedStore.attributes.Address}
+              {selectedStore.Address} {/* Sửa: bỏ .attributes */}
             </Descriptions.Item>
             <Descriptions.Item label="Số điện thoại">
-              {selectedStore.attributes.Phone}
+              {selectedStore.Phone} {/* Sửa: bỏ .attributes */}
             </Descriptions.Item>
             <Descriptions.Item label="Trạng thái">
-              <Tag color={selectedStore.attributes.Status ? 'green' : 'red'}>
-                {selectedStore.attributes.Status ? 'Mở' : 'Đóng'}
+              <Tag color={selectedStore.Status ? 'green' : 'red'}> {/* Sửa: bỏ .attributes */}
+                {selectedStore.Status ? 'Mở' : 'Đóng'} {/* Sửa: bỏ .attributes */}
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Khu vực">
-              {selectedStore.attributes.Area || 'Không xác định'}
+              {selectedStore.Area || 'Không xác định'} {/* Sửa: bỏ .attributes */}
             </Descriptions.Item>
           </Descriptions>
         )}

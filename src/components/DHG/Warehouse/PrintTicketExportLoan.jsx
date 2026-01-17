@@ -66,17 +66,17 @@ const PrintTicketExportLoan = ({ isOpen, onClose, ticket, handoverDevices, retri
                 <p style={{ textAlign: "right" }}>TPHCM, ngày {new Date().getDate()} tháng {new Date().getMonth() + 1} năm {new Date().getFullYear()}</p>
 
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                    <p style={{ width: "50%" }}><strong>Số Phiếu:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.attributes?.Votes}</span></p>
-                    <p style={{ width: "50%" }}><strong>Ticket Dingtalk:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.attributes?.Ticket}</span></p>
+                    <p style={{ width: "50%" }}><strong>Số Phiếu:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.Votes}</span></p>
+                    <p style={{ width: "50%" }}><strong>Ticket Dingtalk:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.Ticket}</span></p>
 
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                    <p style={{ width: "50%" }}><strong>Người đề nghị:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.attributes?.Person}</span></p>
-                    <p style={{ width: "50%" }}><strong>Khách Hàng:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.attributes?.Customer}</span></p>
+                    <p style={{ width: "50%" }}><strong>Người đề nghị:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.Person}</span></p>
+                    <p style={{ width: "50%" }}><strong>Khách Hàng:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.Customer}</span></p>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                    <p style={{ width: "50%" }}><strong>Cửa hàng:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.attributes?.Store}</span></p>
-                    <p style={{ width: "50%" }}><strong>Địa chỉ giao:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.attributes?.DeliveryAddress}</span></p>
+                    <p style={{ width: "50%" }}><strong>Cửa hàng:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.Store}</span></p>
+                    <p style={{ width: "50%" }}><strong>Địa chỉ giao:</strong> <span style={{ fontWeight: "bold", fontSize: "18px" }}>{ticket?.DeliveryAddress}</span></p>
                 </div>
 
                 <h3>1. Chi tiết sản phẩm, gồm có:</h3>

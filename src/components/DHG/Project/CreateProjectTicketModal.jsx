@@ -46,7 +46,8 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
         const loadUsers = async () => {
             try {
                 const res = await fetchUsers();
-                setUsers(res || []);
+                const data = Array.isArray(res) ? res : (res?.data || []);
+                setUsers(data);
             } catch (err) {
                 message.error("Không thể tải danh sách người dùng!");
             }
@@ -59,11 +60,11 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
         const fetchData = async () => {
             try {
                 const res = await fetchListCustomer();
-                const data = res?.data || [];
+                const data = Array.isArray(res) ? res : (res?.data || []);
                 setCustomerList(data);
 
                 const uniqueCustomers = Array.from(
-                    new Set(data.map((i) => i.attributes.Customer))
+                    new Set(data.map((i) => i.Customer))
                 ).map((c) => ({ label: c, value: c }));
 
                 setCustomerOptions(uniqueCustomers);
@@ -86,17 +87,17 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
 
         const result = customerList.filter(
             (item) =>
-                item.attributes.Customer === selectedCustomer &&
-                item.attributes.Status === true
+                item.Customer === selectedCustomer &&
+                item.Status === true
         );
         setFilteredStores(result);
     }, [selectedCustomer, customerList, form, open]);
 
     const handleStoreChange = (value) => {
-        const store = filteredStores.find((s) => s.attributes.StoreID === value);
+        const store = filteredStores.find((s) => s.StoreID === value);
         form.setFieldsValue({
             StoreID: value,
-            Address: store?.attributes?.Address || "",
+            Address: store?.Address || "",
         });
     };
 
@@ -104,6 +105,8 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
         try {
             setLoading(true);
             const values = await form.validateFields();
+
+            // Vì Person là Text, ta giữ nguyên values từ form
             const payload = { ...values, Status: true };
 
             await createRecallDHGs(payload);
@@ -113,7 +116,8 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
             form.resetFields();
             onClose();
         } catch (err) {
-            // message.error("Lỗi khi tạo phiếu!");
+            const errorMsg = err.response?.data?.error?.message || "Lỗi khi tạo phiếu!";
+            message.error(`Lỗi: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
@@ -126,12 +130,10 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
             footer={null}
             width={800}
             centered
-            // Class quan trọng để áp dụng style giống ModalStore
             className="custom-modal-style"
             destroyOnClose
             closeIcon={<CloseOutlined style={{ fontSize: '18px', color: '#6c757d' }} />}
         >
-            {/* HEADER GIỐNG MODALSTORE */}
             <div className="modal-header-modern">
                 <div className="header-icon">
                     <FileTextOutlined />
@@ -210,8 +212,8 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
                                             dropdownClassName="select-dropdown-modern"
                                         >
                                             {filteredStores.map((s) => (
-                                                <Option key={s.id} value={s.attributes.StoreID}>
-                                                    {s.attributes.StoreID}
+                                                <Option key={s.id} value={s.StoreID}>
+                                                    {s.StoreID}
                                                 </Option>
                                             ))}
                                         </Select>
@@ -240,6 +242,7 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
                                 >
                                     <Select showSearch placeholder="Chọn nhân viên" className="select-modern" dropdownClassName="select-dropdown-modern">
                                         {users.map((u) => (
+                                            // ✅ Vì Person là Text -> Gửi Name
                                             <Option key={u.id} value={u.Name || u.username}>
                                                 {u.Name || u.username}
                                             </Option>
@@ -251,6 +254,7 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
                                 <Form.Item label="Người hỗ trợ" name="Person2nd">
                                     <Select showSearch placeholder="Chọn nhân viên (nếu có)" className="select-modern" dropdownClassName="select-dropdown-modern" allowClear>
                                         {users.map((u) => (
+                                            // ✅ Vì Person2nd là Text -> Gửi Name
                                             <Option key={u.id} value={u.Name || u.username}>
                                                 {u.Name || u.username}
                                             </Option>
@@ -266,7 +270,6 @@ const CreateProjectTicketModal = ({ open, onClose, reloadTickets }) => {
                         </Row>
                     </div>
 
-                    {/* FOOTER */}
                     <div className="modal-footer-modern">
                         <Button onClick={onClose} className="btn-modern-cancel">
                             Hủy bỏ

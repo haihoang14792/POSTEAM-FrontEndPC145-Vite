@@ -33,7 +33,11 @@ const Project = () => {
         setLoading(true);
         try {
             const res = await fetchProjectPlantDHGs();
-            setprojectDHGs(res.data.sort((a, b) => b.id - a.id));
+            // Strapi v5: response có thể là mảng trực tiếp hoặc { data: [...] }
+            const data = Array.isArray(res) ? res : (res?.data || []);
+
+            // Sắp xếp theo ID giảm dần (mới nhất lên đầu)
+            setprojectDHGs(data.sort((a, b) => b.id - a.id));
         } finally {
             setLoading(false);
         }
@@ -43,12 +47,14 @@ const Project = () => {
         loadData();
     }, []);
 
+    // Sửa: bỏ .attributes
     const activeList = projectDHGs.filter(
-        item => item.attributes.Status === true
+        item => item.Status === true
     );
 
+    // Sửa: bỏ .attributes
     const completedList = projectDHGs.filter(
-        item => item.attributes.Status === false
+        item => item.Status === false
     );
 
     if (loading) {
@@ -102,11 +108,12 @@ const Project = () => {
                                     className="recall-card active"
                                     onClick={() =>
                                         navigate(
-                                            `/dhg/store/${item.attributes.Ticket}`,
+                                            // Sửa: bỏ .attributes
+                                            `/dhg/store/${item.Ticket}`,
                                             {
                                                 state: {
-                                                    storeId: item.attributes.StoreID, // ✅ mã cửa hàng
-                                                    ticket: item.attributes.Ticket   // ✅ số phiếu
+                                                    storeId: item.StoreID, // ✅ mã cửa hàng
+                                                    ticket: item.Ticket   // ✅ số phiếu
                                                 }
                                             }
                                         )
@@ -115,38 +122,38 @@ const Project = () => {
                                     <div className="card-header">
                                         <Title level={5}>
                                             <ShopOutlined />{" "}
-                                            {item.attributes.Customer}
+                                            {item.Customer} {/* Sửa: bỏ .attributes */}
                                         </Title>
                                         <Tag color="gold">Đang hoạt động</Tag>
                                     </div>
 
                                     <Text strong>
-                                        Store ID: {item.attributes.StoreID}
+                                        Store ID: {item.StoreID} {/* Sửa: bỏ .attributes */}
                                     </Text>
 
                                     <div className="recall-row">
                                         <EnvironmentOutlined />
                                         <span>
-                                            {item.attributes.Address}
+                                            {item.Address} {/* Sửa: bỏ .attributes */}
                                         </span>
                                     </div>
 
                                     <div className="recall-row">
                                         <FileTextOutlined />
-                                        <span>{item.attributes.Detail}</span>
+                                        <span>{item.Detail}</span> {/* Sửa: bỏ .attributes */}
                                     </div>
                                     <div className="recall-row">
                                         <UserOutlined />
                                         <span>
                                             Người phụ trách:{" "}
-                                            {item.attributes.Person || "Chưa phân công"}
+                                            {item.Person || "Chưa phân công"} {/* Sửa: bỏ .attributes */}
                                         </span>
                                     </div>
                                     <div className="recall-row">
                                         <UserOutlined />
                                         <span>
                                             Người phụ trách 2:{" "}
-                                            {item.attributes.Person2nd || "Chưa phân công"}
+                                            {item.Person2nd || "Chưa phân công"} {/* Sửa: bỏ .attributes */}
                                         </span>
                                     </div>
                                 </Card>
@@ -172,11 +179,12 @@ const Project = () => {
                                     className="recall-card done"
                                     onClick={() =>
                                         navigate(
-                                            `/dhg/store/${item.attributes.Ticket}`,
+                                            // Sửa: bỏ .attributes
+                                            `/dhg/store/${item.Ticket}`,
                                             {
                                                 state: {
-                                                    storeId: item.attributes.StoreID, // ✅ mã cửa hàng
-                                                    ticket: item.attributes.Ticket   // ✅ số phiếu
+                                                    storeId: item.StoreID, // ✅ mã cửa hàng
+                                                    ticket: item.Ticket   // ✅ số phiếu
                                                 }
                                             }
                                         )
@@ -185,38 +193,38 @@ const Project = () => {
                                     <div className="card-header">
                                         <Title level={5}>
                                             <ShopOutlined />{" "}
-                                            {item.attributes.Customer}
+                                            {item.Customer} {/* Sửa: bỏ .attributes */}
                                         </Title>
                                         <Tag color="green">Hoàn thành</Tag>
                                     </div>
 
                                     <Text strong>
-                                        Store ID: {item.attributes.StoreID}
+                                        Store ID: {item.StoreID} {/* Sửa: bỏ .attributes */}
                                     </Text>
 
                                     <div className="recall-row">
                                         <EnvironmentOutlined />
                                         <span>
-                                            {item.attributes.Address}
+                                            {item.Address} {/* Sửa: bỏ .attributes */}
                                         </span>
                                     </div>
 
                                     <div className="recall-row">
                                         <FileTextOutlined />
-                                        <span>{item.attributes.Detail}</span>
+                                        <span>{item.Detail}</span> {/* Sửa: bỏ .attributes */}
                                     </div>
                                     <div className="recall-row">
                                         <UserOutlined />
                                         <span>
                                             Người phụ trách:{" "}
-                                            {item.attributes.Person || "Chưa phân công"}
+                                            {item.Person || "Chưa phân công"} {/* Sửa: bỏ .attributes */}
                                         </span>
                                     </div>
                                     <div className="recall-row">
                                         <UserOutlined />
                                         <span>
                                             Người phụ trách 2:{" "}
-                                            {item.attributes.Person2nd || "Chưa phân công"}
+                                            {item.Person2nd || "Chưa phân công"} {/* Sửa: bỏ .attributes */}
                                         </span>
                                     </div>
                                 </Card>

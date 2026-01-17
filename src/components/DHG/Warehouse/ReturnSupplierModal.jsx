@@ -1,19 +1,34 @@
-// import React, { useState } from "react";
+// import React, { useState, useEffect } from "react";
 // import { Modal, Form, InputNumber, Input, Button, message } from "antd";
 // import {
+//   fetchWarehouseDetails,
 //   returnToSupplier,
 //   updateWarehouseDetails,
 // } from "../../../services/dhgServices";
 
-// const ReturnSupplierModal = ({
-//   open,
-//   record,
-//   warehouseList,
-//   onClose,
-//   onConfirmSuccess,
-// }) => {
+// const ReturnSupplierModal = ({ open, record, onClose, onConfirmSuccess }) => {
 //   const [form] = Form.useForm();
 //   const [loading, setLoading] = useState(false);
+//   const [warehouseList, setWarehouseList] = useState([]);
+
+//   // Load danh sách kho khi mở modal
+//   useEffect(() => {
+//     if (open) {
+//       const loadWarehouse = async () => {
+//         try {
+//           const res = await fetchWarehouseDetails();
+//           setWarehouseList(res.data || []);
+//         } catch (error) {
+//           console.error("Lỗi load kho:", error);
+//           message.error("Không thể tải dữ liệu kho");
+//         }
+//       };
+//       loadWarehouse();
+//     } else {
+//       form.resetFields();
+//       setWarehouseList([]);
+//     }
+//   }, [open, form]);
 
 //   const handleOk = async () => {
 //     try {
@@ -127,7 +142,9 @@ const ReturnSupplierModal = ({ open, record, onClose, onConfirmSuccess }) => {
       const loadWarehouse = async () => {
         try {
           const res = await fetchWarehouseDetails();
-          setWarehouseList(res.data || []);
+          // Strapi v5: response.data là mảng phẳng hoặc response là mảng
+          const data = Array.isArray(res) ? res : (res.data || []);
+          setWarehouseList(data);
         } catch (error) {
           console.error("Lỗi load kho:", error);
           message.error("Không thể tải dữ liệu kho");
@@ -145,15 +162,17 @@ const ReturnSupplierModal = ({ open, record, onClose, onConfirmSuccess }) => {
       const values = await form.validateFields();
 
       // 1) Kiểm tra số lượng trả <= totalimport
-      const totalImport = record?.attributes?.totalimport || 0;
+      // Sửa: bỏ .attributes (record được truyền từ parent đã flat)
+      const totalImport = record?.totalimport || 0;
       if (values.Quantity > totalImport) {
         message.error("Số lượng trả không được lớn hơn số lượng đã nhập");
         return;
       }
 
       // 2) Tìm item trong Warehouse theo Model
+      // Sửa: bỏ .attributes
       const matchedItem = warehouseList.find(
-        (item) => item.attributes.Model === record?.attributes?.Model
+        (item) => item.Model === record?.Model
       );
 
       if (!matchedItem) {
@@ -164,6 +183,7 @@ const ReturnSupplierModal = ({ open, record, onClose, onConfirmSuccess }) => {
       setLoading(true);
 
       // 3) Cập nhật Importlists (status, note, totalimportNCC, trừ totalimport)
+      // record.id vẫn giữ nguyên
       await returnToSupplier(record.id, {
         quantity: values.Quantity,
         note: values.Reason,
@@ -171,14 +191,17 @@ const ReturnSupplierModal = ({ open, record, onClose, onConfirmSuccess }) => {
       });
 
       // 4) Trừ số lượng trong Warehouse
-      const kho = record?.attributes?.TypeKho || "DHG"; // lấy từ phiếu hoặc mặc định DHG
+      // Sửa: bỏ .attributes
+      const kho = record?.TypeKho || "DHG"; // lấy từ phiếu hoặc mặc định DHG
       const qty = values.Quantity;
 
-      const currentQty = matchedItem.attributes[kho] || 0;
-      const currentNTK = matchedItem.attributes.totalNTK || 0;
-      const currentCK = matchedItem.attributes.inventoryCK || 0;
+      // Sửa: truy cập trực tiếp thuộc tính
+      const currentQty = matchedItem[kho] || 0;
+      const currentNTK = matchedItem.totalNTK || 0;
+      const currentCK = matchedItem.inventoryCK || 0;
 
-      await updateWarehouseDetails(matchedItem.id, {
+      // Update kho dùng id hoặc documentId
+      await updateWarehouseDetails(matchedItem.id || matchedItem.documentId, {
         [kho]: currentQty - qty,
         totalNTK: currentNTK - qty,
         inventoryCK: currentCK - qty,
@@ -197,7 +220,8 @@ const ReturnSupplierModal = ({ open, record, onClose, onConfirmSuccess }) => {
 
   return (
     <Modal
-      title={`Trả NCC - ${record?.attributes?.ProductName || ""}`}
+      // Sửa: bỏ .attributes trong title
+      title={`Trả NCC - ${record?.ProductName || ""}`}
       open={open}
       onCancel={onClose}
       footer={[
