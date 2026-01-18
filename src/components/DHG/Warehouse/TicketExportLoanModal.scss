@@ -1,0 +1,44 @@
+.ticket-export-loan-modal {
+  .ant-modal-content {
+    border-radius: 8px;
+    box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 
+                0 9px 28px 0 rgba(0, 0, 0, 0.05), 
+                0 12px 48px 16px rgba(0, 0, 0, 0.03);
+  }
+
+  .ant-modal-header {
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 16px 24px;
+    
+    // Căn chỉnh các nút trong footer
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  // Tùy chỉnh màu nút success (Duyệt, Hoàn thành)
+  .btn-success {
+    background-color: #52c41a;
+    border-color: #52c41a;
+    &:hover {
+      background-color: #73d13d;
+      border-color: #73d13d;
+    }
+  }
+
+  // Tùy chỉnh Table input trong modal
+  .ant-table-small {
+    font-size: 13px;
+    
+    .ant-input, .ant-input-number, .ant-select-selector {
+        font-size: 13px;
+    }
+  }
+}

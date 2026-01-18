@@ -1,5 +1,61 @@
-.Device-container {
-    h2 {
-        color: #0c0c0c;
+.export-loan-pos-container {
+  padding: 20px;
+  background-color: #f0f2f5; // Màu nền xám nhạt đặc trưng của Admin Dashboard
+  min-height: 100vh;
+
+  .header-card {
+    border-radius: 8px;
+    margin-bottom: 16px;
+    
+    .ant-statistic-title {
+      font-size: 13px;
+      color: #8c8c8c;
     }
+  }
+
+  .body-card {
+    border-radius: 8px;
+
+    .filter-form {
+      .ant-form-item {
+        margin-bottom: 0; // Loại bỏ margin thừa trong Grid
+      }
+    }
+  }
+
+  // Tùy chỉnh màu nút "Tạo mới" nếu muốn màu xanh lá
+  .btn-success {
+    background-color: #52c41a;
+    border-color: #52c41a;
+    &:hover {
+      background-color: #73d13d;
+      border-color: #73d13d;
+    }
+  }
+
+  // Hiệu ứng hover cho hàng trong bảng
+  .hover-row {
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  // Màu khi hàng được chọn
+  .ant-table-row-selected {
+    background-color: #e6f7ff !important;
+    
+    td {
+      background-color: #e6f7ff !important;
+    }
+  }
+
+  // Responsive Text
+  .text-muted {
+    color: #bfbfbf;
+  }
+}
+
+// Global override for clearer table headers (optional)
+.ant-table-thead > tr > th {
+  background: #fafafa;
+  font-weight: 600;
 }
