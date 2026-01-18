@@ -946,26 +946,57 @@ const fetchDeviceExcludeDHG = async () => {
   return response.data;
 };
 
-const fetchDevicemanager = async () => {
+// const fetchDevicemanager = async () => {
+//   try {
+//     const response = await strapiv1Instance.get(
+//       "/api/device-services?populate=*&pagination[pageSize]=2000"
+//     );
+
+//     // Xử lý linh hoạt response từ interceptor
+//     const data = Array.isArray(response)
+//       ? response
+//       : (response?.data || []);
+
+//     if (Array.isArray(data)) {
+//       return data;
+//     } else {
+//       console.error("Lỗi API: data không đúng định dạng:", response);
+//       throw new Error("Dữ liệu API không đúng định dạng");
+//     }
+//   } catch (error) {
+//     console.error("fetchDevicemanager lỗi:", error);
+//     return [];
+//   }
+// };
+
+// src/services/storeServices.jsx
+
+const fetchDevicemanager = async (page = 1, pageSize = 4000) => {
   try {
+    const params = new URLSearchParams();
+    // 1. Lấy hết dữ liệu liên quan
+    params.append("populate", "*");
+
+    // 2. Cấu hình phân trang (mặc định lấy 2000 dòng để đủ cho dropdown)
+    params.append("pagination[page]", page);
+    params.append("pagination[pageSize]", pageSize);
+
+    // 3. Sắp xếp: Mới nhất lên đầu (Quan trọng cho trải nghiệm người dùng)
+    params.append("sort[0]", "updatedAt:desc");
+
     const response = await strapiv1Instance.get(
-      "/api/device-services?populate=*&pagination[pageSize]=2000"
+      `/api/device-services?${params.toString()}`
     );
 
-    // Xử lý linh hoạt response từ interceptor
-    const data = Array.isArray(response)
-      ? response
-      : (response?.data || []);
+    // Xử lý linh hoạt dữ liệu trả về từ Strapi v5
+    // Đảm bảo luôn trả về một MẢNG (Array) để không bị lỗi .map() bên giao diện
+    const rawData = response?.data || response;
+    const data = Array.isArray(rawData) ? rawData : (rawData?.data || []);
 
-    if (Array.isArray(data)) {
-      return data;
-    } else {
-      console.error("Lỗi API: data không đúng định dạng:", response);
-      throw new Error("Dữ liệu API không đúng định dạng");
-    }
+    return data;
   } catch (error) {
     console.error("fetchDevicemanager lỗi:", error);
-    return [];
+    return []; // Luôn trả về mảng rỗng nếu lỗi để app không bị crash
   }
 };
 
@@ -996,6 +1027,52 @@ const fetchDeviceListv1 = async (storeID) => {
   );
   return response.data;
 };
+
+const fetchDeviceListHandover = async () => {
+  try {
+    // 1. filters[Store][$eq]=DHG: Chỉ lấy thiết bị thuộc kho DHG
+    // 2. pagination[limit]=9000: Lấy hết danh sách
+    // 3. populate=*: Lấy full thông tin
+    const response = await strapiv1Instance.get(
+      `/api/device-services?filters[Store][$eq]=DHG&pagination[limit]=9000&populate=*`
+    );
+
+    // Xử lý dữ liệu trả về an toàn
+    const rawData = response?.data || response;
+    const data = Array.isArray(rawData) ? rawData : (rawData?.data || []);
+
+    return data;
+  } catch (error) {
+    console.error("fetchDeviceListHandover lỗi:", error);
+    return [];
+  }
+};
+
+const fetchDeviceListRetrieve = async (storeID) => {
+  try {
+    if (!storeID) return []; // Nếu không có tên cửa hàng thì không gọi API
+
+    // Encode tên cửa hàng để tránh lỗi nếu có ký tự đặc biệt hoặc dấu cách
+    const encodedStore = encodeURIComponent(storeID);
+
+    // 1. filters[Store][$eq]: Lọc chính xác cửa hàng (Backend xử lý)
+    // 2. pagination[limit]=9000: Lấy hết danh sách (tránh bị cắt ở 25 dòng)
+    // 3. populate=*: Lấy full thông tin
+    const response = await strapiv1Instance.get(
+      `/api/device-services?filters[Store][$eq]=${encodedStore}&pagination[limit]=9000&populate=*`
+    );
+
+    // Xử lý dữ liệu trả về để đảm bảo luôn nhận được một Mảng (Array)
+    const rawData = response?.data || response;
+    const data = Array.isArray(rawData) ? rawData : (rawData?.data || []);
+
+    return data;
+  } catch (error) {
+    console.error(`Lỗi khi tải thiết bị của cửa hàng ${storeID}:`, error);
+    return []; // Trả về mảng rỗng để không làm crash giao diện
+  }
+};
+
 
 // =================================================================
 // 🛠 IMPORT / UPDATE DEVICE LOGIC (Xử lý Excel)
@@ -1028,7 +1105,6 @@ const createDeviceAll = async (deviceData) => {
       }
       return excelSerialToDate(inputDate);
     };
-
     const mappedDevice = {
       Customer: normalizedData["customer"] || "Không xác định",
       DeliveryDate: formatDate(normalizedData["deliverydate"]) || null,
@@ -1044,9 +1120,10 @@ const createDeviceAll = async (deviceData) => {
       Location: normalizedData["location"] || "Không xác định",
       Status: normalizedData["status"] || "Không xác định",
       Note: normalizedData["note"] || "",
-    };
 
-    // console.log("Dữ liệu sau khi map:", mappedDevice);
+      // 👇 BẮT BUỘC PHẢI THÊM DÒNG NÀY (Để Web hiển thị được)
+      publishedAt: new Date().toISOString(),
+    };
 
     const response = await strapiv1Instance.post("/api/device-services", {
       data: mappedDevice,
@@ -1129,19 +1206,92 @@ const updateDeviceBySTT = async (stt, deviceData, devices) => {
   }
 };
 
+// const updateDeviceBySerial = async (serial, deviceData) => {
+//   try {
+//     const trimmedSerial = serial.trim();
+//     // console.log("Serial sau khi trim:", trimmedSerial);
+
+//     const formatDate = (inputDate) => {
+//       if (!inputDate) return null;
+//       if (typeof inputDate === "string") {
+//         if (/^\d{4}-\d{2}-\d{2}$/.test(inputDate)) return inputDate;
+//         const parts = inputDate.split("/");
+//         if (parts.length === 3) {
+//           const [day, month, year] = parts;
+//           return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+//         }
+//       }
+//       if (typeof inputDate === "number") {
+//         const excelStartDate = new Date(1899, 11, 30);
+//         return new Date(excelStartDate.getTime() + inputDate * 86400000)
+//           .toISOString()
+//           .split("T")[0];
+//       }
+//       return null;
+//     };
+
+//     // Tìm kiếm thiết bị theo Serial
+//     let filterQuery = `/api/device-services?filters[SerialNumber][$eq]=${encodeURIComponent(trimmedSerial)}&populate=*`;
+//     let getResponse = await strapiv1Instance.get(filterQuery);
+
+//     // Xử lý response phẳng hoặc lồng data
+//     let devices = Array.isArray(getResponse) ? getResponse : (getResponse?.data || []);
+
+//     if (!devices || devices.length === 0) {
+//       console.warn(`Không tìm thấy thiết bị với $eq cho Serial: ${trimmedSerial}. Thử với $containsi.`);
+//       filterQuery = `/api/device-services?filters[SerialNumber][$containsi]=${encodeURIComponent(trimmedSerial)}&populate=*`;
+//       getResponse = await strapiv1Instance.get(filterQuery);
+//       devices = Array.isArray(getResponse) ? getResponse : (getResponse?.data || []);
+
+//       if (!devices || devices.length === 0) {
+//         console.warn(`Không tìm thấy thiết bị trong device-services với số Serial: ${trimmedSerial}`);
+//         return null;
+//       }
+//     }
+
+//     const deviceToUpdate = devices[0];
+//     const deviceId = deviceToUpdate.documentId || deviceToUpdate.id;
+//     // console.log(`Đã tìm thấy record với id ${deviceId} cho Serial ${trimmedSerial}`);
+
+//     const newFormattedDate = formatDate(deviceData["DeliveryDate"]);
+
+//     const mappedDevice = {
+//       Customer: deviceData["Customer"] || "",
+//       DeliveryDate: newFormattedDate,
+//       DeviceName: deviceData["DeviceName"] || "",
+//       Store: deviceData["Store"] || "Unknown",
+//       Location: deviceData["Location"] || "Unknown",
+//       Status: deviceData["Status"] || "Unknown",
+//       Note: deviceData["Note"] || "",
+//     };
+
+//     const updateResponse = await strapiv1Instance.put(
+//       `/api/device-services/${deviceId}`,
+//       { data: mappedDevice }
+//     );
+
+//     // console.log(`✅ Cập nhật thành công: Serial ${trimmedSerial} (id: ${deviceId}).`);
+//     return updateResponse.data;
+//   } catch (error) {
+//     console.error(`❌ Lỗi cập nhật thiết bị với Serial ${serial}:`, error);
+//     throw error;
+//   }
+// };
+
 const updateDeviceBySerial = async (serial, deviceData) => {
   try {
-    const trimmedSerial = serial.trim();
-    // console.log("Serial sau khi trim:", trimmedSerial);
+    if (!serial) throw new Error("Serial number bị trống"); // Validate đầu vào
 
+    const trimmedSerial = String(serial).trim(); // Ép kiểu chuỗi cho chắc chắn
+
+    // Hàm format date (Giữ nguyên logic của bạn)
     const formatDate = (inputDate) => {
       if (!inputDate) return null;
       if (typeof inputDate === "string") {
         if (/^\d{4}-\d{2}-\d{2}$/.test(inputDate)) return inputDate;
         const parts = inputDate.split("/");
         if (parts.length === 3) {
-          const [day, month, year] = parts;
-          return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
         }
       }
       if (typeof inputDate === "number") {
@@ -1153,28 +1303,46 @@ const updateDeviceBySerial = async (serial, deviceData) => {
       return null;
     };
 
-    // Tìm kiếm thiết bị theo Serial
-    let filterQuery = `/api/device-services?filters[SerialNumber][$eq]=${encodeURIComponent(trimmedSerial)}&populate=*`;
+    // --- BƯỚC 1: TÌM THIẾT BỊ ---
+    // Ưu tiên tìm chính xác ($eq)
+    let filterQuery = `/api/device-services?filters[SerialNumber][$eq]=${encodeURIComponent(trimmedSerial)}`;
     let getResponse = await strapiv1Instance.get(filterQuery);
 
-    // Xử lý response phẳng hoặc lồng data
-    let devices = Array.isArray(getResponse) ? getResponse : (getResponse?.data || []);
+    // Xử lý response đa dạng của Strapi (v4/v5/array/object)
+    let devices = [];
+    if (Array.isArray(getResponse)) {
+      devices = getResponse;
+    } else if (Array.isArray(getResponse?.data)) {
+      devices = getResponse.data;
+    }
 
-    if (!devices || devices.length === 0) {
-      console.warn(`Không tìm thấy thiết bị với $eq cho Serial: ${trimmedSerial}. Thử với $containsi.`);
-      filterQuery = `/api/device-services?filters[SerialNumber][$containsi]=${encodeURIComponent(trimmedSerial)}&populate=*`;
+    // Nếu không thấy, thử tìm gần đúng ($containsi) -> Fallback an toàn
+    if (devices.length === 0) {
+      // console.warn(`Thử tìm $containsi cho serial: ${trimmedSerial}`);
+      filterQuery = `/api/device-services?filters[SerialNumber][$containsi]=${encodeURIComponent(trimmedSerial)}`;
       getResponse = await strapiv1Instance.get(filterQuery);
-      devices = Array.isArray(getResponse) ? getResponse : (getResponse?.data || []);
 
-      if (!devices || devices.length === 0) {
-        console.warn(`Không tìm thấy thiết bị trong device-services với số Serial: ${trimmedSerial}`);
-        return null;
+      if (Array.isArray(getResponse)) devices = getResponse;
+      else if (Array.isArray(getResponse?.data)) devices = getResponse.data;
+
+      if (devices.length === 0) {
+        console.error(`❌ Không tìm thấy thiết bị nào có Serial: ${trimmedSerial}`);
+        return null; // Trả về null để bên ngoài biết là không update được
       }
     }
 
+    // --- BƯỚC 2: CẬP NHẬT ---
+    // Lấy phần tử đầu tiên tìm thấy
     const deviceToUpdate = devices[0];
-    const deviceId = deviceToUpdate.documentId || deviceToUpdate.id;
-    // console.log(`Đã tìm thấy record với id ${deviceId} cho Serial ${trimmedSerial}`);
+
+    // QUAN TRỌNG: Strapi v5 bắt buộc dùng documentId cho PUT
+    // Kiểm tra kỹ cấu trúc object trả về để lấy ID đúng
+    const targetId = deviceToUpdate.documentId || deviceToUpdate.id;
+
+    if (!targetId) {
+      console.error("❌ Dữ liệu thiết bị lỗi, không tìm thấy documentId/id");
+      return null;
+    }
 
     const newFormattedDate = formatDate(deviceData["DeliveryDate"]);
 
@@ -1188,16 +1356,18 @@ const updateDeviceBySerial = async (serial, deviceData) => {
       Note: deviceData["Note"] || "",
     };
 
+    // Gọi API Update
     const updateResponse = await strapiv1Instance.put(
-      `/api/device-services/${deviceId}`,
+      `/api/device-services/${targetId}`,
       { data: mappedDevice }
     );
 
-    // console.log(`✅ Cập nhật thành công: Serial ${trimmedSerial} (id: ${deviceId}).`);
     return updateResponse.data;
+
   } catch (error) {
-    console.error(`❌ Lỗi cập nhật thiết bị với Serial ${serial}:`, error);
-    throw error;
+    // Log lỗi chi tiết để dễ debug
+    console.error(`❌ Lỗi updateDeviceBySerial (${serial}):`, error?.response?.data || error.message);
+    throw error; // Ném lỗi ra để vòng lặp bên ngoài bắt được (tăng failCount)
   }
 };
 
@@ -1579,5 +1749,7 @@ export {
   deleteTicketById,
   fetchDeviceDetailHandoverPOS,
   fetchDeviceExcludeDHG,
-  fetchDevicesByPage
+  fetchDevicesByPage,
+  fetchDeviceListHandover,
+  fetchDeviceListRetrieve
 };

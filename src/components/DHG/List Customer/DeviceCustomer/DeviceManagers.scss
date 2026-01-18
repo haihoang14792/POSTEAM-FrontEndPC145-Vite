@@ -1,268 +1,52 @@
-//   /* Container tổng thể cho trang */
-// .device-managers-container {
-//     padding: 20px;
-//     background: #ffffff;
-//     border-radius: 8px;
-//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-//     margin: 20px;
-//   }
-  
-//   /* Style cho các Card trạng thái trong Dashboard */
-//   .dashboard-card {
-//     height: 120px;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: center;
-//     border-radius: 8px;
-//     transition: background 0.3s, box-shadow 0.3s, color 0.3s;
-//     cursor: pointer;
-//   }
-  
-//   .dashboard-card:hover {
-//     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-//   }
-  
-//   .dashboard-card h3 {
-//     font-size: 18px;
-//     margin-bottom: 8px;
-//     display: flex;
-//     align-items: center;
-//   }
-  
-//   .dashboard-card p {
-//     font-size: 32px;
-//     font-weight: bold;
-//     margin: 0;
-//   }
-  
-//   /* Style cho hàng được chọn trong bảng */
-//   .selected-row {
-//     background-color: #e6f7ff !important;
-//   }
-  
-//   /* Hover trên hàng bảng */
-//   .ant-table-tbody > tr:hover > td {
-//     background: #f5f5f5;
-//   }
-  
-  /* Style cho header bảng */
-//   .ant-table-thead > tr > th {
-//     background: #fafafa;
-//     font-weight: 600;
-//     color: #eff166c7;
-//   }
 
-// code cũ 
-  
+
 // .Device-container {
-//     h2 {
-//         color: #0c0c0c;
+//   padding: 16px;
+
+//   h2 {
+//     font-size: 22px;
+//     margin-bottom: 16px;
+//   }
+
+//   .ant-btn {
+//     margin-right: 10px;
+//     margin-bottom: 10px;
+//   }
+
+//   // Thống kê trạng thái (đang tạo, chờ duyệt, đã duyệt)
+//   .ant-card {
+//     text-align: center;
+//     transition: 0.3s;
+
+//     h3 {
+//       font-size: 18px;
+//       margin-bottom: 8px;
 //     }
-// }
-// .button-spacing {
-//   margin-right: 10px;
-// }
 
-.Device-container {
-  padding: 16px;
-
-  h2 {
-    font-size: 22px;
-    margin-bottom: 16px;
-  }
-
-  .ant-btn {
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-
-  // Thống kê trạng thái (đang tạo, chờ duyệt, đã duyệt)
-  .ant-card {
-    text-align: center;
-    transition: 0.3s;
-
-    h3 {
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    p {
-      font-size: 32px;
-      font-weight: bold;
-      margin: 0;
-    }
-  }
-
-  // Bảng danh sách phiếu dạng table (desktop)
-  .ant-table-wrapper {
-    overflow-x: auto;
-  }
-
-  .ant-table {
-    font-size: 14px;
-
-    td,
-    th {
-      white-space: nowrap;
-    }
-  }
-
-
-
-
-@media (max-width: 768px) {
-  .ant-row {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-  }
-
-  .ant-col {
-  flex: 0 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.ant-card {
-  width: 100px;
-  height: 100px;
-  padding: 8px 4px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  border-radius: 8px;
-}
-
-  .ant-card h3 {
-    font-size: 14px;
-    line-height: 1.4;
-    margin: 0;
-  }
-
-  .ant-card p {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
-  }
-
-
-
-    // Ẩn bảng table gốc trên mobile
-    .ant-table-wrapper {
-      display: none;
-    }
-
-    // Hiển thị danh sách đơn giản hơn dạng block
-    .mobile-ticket-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      .ticket-item {
-        padding: 12px;
-        border-radius: 8px;
-        background-color: #f8f8f8;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        font-size: 14px;
-
-        .ticket-field {
-          margin-bottom: 4px;
-
-          span {
-            font-weight: 600;
-          }
-        }
-      }
-    }
-  }
-}
-
-
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 16px;
-  gap: 4px;
-
-  .page-item {
-    list-style: none;
-
-    .page-link {
-      padding: 6px 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      cursor: pointer;
-      color: #1890ff;
-      font-size: 14px;
-      background-color: #fff;
-    }
-
-    &.active .page-link {
-      background-color: #1890ff;
-      color: white;
-      border-color: #1890ff;
-    }
-
-    &.disabled .page-link {
-      color: #ccc;
-      cursor: not-allowed;
-    }
-  }
-}
-
-  // Responsive cho điện thoại
-// @media (max-width: 768px) {
-//   .ant-row {
-//     flex-wrap: wrap;
-//     justify-content: center !important;
-//     gap: 12px;
+//     p {
+//       font-size: 32px;
+//       font-weight: bold;
+//       margin: 0;
+//     }
 //   }
 
-//   .ant-col {
-//   // flex: 0 0 32%;
-//   // max-width: 32%;
-//   // display: flex;
-//   // justify-content: center;
-//     flex: 0 0 calc(33.33% - 12px);  /* trừ khoảng cách giữa các ô */
-//   max-width: calc(33.33% - 12px);
-//   display: flex;
-//   justify-content: center;
-// }
-
-//  .ant-card {
-//   min-width: 100px;
-//   max-width: 100%;
-//   width: auto;
-//   padding: 12px;
-//   background-color: #eff166;
-//   border-radius: 10px;
-//   text-align: center;
-
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-
-//   word-break: keep-all;        // ✅ không ngắt từng chữ cái
-//   white-space: normal;
-
-//   h3 {
-//     font-size: clamp(12px, 3vw, 14px);
-//     margin-bottom: 6px;
-//     line-height: 1.4;
-//     text-wrap: balance;
-//     display: inline-block;
+//   // Bảng danh sách phiếu dạng table (desktop)
+//   .ant-table-wrapper {
+//     overflow-x: auto;
 //   }
 
-//   p {
-//     font-size: 20px;
-//     font-weight: bold;
-//     margin: 0;
+//   .ant-table {
+//     font-size: 14px;
+
+//     td,
+//     th {
+//       white-space: nowrap;
+//     }
 //   }
+
+
+
+
 // @media (max-width: 768px) {
 //   .ant-row {
 //     display: flex;
@@ -271,19 +55,320 @@
 //   }
 
 //   .ant-col {
-//     flex: 0 0 calc(33.33% - 8px);
-//     max-width: calc(33.33% - 8px);
-//     display: flex;
-//     justify-content: center;
+//   flex: 0 0 auto;
+//   display: flex;
+//   justify-content: center;
+// }
+
+// .ant-card {
+//   width: 100px;
+//   height: 100px;
+//   padding: 8px 4px;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   align-items: center;
+//   text-align: center;
+//   border-radius: 8px;
+// }
+
+//   .ant-card h3 {
+//     font-size: 14px;
+//     line-height: 1.4;
+//     margin: 0;
 //   }
 
-//   .ant-card {
-//     width: 100%;
-//     min-width: 100px;
-//     text-align: center;
-//     padding: 12px;
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: center;
-//     align-items: center;
+//   .ant-card p {
+//     font-size: 20px;
+//     font-weight: bold;
+//     margin: 0;
 //   }
+
+
+
+//     // Ẩn bảng table gốc trên mobile
+//     .ant-table-wrapper {
+//       display: none;
+//     }
+
+//     // Hiển thị danh sách đơn giản hơn dạng block
+//     .mobile-ticket-list {
+//       display: flex;
+//       flex-direction: column;
+//       gap: 12px;
+
+//       .ticket-item {
+//         padding: 12px;
+//         border-radius: 8px;
+//         background-color: #f8f8f8;
+//         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+//         font-size: 14px;
+
+//         .ticket-field {
+//           margin-bottom: 4px;
+
+//           span {
+//             font-weight: 600;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
+
+
+// .pagination {
+//   display: flex;
+//   justify-content: center;
+//   flex-wrap: wrap;
+//   margin-top: 16px;
+//   gap: 4px;
+
+//   .page-item {
+//     list-style: none;
+
+//     .page-link {
+//       padding: 6px 12px;
+//       border: 1px solid #ccc;
+//       border-radius: 4px;
+//       cursor: pointer;
+//       color: #1890ff;
+//       font-size: 14px;
+//       background-color: #fff;
+//     }
+
+//     &.active .page-link {
+//       background-color: #1890ff;
+//       color: white;
+//       border-color: #1890ff;
+//     }
+
+//     &.disabled .page-link {
+//       color: #ccc;
+//       cursor: not-allowed;
+//     }
+//   }
+// }
+
+ .Device-container {
+  padding: 16px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+
+  .text-muted {
+    color: #bfbfbf;
+  }
+
+  /* TOP ACTIONS */
+  .top-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+  }
+
+  /* FILTER CARD */
+  .filter-card {
+    border-radius: 8px;
+    margin-bottom: 20px;
+
+    .card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #1890ff;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .filter-actions {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: flex-end;
+            
+            button {
+                min-width: 100px;
+            }
+        }
+    }
+  }
+
+  /* STATUS SUMMARY */
+  .status-summary-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    .status-summary-tag {
+        display: flex;
+        align-items: center;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 6px;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+    }
+  }
+
+  /* PAGINATION CUSTOM */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 24px;
+
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        gap: 5px;
+
+        .page-item {
+            .page-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 36px;
+                height: 36px;
+                border: 1px solid #d9d9d9;
+                border-radius: 6px;
+                background: #fff;
+                cursor: pointer;
+                color: #333;
+                text-decoration: none;
+                transition: all 0.3s;
+
+                &:hover {
+                    border-color: #1890ff;
+                    color: #1890ff;
+                }
+            }
+
+            &.active .page-link {
+                background: #1890ff;
+                border-color: #1890ff;
+                color: #fff;
+            }
+
+            &.disabled .page-link {
+                background: #f5f5f5;
+                color: #ccc;
+                cursor: not-allowed;
+            }
+        }
+    }
+  }
+
+  /* TABLE CARD */
+  .table-card {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* ================= RESPONSIVE MOBILE ================= */
+  @media (max-width: 768px) {
+    padding: 10px;
+
+    .top-actions {
+        margin-bottom: 10px;
+        .action-buttons {
+            width: 100%;
+            button {
+                flex: 1; /* Nút giãn đều */
+            }
+        }
+    }
+
+    .filter-card {
+        .ant-card-body {
+            padding: 12px;
+        }
+        .filter-actions .btn-group {
+            margin-top: 10px;
+            button {
+                flex: 1;
+            }
+        }
+    }
+
+    .status-summary-container {
+        gap: 5px;
+        .status-summary-tag {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+    }
+
+    /* CARD STYLE LIST FOR MOBILE */
+    .mobile-ticket-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .ticket-card-mobile {
+            border-radius: 8px;
+            overflow: hidden;
+            
+            .ant-card-body {
+                padding: 12px;
+            }
+
+            .card-header-mobile {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #f0f0f0;
+                padding-bottom: 8px;
+                margin-bottom: 8px;
+
+                .ticket-code {
+                    font-weight: 700;
+                    color: #1890ff;
+                    font-size: 16px;
+                }
+            }
+
+            .card-body-mobile {
+                p {
+                    margin: 4px 0;
+                    font-size: 14px;
+                    color: #333;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    strong {
+                        min-width: 60px;
+                        color: #666;
+                    }
+
+                    &.date {
+                        color: #999;
+                        font-size: 12px;
+                        margin-top: 8px;
+                    }
+                }
+            }
+
+            .card-footer-mobile {
+                margin-top: 8px;
+                padding-top: 8px;
+                border-top: 1px dashed #f0f0f0;
+                text-align: right;
+            }
+        }
+    }
+  }
+}

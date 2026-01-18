@@ -1,1479 +1,4 @@
-// import React, { useState, useEffect } from "react";
-// import {
-//   Modal,
-//   Button,
-//   Input,
-//   Table,
-//   message,
-//   AutoComplete,
-//   Select,
-//   DatePicker,
-//   Popconfirm,
-//   Tooltip,
-// } from "antd";
-// import {
-//   createDevicesDetailHandover,
-//   updateDevicesDetailHandover,
-//   createDevicesDetailRetrieve,
-//   updateDevicesDetailRetrieve,
-//   fetchDeviceDetailHandover,
-//   fetchDeviceDetailRetrieve,
-//   deleteDeviceDetailHandover,
-//   deleteDeviceDetailRetrieve,
-//   updateTicketStatus,
-//   updateDeviceBySerial,
-// } from "../../../../services/storeServices";
-// import PrintTicketModal from "./PrintTicketModal";
-// import PrintLabelModalRetrieve from "./PrintLabelModalRetrieve";
-// import PrintLabelModalHandover from "./PrintLabelModalHandover";
-// import {
-//   EditOutlined,
-//   DeleteOutlined,
-//   CloseOutlined,
-//   CheckOutlined,
-//   RollbackOutlined,
-//   SaveOutlined,
-//   CheckCircleOutlined,
-//   FileDoneOutlined,
-//   PrinterOutlined,
-// } from "@ant-design/icons";
-// import dayjs from "dayjs";
-
-// const TicketModal = ({
-//   isOpen,
-//   onClose,
-//   ticket,
-//   fetchDevices,
-//   fetchTickets,
-//   reloadTickets,
-//   serialNumberOptions = [],
-// }) => {
-//   const [loading, setLoading] = useState(false);
-//   const [handoverDevicesData, setHandoverDevicesData] = useState([]);
-//   const [retrieveDevicesData, setRetrieveDevicesData] = useState([]);
-//   const [newHandoverDevices, setNewHandoverDevices] = useState([]);
-//   const [newRetrieveDevices, setNewRetrieveDevices] = useState([]);
-//   const [editingRowId, setEditingRowId] = useState(null);
-//   const [printVisible, setPrintVisible] = useState(false);
-//   const [isPrintModalOpenH, setIsPrintModalOpenH] = useState(false);
-//   const [isPrintModalOpenR, setIsPrintModalOpenR] = useState(false);
-//   const [selectedDevice, setSelectedDevice] = useState(null);
-
-//   useEffect(() => {
-//     if (isOpen && ticket?.attributes?.Votes) {
-//       console.log("Ticket value:", ticket.attributes.Votes);
-//       fetchDeviceDetailHandover(ticket.attributes.Votes)
-//         .then((responseData) => {
-//           console.log("Response Handover API:", responseData);
-//           const devices =
-//             responseData && responseData.data
-//               ? responseData.data.map((item) => ({
-//                 id: item.id,
-//                 ...item.attributes,
-//               }))
-//               : Array.isArray(responseData)
-//                 ? responseData.map((item) => ({
-//                   id: item.id,
-//                   ...item.attributes,
-//                 }))
-//                 : [];
-//           console.log("Mapped handover devices:", devices);
-//           setHandoverDevicesData(devices);
-//         })
-//         .catch((error) => {
-//           console.error("Lỗi tải thiết bị bàn giao:", error);
-//           message.error("Lỗi tải thiết bị bàn giao.");
-//         });
-
-//       fetchDeviceDetailRetrieve(ticket.attributes.Votes)
-//         .then((responseData) => {
-//           console.log("Response Retrieve API:", responseData);
-//           const devices =
-//             responseData && responseData.data
-//               ? responseData.data.map((item) => ({
-//                 id: item.id,
-//                 ...item.attributes,
-//               }))
-//               : Array.isArray(responseData)
-//                 ? responseData.map((item) => ({
-//                   id: item.id,
-//                   ...item.attributes,
-//                 }))
-//                 : [];
-//           console.log("Mapped retrieve devices:", devices);
-//           setRetrieveDevicesData(devices);
-//         })
-//         .catch((error) => {
-//           console.error("Lỗi tải thiết bị thu hồi:", error);
-//           message.error("Lỗi tải thiết bị thu hồi.");
-//         });
-//     }
-//   }, [isOpen, ticket?.attributes?.Votes]);
-
-//   useEffect(() => {
-//     if (!isOpen) {
-//       setHandoverDevicesData([]);
-//       setRetrieveDevicesData([]);
-//       setNewHandoverDevices([]);
-//       setNewRetrieveDevices([]);
-//       setEditingRowId(null);
-//     }
-//   }, [isOpen]);
-
-//   const combinedHandoverData = [...handoverDevicesData, ...newHandoverDevices];
-//   const combinedRetrieveData = [...retrieveDevicesData, ...newRetrieveDevices];
-
-//   const statusOptions = [
-//     { value: "Đang sử dụng", label: "Đang sử dụng" }
-//   ];
-
-//   const devicestatusOptions = [
-//     { value: "Thiết bị mới", label: "Thiết bị mới" },
-//     { value: "Thiết bị cũ", label: "Thiết bị cũ" }
-//   ];
-//   const devicesoldtatusOptions = [
-//     { value: "Hỏng", label: "Hỏng" },
-//     { value: "Hết hạn sử dụng", label: "Hết hạn sử dụng" },
-//     { value: "Đóng cửa", label: "Đóng cửa" }
-//   ];
-
-//   const handleAddRow = (type) => {
-//     if (!ticket) {
-//       message.error("Vui lòng chọn phiếu trước khi thêm thiết bị!");
-//       return;
-//     }
-//     const newDevice = {
-//       id: Date.now(),
-//       Customer: ticket.attributes.Customer || "",
-//       DeliveryDate: "",
-//       DeviceName: "",
-//       BrandName: "",
-//       Model: "",
-//       SerialNumber: "",
-//       // Store: ticket.attributes.Store,
-//       Store:
-//         type === "handover"
-//           ? ticket.attributes.Store // 👉 handover: lấy mặc định
-//           : undefined, // 👉 retrieve: để trống, ép chọn lại
-//       Location: "",
-//       Status: type === "handover" ? "Đang sử dụng" : "Thu hồi",
-//       DeviceStatus: "",
-//       Note: "",
-//       Votes: ticket.attributes.Votes,
-//       StoreRecall: ticket.attributes.Store,
-//       isNew: true,
-//       Type: type === "handover" ? "Bàn giao" : "Thu hồi",
-//     };
-//     if (type === "handover") {
-//       setNewHandoverDevices((prev) => [...prev, newDevice]);
-//     } else if (type === "retrieve") {
-//       setNewRetrieveDevices((prev) => [...prev, newDevice]);
-//     }
-//   };
-
-//   const handleInputChange = (id, field, value, type) => {
-//     if (type === "handover") {
-//       setNewHandoverDevices((prev) =>
-//         prev.map((device) =>
-//           device.id === id ? { ...device, [field]: value } : device
-//         )
-//       );
-//     } else if (type === "retrieve") {
-//       setNewRetrieveDevices((prev) =>
-//         prev.map((device) =>
-//           device.id === id ? { ...device, [field]: value } : device
-//         )
-//       );
-//     }
-//   };
-
-//   const handleSavedInputChange = (id, field, value, type) => {
-//     if (type === "handover") {
-//       setHandoverDevicesData((prev) =>
-//         prev.map((device) =>
-//           device.id === id ? { ...device, [field]: value } : device
-//         )
-//       );
-//     } else if (type === "retrieve") {
-//       setRetrieveDevicesData((prev) =>
-//         prev.map((device) =>
-//           device.id === id ? { ...device, [field]: value } : device
-//         )
-//       );
-//     }
-//   };
-
-//   const handleSerialNumberChange = (value, record, type) => {
-//     const selectedDevice = serialNumberOptions.find(
-//       (option) => option.value === value
-//     );
-//     const updateFunction =
-//       type === "handover"
-//         ? editingRowId === record.id
-//           ? handleSavedInputChange
-//           : setNewHandoverDevices
-//         : editingRowId === record.id
-//           ? handleSavedInputChange
-//           : setNewRetrieveDevices;
-
-//     if (editingRowId === record.id || record.isNew === false) {
-//       if (type === "handover") {
-//         setHandoverDevicesData((prev) =>
-//           prev.map((device) =>
-//             device.id === record.id
-//               ? {
-//                 ...device,
-//                 SerialNumber: value,
-//                 DeviceName: selectedDevice ? selectedDevice.DeviceName : "",
-//                 BrandName: selectedDevice ? selectedDevice.BrandName : "",
-//                 Model: selectedDevice ? selectedDevice.Model : "",
-//                 DeliveryDate: selectedDevice
-//                   ? selectedDevice.DeliveryDate
-//                   : ticket?.attributes?.Date || "",
-//                 Location: selectedDevice ? selectedDevice.Location : "",
-//                 // Status: selectedDevice
-//                 //   ? selectedDevice.Status
-//                 //   : "Đang sử dụng",
-//                 Status: "Đang sử dụng",
-
-//                 Note: selectedDevice ? selectedDevice.Note : "",
-//               }
-//               : device
-//           )
-//         );
-//       } else {
-//         setRetrieveDevicesData((prev) =>
-//           prev.map((device) =>
-//             device.id === record.id
-//               ? {
-//                 ...device,
-//                 SerialNumber: value,
-//                 DeviceName: selectedDevice ? selectedDevice.DeviceName : "",
-//                 BrandName: selectedDevice ? selectedDevice.BrandName : "",
-//                 Model: selectedDevice ? selectedDevice.Model : "",
-//                 DeliveryDate: selectedDevice
-//                   ? selectedDevice.DeliveryDate
-//                   : ticket?.attributes?.Date || "",
-//                 Location: selectedDevice ? selectedDevice.Location : "",
-//                 Status: "Thu hồi",
-//                 Note: selectedDevice ? selectedDevice.Note : "",
-//               }
-//               : device
-//           )
-//         );
-//       }
-//     } else {
-//       updateFunction((prev) =>
-//         prev.map((device) =>
-//           device.id === record.id
-//             ? {
-//               ...device,
-//               SerialNumber: value,
-//               DeviceName: selectedDevice ? selectedDevice.DeviceName : "",
-//               BrandName: selectedDevice ? selectedDevice.BrandName : "",
-//               Model: selectedDevice ? selectedDevice.Model : "",
-//               DeliveryDate: selectedDevice
-//                 ? selectedDevice.DeliveryDate
-//                 : ticket?.attributes?.Date || "",
-//               Location: selectedDevice ? selectedDevice.Location : "",
-//               Status: type === "handover" ? "Đang sử dụng" : "Thu hồi",
-//               Note: selectedDevice ? selectedDevice.Note : "",
-//             }
-//             : device
-//         )
-//       );
-//     }
-//   };
-
-//   const handleDeleteRow = (id, type) => {
-//     if (type === "handover") {
-//       setNewHandoverDevices((prev) =>
-//         prev.filter((device) => device.id !== id)
-//       );
-//     } else if (type === "retrieve") {
-//       setNewRetrieveDevices((prev) =>
-//         prev.filter((device) => device.id !== id)
-//       );
-//     }
-//   };
-
-//   const handleUpdateRow = async (id, type) => {
-//     let device;
-//     if (type === "handover") {
-//       device = handoverDevicesData.find((d) => d.id === id);
-//     } else {
-//       device = retrieveDevicesData.find((d) => d.id === id);
-//     }
-
-//     if (!device) {
-//       message.warning("Thiết bị không hợp lệ để cập nhật.");
-//       return;
-//     }
-
-//     try {
-//       setLoading(true);
-
-//       if (type === "handover") {
-//         await updateDevicesDetailHandover(device.id, {
-//           ...device,
-//           Status: device.Status || "Đang sử dụng",
-//         });
-//       } else {
-//         await updateDevicesDetailRetrieve(device.id, {
-//           ...device,
-//           Status: "Thu hồi",
-//         });
-//       }
-
-//       message.success("Cập nhật thiết bị thành công!");
-//       setEditingRowId(null);
-
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật thiết bị:", error);
-//       message.error("Lỗi khi cập nhật thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Hàm lưu thiết bị
-//   const handleSaveNewDevices = async () => {
-//     setLoading(true);
-//     try {
-//       const newDevices = [...newHandoverDevices, ...newRetrieveDevices];
-//       const requiredFields = [
-//         "Customer",
-//         "DeliveryDate",
-//         "DeviceName",
-//         "BrandName",
-//         "Model",
-//         "SerialNumber",
-//         "Store",
-//         "Location",
-//         "Status",
-//         "DeviceStatus",
-//       ];
-
-//       // Kiểm tra dữ liệu bắt buộc
-//       for (const device of newDevices) {
-//         for (const field of requiredFields) {
-//           if (!device[field] || device[field].toString().trim() === "") {
-//             message.warning(
-//               `Vui lòng điền đầy đủ trường "${field}" cho tất cả các hàng (ngoại trừ "Ghi Chú").`
-//             );
-//             return false; // ❌ báo không thành công
-//           }
-//         }
-//       }
-
-//       // Lưu thiết bị bàn giao
-//       const handoverPromises = newHandoverDevices
-//         .filter((device) => device.SerialNumber)
-//         .map((device) => {
-//           const deviceData = {
-//             ...device,
-//             Votes: ticket.attributes.Votes,
-//             Customer: ticket.attributes.Customer,
-//             Store: ticket.attributes.Store,
-//             Status: device.Status || "Đang sử dụng",
-//           };
-//           console.log("Payload handover deviceData:", deviceData);
-//           return createDevicesDetailHandover(deviceData);
-//         });
-
-//       // Lưu thiết bị thu hồi
-//       const retrievePromises = newRetrieveDevices
-//         .filter((device) => device.SerialNumber)
-//         .map((device) => {
-//           const deviceData = {
-//             ...device,
-//             Votes: ticket.attributes.Votes,
-//             Customer: ticket.attributes.Customer,
-//             Status: "Thu hồi",
-//           };
-//           console.log("Payload retrieve deviceData:", deviceData);
-//           return createDevicesDetailRetrieve(deviceData);
-//         });
-
-//       await Promise.all([...handoverPromises, ...retrievePromises]);
-//       onClose();
-//       message.success("Lưu thiết bị thành công!");
-//       fetchDevices();
-//       fetchTickets();
-//       return true; // ✅ báo thành công
-//     } catch (error) {
-//       console.error("Lỗi khi lưu thiết bị:", error);
-//       message.error("Lỗi khi lưu thiết bị.");
-//       return false;
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // Hàm gửi phiếu (xác nhận phiếu)
-//   const handleConfirmTicket = async () => {
-//     try {
-//       setLoading(true);
-
-//       // Trước tiên phải lưu thiết bị
-//       const isSaved = await handleSaveNewDevices();
-//       if (!isSaved) {
-//         return; // ❌ Nếu lưu lỗi → không chuyển trạng thái
-//       }
-
-//       // Nếu lưu OK → update trạng thái phiếu
-//       await updateTicketStatus(ticket.id, "Đang chờ duyệt");
-//       message.success("Phiếu đã chuyển sang trạng thái 'Đang chờ duyệt'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   //--------------------------------------------------------------------------------
-//   const handleDeleteSavedRow = async (id, type) => {
-//     try {
-//       setLoading(true);
-//       if (type === "handover") {
-//         await deleteDeviceDetailHandover(id);
-//         setHandoverDevicesData((prev) =>
-//           prev.filter((device) => device.id !== id)
-//         );
-//       } else if (type === "retrieve") {
-//         await deleteDeviceDetailRetrieve(id);
-//         setRetrieveDevicesData((prev) =>
-//           prev.filter((device) => device.id !== id)
-//         );
-//       }
-//       message.success("Đã xóa thiết bị thành công!");
-//     } catch (error) {
-//       console.error("Lỗi khi xóa thiết bị đã lưu:", error);
-//       message.error("Lỗi khi xóa thiết bị đã lưu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicket = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...handoverDevicesData, ...retrieveDevicesData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để duyệt.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       const updatePromises = savedDevices.map((device) => {
-//         if (device.isNew) {
-//           console.warn(
-//             `Bỏ qua thiết bị mới (chưa lưu): ${device.SerialNumber}`
-//           );
-//           return Promise.resolve(null);
-//         }
-
-//         const updatedData = {
-//           ...device,
-//           DeliveryDate: device.DeliveryDate || null,
-//           // Status:
-//           //   device.Type === "Bàn giao"
-//           //     ? device.Status || "Đang sử dụng"
-//           //     : "Thu hồi",
-//           Status: device.Status,
-//           Note: device.Note
-//         };
-
-//         return updateDeviceBySerial(device.SerialNumber, updatedData);
-//       });
-
-//       await Promise.all(updatePromises);
-
-//       await updateTicketStatus(ticket.id, "Đã duyệt");
-
-//       message.success("Duyệt phiếu thành công!");
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi duyệt phiếu:", error);
-//       message.error("Lỗi duyệt phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleReturnTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateTicketStatus(ticket.id, "Đang tạo phiếu");
-//       message.success("Phiếu đã được trả về trạng thái 'Đang tạo phiếu'!");
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmAdminTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateTicketStatus(ticket.id, "Đã nhận phiếu");
-//       message.success("Phiếu đã được trả về trạng thái 'Đã nhận phiếu'!");
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const locationOptions = [
-//     "POS01",
-//     "POS02",
-//     "POS03",
-//     "POS04",
-//     "POS05",
-//     "POS06",
-//     "Server",
-//     "RACK",
-//     "KD01",
-//     "KD02",
-//     "KP01",
-//     "KP02",
-//     "KP03",
-//     "KP04",
-//     "KP05",
-//     "AP01",
-//     "AP02",
-//     "WIFI01",
-//     "WIFI02",
-//     "Handy01",
-//     "Handy02",
-//     "Handy03",
-//     "Handy04",
-//     "Handy05",
-//     "Handy06",
-//     "Handy07",
-//     "Handy08",
-//   ];
-//   const storeOptions = ["DHG", "FMV", "Kohnan", "Sukiya", "Colowide"];
-//   const deviceOptions = [
-//     { value: "POS", label: "POS" },
-//     { value: "Drawer", label: "Drawer" },
-//     { value: "Scanner", label: "Scanner" },
-//     { value: "Printer", label: "Printer" },
-//     { value: "Keyboard", label: "Keyboard" },
-//     { value: "Handy", label: "Handy" },
-//     { value: "Switch", label: "Switch" },
-//     { value: "Monitor", label: "Monitor" },
-//     { value: "UPS", label: "UPS" },
-//     { value: "WIFI", label: "WIFI" },
-//     { value: "Mouse", label: "Mouse" },
-//     { value: "Server", label: "Server" },
-//     { value: "Hard Drive", label: "Hard Drive" },
-//     { value: "PCC", label: "PCC" },
-//     { value: "Laptop", label: "Laptop" },
-//     { value: "PDA", label: "PDA" },
-//     { value: "KD", label: "KD" },
-//     { value: "KP", label: "KP" },
-//     { value: "Cisco", label: "Cisco" },
-//     { value: "Router", label: "Router" },
-//     { value: "AP", label: "AP" },
-//     { value: "Firewall", label: "Firewall" },
-//     { value: "POE", label: "POE" },
-//     { value: "Rack", label: "Rack" },
-//     { value: "Arm", label: "Arm" },
-//     { value: "Giá treo gỗ", label: "Giá treo gỗ" },
-//     { value: "Ổ điện", label: "Ổ điện" },
-//   ];
-
-//   const brandOptions = [
-//     { value: "Toshiba", label: "Toshiba" },
-//     { value: "Maken", label: "Maken" },
-//     { value: "Aida", label: "Aida" },
-//     { value: "Datalogic", label: "Datalogic" },
-//     { value: "Dell", label: "Dell" },
-//     { value: "VSP", label: "VSP" },
-//     { value: "Tplink", label: "Tplink" },
-//     { value: "Ares", label: "Ares" },
-//     { value: "Brother", label: "Brother" },
-//     { value: "Canon", label: "Canon" },
-//     { value: "Cisco", label: "Cisco" },
-//   ];
-
-//   const userData = JSON.parse(localStorage.getItem("user")) || {};
-//   const account = userData?.account || {};
-
-//   return (
-//     <Modal
-//       title="Chi Tiết Phiếu"
-//       open={isOpen}
-//       onCancel={onClose}
-//       getContainer={document.body}
-//       footer={[
-//         <Button key="cancel" icon={<CloseOutlined />} onClick={onClose}>
-//           Đóng
-//         </Button>,
-//         account.Leader === true &&
-//         ticket?.attributes?.Status === "Đang chờ duyệt" && (
-//           <Button
-//             key="return"
-//             type="default"
-//             danger
-//             icon={<RollbackOutlined />}
-//             onClick={handleReturnTicket}
-//           >
-//             Trả Phiếu
-//           </Button>
-//         ),
-//         account.Leader === true &&
-//         ticket?.attributes?.Status === "Đang chờ duyệt" && (
-//           <Button
-//             key="approve"
-//             type="primary"
-//             icon={<CheckOutlined />}
-//             onClick={handleApproveTicket}
-//             style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-//           >
-//             Duyệt Phiếu
-//           </Button>
-//         ),
-//         ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//         ticket?.attributes?.Person === account?.Name && (
-//           <Button
-//             key="saveNew"
-//             type="default"
-//             icon={<SaveOutlined />}
-//             onClick={handleSaveNewDevices}
-//           >
-//             Lưu
-//           </Button>
-//         ),
-//         ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//         ticket?.attributes?.Person === account?.Name && (
-//           <Button
-//             key="confirm"
-//             type="primary"
-//             icon={<FileDoneOutlined />}
-//             onClick={handleConfirmTicket}
-//             style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//           >
-//             Gửi Phiếu
-//           </Button>
-//         ),
-//         account.Receivelist === true &&
-//         ticket?.attributes?.Status === "Đã duyệt" && (
-//           <Button
-//             key="confirm"
-//             type="primary"
-//             icon={<CheckCircleOutlined />}
-//             onClick={handleConfirmAdminTicket}
-//             style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//           >
-//             Nhận Phiếu
-//           </Button>
-//         ),
-//         ticket?.attributes?.Status === "Đang chờ duyệt" &&
-//         ticket?.attributes?.Person === account?.Name &&
-//         (
-//           <Button
-//             key="print"
-//             type="primary"
-//             onClick={() => setPrintVisible(true)}
-//           >
-//             In Phiếu
-//           </Button>
-//         ),
-//       ]}
-//       width="75vw"
-//       style={{ maxWidth: "1200px" }}
-//     >
-//       <h3>Thiết Bị Bàn Giao</h3>
-//       <Table
-//         dataSource={combinedHandoverData}
-//         rowKey="id"
-//         pagination={false}
-//         columns={[
-//           {
-//             title: "Khách Hàng",
-//             dataIndex: "Customer",
-//             key: "Customer",
-//             width: 150,
-//             render: (_, record) =>
-//               record.isNew ? (
-//                 <Input
-//                   value={record.Customer}
-//                   style={{ width: "100%" }}
-//                   onChange={(e) =>
-//                     handleInputChange(
-//                       record.id,
-//                       "Customer",
-//                       e.target.value,
-//                       "handover"
-//                     )
-//                   }
-//                   placeholder="Nhập khách hàng"
-//                 />
-//               ) : (
-//                 <span>{record.Customer || "-"}</span>
-//               ),
-//           },
-//           {
-//             title: "Số Serial",
-//             dataIndex: "SerialNumber",
-//             key: "SerialNumber",
-//             width: 240,
-//             render: (_, record) => {
-//               const selectedSerials = combinedHandoverData
-//                 .filter((device) => device.id !== record.id)
-//                 .map((device) => device.SerialNumber);
-
-//               const filteredOptions = serialNumberOptions.filter(
-//                 (option) =>
-//                   option.Store === "DHG" &&
-//                   option.label &&
-//                   !selectedSerials.includes(option.value)
-//               );
-
-//               if (record.isNew || editingRowId === record.id) {
-//                 return (
-//                   <div style={{ position: "relative" }}>
-//                     <AutoComplete
-//                       options={filteredOptions}
-//                       style={{ width: "100%", height: "32px" }}
-//                       onChange={(value) =>
-//                         handleSerialNumberChange(value, record, "handover")
-//                       }
-//                       value={record.SerialNumber || ""}
-//                       placeholder="Nhập số serial"
-//                       filterOption={(inputValue, option) => {
-//                         const label = option?.label || "";
-//                         return label
-//                           .toUpperCase()
-//                           .includes(inputValue?.toUpperCase() || "");
-//                       }}
-//                     />
-//                     {!record.SerialNumber && (
-//                       <span
-//                         style={{
-//                           position: "absolute",
-//                           bottom: "-18px",
-//                           left: 0,
-//                           color: "red",
-//                           fontSize: "12px",
-//                         }}
-//                       >
-//                         * Vui lòng nhập số serial
-//                       </span>
-//                     )}
-//                   </div>
-//                 );
-//               }
-//               return <span>{record.SerialNumber || "-"}</span>;
-//             },
-//           },
-//           {
-//             title: "Ngày Giao",
-//             dataIndex: "DeliveryDate",
-//             key: "DeliveryDate",
-//             width: 150,
-//             render: (_, record) => {
-//               const dateValue = record.DeliveryDate
-//                 ? dayjs(record.DeliveryDate, "YYYY-MM-DD")
-//                 : null;
-
-//               const handleChange = (date) => {
-//                 const formattedDate = date ? date.format("YYYY-MM-DD") : "";
-//                 const handler = record.isNew
-//                   ? handleInputChange
-//                   : handleSavedInputChange;
-//                 handler(record.id, "DeliveryDate", formattedDate, "handover");
-//               };
-
-//               if (record.isNew || editingRowId === record.id) {
-//                 return (
-//                   <Tooltip
-//                     title={
-//                       record.DeliveryDate
-//                         ? `Ngày gốc: ${dayjs(record.DeliveryDate).format(
-//                           "DD-MM-YYYY"
-//                         )}`
-//                         : "Chưa có"
-//                     }
-//                   >
-//                     <DatePicker
-//                       value={dateValue}
-//                       onChange={handleChange}
-//                       format="DD-MM-YYYY"
-//                       placeholder="Chọn ngày giao"
-//                       size="small"
-//                       style={{ width: "100%" }}
-//                       disabledDate={(current) =>
-//                         current &&
-//                         current < dayjs().subtract(1, "month").startOf("day")
-//                       }
-//                     />
-//                   </Tooltip>
-//                 );
-//               }
-//               return (
-//                 <span>
-//                   {record.DeliveryDate
-//                     ? dayjs(record.DeliveryDate).format("DD-MM-YYYY")
-//                     : "-"}
-//                 </span>
-//               );
-//             },
-//           },
-//           {
-//             title: "Tên Thiết Bị",
-//             dataIndex: "DeviceName",
-//             key: "DeviceName",
-//             width: 180,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Select
-//                   showSearch
-//                   value={record.DeviceName || undefined}
-//                   style={{ width: "100%" }}
-//                   onChange={(value) => {
-//                     if (record.isNew) {
-//                       handleInputChange(
-//                         record.id,
-//                         "DeviceName",
-//                         value,
-//                         "handover"
-//                       );
-//                     } else {
-//                       handleSavedInputChange(
-//                         record.id,
-//                         "DeviceName",
-//                         value,
-//                         "handover"
-//                       );
-//                     }
-//                   }}
-//                   options={deviceOptions}
-//                   placeholder="Chọn thiết bị"
-//                   filterOption={(input, option) =>
-//                     (option?.label ?? "")
-//                       .toLowerCase()
-//                       .includes(input.toLowerCase())
-//                   }
-//                 />
-//               ) : (
-//                 <span>{record.DeviceName || "-"}</span>
-//               ),
-//           },
-//           {
-//             title: "Thương Hiệu",
-//             dataIndex: "BrandName",
-//             key: "BrandName",
-//             width: 150,
-//             render: (_, record) => <span>{record.BrandName || "-"}</span>,
-//           },
-//           {
-//             title: "Model",
-//             dataIndex: "Model",
-//             key: "Model",
-//             width: 220,
-//             render: (_, record) => <span>{record.Model || "-"}</span>,
-//           },
-//           {
-//             title: "Cửa Hàng",
-//             dataIndex: "Store",
-//             key: "Store",
-//             width: 150,
-//             render: (_, record) => <span>{record.Store || "-"}</span>,
-//           },
-//           {
-//             title: "Vị Trí",
-//             dataIndex: "Location",
-//             key: "Location",
-//             width: 150,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Select
-//                   style={{ width: "100%" }}
-//                   value={record.Location || null}
-//                   onChange={(value) => {
-//                     const handler = record.isNew
-//                       ? handleInputChange
-//                       : handleSavedInputChange;
-//                     handler(record.id, "Location", value, "handover");
-//                   }}
-//                   options={locationOptions.map((loc) => ({
-//                     value: loc,
-//                     label: loc,
-//                   }))}
-//                   placeholder="Chọn vị trí"
-//                 />
-//               ) : (
-//                 <span>{record.Location || "-"}</span>
-//               ),
-//           },
-//           {
-//             title: "Trạng Thái",
-//             dataIndex: "Status",
-//             key: "Status",
-//             width: 150,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Select
-//                   style={{ width: "100%" }}
-//                   value={record.Status || "Đang sử dụng"}
-//                   onChange={(value) => {
-//                     const handler = record.isNew
-//                       ? handleInputChange
-//                       : handleSavedInputChange;
-//                     handler(record.id, "Status", value, "handover");
-//                   }}
-//                   options={statusOptions}
-//                   placeholder="Chọn trạng thái"
-//                 />
-//               ) : (
-//                 <span>{record.Status || "Đang sử dụng"}</span>
-//               ),
-//           },
-//           {
-//             title: "Tình trạng",
-//             dataIndex: "DeviceStatus",
-//             key: "DeviceStatus",
-//             width: 150,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Select
-//                   style={{ width: "100%" }}
-//                   value={record.DeviceStatus}
-//                   onChange={(value) => {
-//                     const handler = record.isNew
-//                       ? handleInputChange
-//                       : handleSavedInputChange;
-//                     handler(record.id, "DeviceStatus", value, "handover");
-//                   }}
-//                   options={devicestatusOptions}
-//                   placeholder="Chọn trạng thái"
-//                 />
-//               ) : (
-//                 <span>{record.DeviceStatus}</span>
-//               ),
-//           },
-//           {
-//             title: "Ghi Chú",
-//             dataIndex: "Note",
-//             key: "Note",
-//             width: 200,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Input
-//                   value={record.Note || ""}
-//                   onChange={(e) => {
-//                     const handler = record.isNew
-//                       ? handleInputChange
-//                       : handleSavedInputChange;
-//                     handler(record.id, "Note", e.target.value, "handover");
-//                   }}
-//                   style={{ width: "100%" }}
-//                   placeholder="Nhập ghi chú"
-//                 />
-//               ) : (
-//                 <span>{record.Note || "-"}</span>
-//               ),
-//           },
-//           {
-//             title: "Số Phiếu",
-//             dataIndex: "Votes",
-//             key: "Votes",
-//             width: 180,
-//             render: (_, record) => <span>{record.Votes || "-"}</span>,
-//           },
-//           {
-//             title: "Hành động",
-//             key: "action",
-//             render: (_, record) => {
-//               const isCreator = ticket?.attributes?.Person === account?.Name;
-//               const isPending = ticket?.attributes?.Status === "Đang tạo phiếu";
-//               const canDelete = isCreator && isPending;
-
-//               if (record.isNew) {
-//                 return canDelete ? (
-//                   <Popconfirm
-//                     title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                     onConfirm={() => handleDeleteRow(record.id, "handover")}
-//                     okText="Có"
-//                     cancelText="Không"
-//                   >
-//                     <Button type="danger" icon={<DeleteOutlined />} />
-//                   </Popconfirm>
-//                 ) : null;
-//               } else {
-//                 if (editingRowId === record.id) {
-//                   return (
-//                     <div
-//                       style={{
-//                         display: "flex",
-//                         flexDirection: "row",
-//                         gap: "5px",
-//                         justifyContent: "center",
-//                       }}
-//                     >
-//                       {ticket?.attributes?.Status === "Đang tạo phiếu" && (
-//                         <Button
-//                           type="primary"
-//                           onClick={() => handleUpdateRow(record.id, "handover")}
-//                         >
-//                           Lưu
-//                         </Button>
-//                       )}
-//                       <Button onClick={() => setEditingRowId(null)}>Hủy</Button>
-//                     </div>
-//                   );
-//                 } else {
-//                   return (
-//                     <div
-//                       style={{
-//                         display: "flex",
-//                         flexDirection: "row",
-//                         gap: "5px",
-//                         justifyContent: "center",
-//                       }}
-//                     >
-//                       <Button
-//                         type="default"
-//                         icon={<EditOutlined style={{ color: "#1890ff" }} />}
-//                         onClick={() => setEditingRowId(record.id)}
-//                       />
-//                       {canDelete && (
-//                         <Popconfirm
-//                           title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                           onConfirm={() =>
-//                             handleDeleteSavedRow(record.id, "handover")
-//                           }
-//                           okText="Có"
-//                           cancelText="Không"
-//                         >
-//                           <Button type="danger" icon={<DeleteOutlined />} />
-//                         </Popconfirm>
-//                       )}
-//                       <Button
-//                         type="primary"
-//                         icon={<PrinterOutlined />}
-//                         onClick={() => {
-//                           console.log("Record:", record);
-//                           setSelectedDevice(record);
-//                           setIsPrintModalOpenH(true);
-//                         }}
-//                       >
-//                         In Nhãn
-//                       </Button>
-//                     </div>
-//                   );
-//                 }
-//               }
-//             },
-//             width: 120,
-//           },
-//         ]}
-//         scroll={{ x: "max-content" }}
-//       />
-//       {ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//         ticket?.attributes?.Person === account?.Name && (
-//           <Button
-//             type="dashed"
-//             onClick={() => handleAddRow("handover")}
-//             style={{ marginTop: 10, marginLeft: 10 }}
-//           >
-//             ➕ Thêm Hàng (Bàn giao)
-//           </Button>
-//         )}
-
-//       <h3 style={{ marginTop: 20 }}>Thiết Bị Thu Hồi</h3>
-//       <Table
-//         dataSource={combinedRetrieveData}
-//         rowKey="id"
-//         pagination={false}
-//         columns={[
-//           {
-//             title: "Khách Hàng",
-//             dataIndex: "Customer",
-//             key: "Customer",
-//             width: 150,
-//             render: (_, record) =>
-//               record.isNew ? (
-//                 <Input
-//                   value={record.Customer}
-//                   style={{ width: "100%" }}
-//                   onChange={(e) =>
-//                     handleInputChange(
-//                       record.id,
-//                       "Customer",
-//                       e.target.value,
-//                       "retrieve"
-//                     )
-//                   }
-//                 />
-//               ) : (
-//                 <span>{record.Customer || "-"}</span>
-//               ),
-//           },
-//           {
-//             title: "Số Serial",
-//             dataIndex: "SerialNumber",
-//             key: "SerialNumber",
-//             width: 240,
-//             render: (_, record) => {
-//               const selectedSerials = combinedRetrieveData
-//                 .filter((device) => device.id !== record.id)
-//                 .map((device) => device.SerialNumber);
-
-//               const filteredOptions = serialNumberOptions.filter(
-//                 (option) =>
-//                   option.Store === ticket?.attributes?.Store &&
-//                   option.label &&
-//                   !selectedSerials.includes(option.value)
-//               );
-
-//               const isEditing = editingRowId === record.id;
-
-//               return record.isNew || isEditing ? (
-//                 <div style={{ position: "relative" }}>
-//                   <AutoComplete
-//                     options={filteredOptions}
-//                     style={{ width: "100%" }}
-//                     onChange={(value) =>
-//                       handleSerialNumberChange(value, record, "retrieve")
-//                     }
-//                     value={record.SerialNumber || ""}
-//                     placeholder="Nhập số serial"
-//                     filterOption={(inputValue, option) => {
-//                       const label = option?.label || "";
-//                       return label
-//                         .toUpperCase()
-//                         .includes(inputValue?.toUpperCase() || "");
-//                     }}
-//                   />
-//                   {!record.SerialNumber && (
-//                     <span
-//                       style={{
-//                         position: "absolute",
-//                         bottom: "-18px",
-//                         left: 0,
-//                         color: "red",
-//                         fontSize: "12px",
-//                       }}
-//                     >
-//                       * Vui lòng nhập số serial
-//                     </span>
-//                   )}
-//                 </div>
-//               ) : (
-//                 <span>{record.SerialNumber || "-"}</span>
-//               );
-//             },
-//           },
-//           {
-//             title: "Ngày Giao",
-//             dataIndex: "DeliveryDate",
-//             key: "DeliveryDate",
-//             width: 150,
-//             render: (_, record) => <span>{record.DeliveryDate || "-"}</span>,
-//           },
-//           {
-//             title: "Tên Thiết Bị",
-//             dataIndex: "DeviceName",
-//             key: "DeviceName",
-//             width: 180,
-//             render: (_, record) => <span>{record.DeviceName || "-"}</span>,
-//           },
-//           {
-//             title: "Thương Hiệu",
-//             dataIndex: "BrandName",
-//             key: "BrandName",
-//             width: 150,
-//             render: (_, record) => <span>{record.BrandName || "-"}</span>,
-//           },
-//           {
-//             title: "Model",
-//             dataIndex: "Model",
-//             key: "Model",
-//             width: 220,
-//             render: (_, record) => <span>{record.Model || "-"}</span>,
-//           },
-//           {
-//             title: "Cửa Hàng",
-//             dataIndex: "StoreRecall",
-//             key: "StoreRecall",
-//             width: 150,
-//             render: (_, record) => <span>{record.StoreRecall || "-"}</span>,
-//           },
-//           {
-//             title: "Vị Trí",
-//             dataIndex: "Location",
-//             key: "Location",
-//             width: 150,
-//             render: (_, record) => <span>{record.Location || "-"}</span>,
-//           },
-//           {
-//             title: "Trạng Thái",
-//             dataIndex: "Status",
-//             key: "Status",
-//             width: 150,
-//             render: () => <span>Thu hồi</span>,
-//           },
-//           {
-//             title: "Tình trạng",
-//             dataIndex: "DeviceStatus",
-//             key: "DeviceStatus",
-//             width: 170,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Select
-//                   style={{ width: "100%" }}
-//                   value={record.DeviceStatus}
-//                   onChange={(value) => {
-//                     const handler = record.isNew
-//                       ? handleInputChange
-//                       : handleSavedInputChange;
-//                     handler(record.id, "DeviceStatus", value, "retrieve");
-//                   }}
-//                   options={devicesoldtatusOptions}
-//                   placeholder="Chọn trạng thái"
-//                 />
-//               ) : (
-//                 <span>{record.DeviceStatus}</span>
-//               ),
-//           },
-//           {
-//             title: "Ghi Chú",
-//             dataIndex: "Note",
-//             key: "Note",
-//             width: 200,
-//             render: (_, record) =>
-//               record.isNew || editingRowId === record.id ? (
-//                 <Input
-//                   value={record.Note || ""}
-//                   onChange={(e) => {
-//                     const handler = record.isNew
-//                       ? handleInputChange
-//                       : handleSavedInputChange;
-//                     handler(record.id, "Note", e.target.value, "retrieve");
-//                   }}
-//                   style={{ width: "100%" }}
-//                   placeholder="Nhập ghi chú"
-//                 />
-//               ) : (
-//                 <span>{record.Note || "-"}</span>
-//               ),
-//           },
-//           {
-//             title: "Số Phiếu",
-//             dataIndex: "Votes",
-//             key: "Votes",
-//             width: 180,
-//             render: (_, record) => <span>{record.Votes || "-"}</span>,
-//           },
-
-//           {
-//             title: "Vị trí nhận",
-//             dataIndex: "Store",
-//             key: "Store",
-//             width: 150,
-//             render: (_, record) => {
-//               if (record.isNew) {
-//                 // 👉 Row mới: Select trống, user phải chọn
-//                 return (
-//                   <Select
-//                     style={{ width: "100%" }}
-//                     value={undefined}
-//                     onChange={(value) =>
-//                       handleInputChange(record.id, "Store", value, "retrieve")
-//                     }
-//                     options={storeOptions.map((loc) => ({
-//                       value: loc,
-//                       label: loc,
-//                     }))}
-//                     placeholder="Chọn vị trí"
-//                   />
-//                 );
-//               }
-
-//               if (editingRowId === record.id) {
-//                 // 👉 Row đang edit: cho phép đổi giá trị
-//                 return (
-//                   <Select
-//                     style={{ width: "100%" }}
-//                     value={record.Store}
-//                     onChange={(value) =>
-//                       handleSavedInputChange(
-//                         record.id,
-//                         "Store",
-//                         value,
-//                         "retrieve"
-//                       )
-//                     }
-//                     options={storeOptions.map((loc) => ({
-//                       value: loc,
-//                       label: loc,
-//                     }))}
-//                   />
-//                 );
-//               }
-
-//               // 👉 Row bình thường: chỉ text
-//               return <span>{record.Store || "-"}</span>;
-//             },
-//           },
-//           {
-//             title: "Hành động",
-//             key: "action",
-//             render: (_, record) => {
-//               const isCreator = ticket?.attributes?.Person === account?.Name;
-//               const isPending = ticket?.attributes?.Status === "Đang tạo phiếu";
-//               const canDelete = isCreator && isPending;
-
-//               if (record.isNew) {
-//                 return canDelete ? (
-//                   <Popconfirm
-//                     title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                     onConfirm={() => handleDeleteRow(record.id, "retrieve")}
-//                     okText="Có"
-//                     cancelText="Không"
-//                   >
-//                     <Button type="danger" icon={<DeleteOutlined />} />
-//                   </Popconfirm>
-//                 ) : null;
-//               } else {
-//                 if (editingRowId === record.id) {
-//                   return (
-//                     <div
-//                       style={{
-//                         display: "flex",
-//                         flexDirection: "row",
-//                         gap: "5px",
-//                         justifyContent: "center",
-//                       }}
-//                     >
-//                       {ticket?.attributes?.Status === "Đang tạo phiếu" && (
-//                         <Button
-//                           type="primary"
-//                           onClick={() => handleUpdateRow(record.id, "retrieve")}
-//                         >
-//                           Lưu
-//                         </Button>
-//                       )}
-//                       <Button onClick={() => setEditingRowId(null)}>Hủy</Button>
-//                     </div>
-//                   );
-//                 } else {
-//                   return (
-//                     <div
-//                       style={{
-//                         display: "flex",
-//                         flexDirection: "row",
-//                         gap: "5px",
-//                         justifyContent: "center",
-//                       }}
-//                     >
-//                       <Button
-//                         type="default"
-//                         icon={<EditOutlined style={{ color: "#1890ff" }} />}
-//                         onClick={() => setEditingRowId(record.id)}
-//                       />
-//                       {canDelete && (
-//                         <Popconfirm
-//                           title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                           onConfirm={() =>
-//                             handleDeleteSavedRow(record.id, "retrieve")
-//                           }
-//                           okText="Có"
-//                           cancelText="Không"
-//                         >
-//                           <Button type="danger" icon={<DeleteOutlined />} />
-//                         </Popconfirm>
-//                       )}
-//                       <Button
-//                         type="primary"
-//                         icon={<PrinterOutlined />}
-//                         onClick={() => {
-//                           console.log("Record:", record);
-//                           setSelectedDevice(record);
-//                           setIsPrintModalOpenR(true);
-//                         }}
-//                       >
-//                         In Nhãn
-//                       </Button>
-//                     </div>
-//                   );
-//                 }
-//               }
-//             },
-//             width: 120,
-//           },
-//         ]}
-//         scroll={{ x: "max-content" }}
-//       />
-//       {ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//         ticket?.attributes?.Person === account?.Name && (
-//           <Button
-//             type="dashed"
-//             onClick={() => handleAddRow("retrieve")}
-//             style={{ marginTop: 10, marginLeft: 10 }}
-//           >
-//             ➕ Thêm Hàng (Thu hồi)
-//           </Button>
-//         )}
-//       <PrintTicketModal
-//         isOpen={printVisible}
-//         onClose={() => setPrintVisible(false)}
-//         ticket={ticket || { attributes: {} }}
-//         handoverDevices={handoverDevicesData || []}
-//         retrieveDevices={retrieveDevicesData || []}
-//         autoPrint={true}
-//       />
-//       <PrintLabelModalRetrieve
-//         visible={isPrintModalOpenR}
-//         onClose={() => setIsPrintModalOpenR(false)}
-//         deviceData={selectedDevice}
-//       />
-//       <PrintLabelModalHandover
-//         visible={isPrintModalOpenH}
-//         onClose={() => setIsPrintModalOpenH(false)}
-//         deviceData={selectedDevice}
-//       />
-//     </Modal>
-//   );
-// };
-
-// export default TicketModal;
-
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Modal,
   Button,
@@ -1485,7 +10,31 @@ import {
   DatePicker,
   Popconfirm,
   Tooltip,
+  Tabs,
+  Tag,
+  Space,
+  Card,
+  Typography,
 } from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  CloseOutlined,
+  CheckOutlined,
+  RollbackOutlined,
+  SaveOutlined,
+  CheckCircleOutlined,
+  FileDoneOutlined,
+  PrinterOutlined,
+  PlusOutlined,
+  ExportOutlined,
+  ImportOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+import dayjs from "dayjs";
+import { motion } from "framer-motion";
+
+// --- Services ---
 import {
   createDevicesDetailHandover,
   updateDevicesDetailHandover,
@@ -1497,82 +46,143 @@ import {
   deleteDeviceDetailRetrieve,
   updateTicketStatus,
   updateDeviceBySerial,
+  fetchDeviceListRetrieve, // API Thu Hồi
+  fetchDeviceListHandover, // API Bàn Giao
 } from "../../../../services/storeServices";
+
+// --- Components ---
 import PrintTicketModal from "./PrintTicketModal";
 import PrintLabelModalRetrieve from "./PrintLabelModalRetrieve";
 import PrintLabelModalHandover from "./PrintLabelModalHandover";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  CloseOutlined,
-  CheckOutlined,
-  RollbackOutlined,
-  SaveOutlined,
-  CheckCircleOutlined,
-  FileDoneOutlined,
-  PrinterOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
+
+const { TabPane } = Tabs;
+const { Text } = Typography;
 
 const TicketModal = ({
   isOpen,
   onClose,
   ticket,
-  fetchDevices,
   fetchTickets,
   reloadTickets,
-  serialNumberOptions = [],
 }) => {
   const [loading, setLoading] = useState(false);
+
+  // --- Data hiển thị trên bảng ---
   const [handoverDevicesData, setHandoverDevicesData] = useState([]);
   const [retrieveDevicesData, setRetrieveDevicesData] = useState([]);
+
+  // --- Data mới thêm vào ---
   const [newHandoverDevices, setNewHandoverDevices] = useState([]);
   const [newRetrieveDevices, setNewRetrieveDevices] = useState([]);
+
+  // --- UI State ---
   const [editingRowId, setEditingRowId] = useState(null);
   const [printVisible, setPrintVisible] = useState(false);
   const [isPrintModalOpenH, setIsPrintModalOpenH] = useState(false);
   const [isPrintModalOpenR, setIsPrintModalOpenR] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
+  const [activeTab, setActiveTab] = useState("1");
 
+  // --- INVENTORY SOURCES ---
+  const [handoverInventory, setHandoverInventory] = useState([]); // Kho DHG
+  const [storeInventory, setStoreInventory] = useState([]);       // Kho Cửa hàng
+
+  // --- HÀM XỬ LÝ DATA ---
+  const processDevicesToOptions = (devices, defaultStore) => {
+    if (!Array.isArray(devices)) return [];
+
+    const uniqueMap = new Map();
+
+    devices.forEach((item) => {
+      const attr = item.attributes || item;
+
+      if (attr && attr.SerialNumber) {
+        const deviceName = attr.DeviceName || "Không tên";
+        const serial = attr.SerialNumber;
+
+        if (!uniqueMap.has(serial)) {
+          uniqueMap.set(serial, {
+            value: serial,
+            label: `${deviceName} - ${serial}`,
+            ...attr,
+            DeviceName: deviceName,
+            Store: attr.Store || defaultStore,
+          });
+        }
+      }
+    });
+
+    return Array.from(uniqueMap.values());
+  };
+
+  // --- 1. Fetch Data Chi Tiết Phiếu ---
   useEffect(() => {
-    // Sửa: bỏ .attributes
     if (isOpen && ticket?.Votes) {
-      console.log("Ticket value:", ticket.Votes);
+      // 1.1 Fetch Chi Tiết Bàn Giao
       fetchDeviceDetailHandover(ticket.Votes)
-        .then((responseData) => {
-          // Strapi v5: responseData thường là mảng trực tiếp hoặc trong data
-          const data = Array.isArray(responseData) ? responseData : (responseData.data || []);
-          const devices = data.map((item) => ({
-            ...item, // Sửa: bỏ .attributes, spread trực tiếp item
-            id: item.id || item.documentId // fallback id
-          }));
-
-          console.log("Mapped handover devices:", devices);
-          setHandoverDevicesData(devices);
+        .then((res) => {
+          const data = Array.isArray(res) ? res : res.data || [];
+          setHandoverDevicesData(data.map(i => ({
+            ...(i.attributes || i),
+            id: i.documentId || i.id
+          })));
         })
-        .catch((error) => {
-          console.error("Lỗi tải thiết bị bàn giao:", error);
-          message.error("Lỗi tải thiết bị bàn giao.");
-        });
+        .catch(() => message.error("Lỗi tải thiết bị bàn giao."));
 
+      // 1.2 Fetch Chi Tiết Thu Hồi
       fetchDeviceDetailRetrieve(ticket.Votes)
-        .then((responseData) => {
-          const data = Array.isArray(responseData) ? responseData : (responseData.data || []);
-          const devices = data.map((item) => ({
-            ...item, // Sửa: bỏ .attributes
-            id: item.id || item.documentId
-          }));
-
-          console.log("Mapped retrieve devices:", devices);
-          setRetrieveDevicesData(devices);
+        .then((res) => {
+          const data = Array.isArray(res) ? res : res.data || [];
+          setRetrieveDevicesData(data.map(i => ({
+            ...(i.attributes || i),
+            id: i.documentId || i.id
+          })));
         })
-        .catch((error) => {
-          console.error("Lỗi tải thiết bị thu hồi:", error);
-          message.error("Lỗi tải thiết bị thu hồi.");
-        });
+        .catch(() => message.error("Lỗi tải thiết bị thu hồi."));
     }
-  }, [isOpen, ticket?.Votes]); // Sửa dependency
+  }, [isOpen, ticket?.Votes]);
 
+  // --- 2. Fetch Kho Bàn Giao (DHG) ---
+  useEffect(() => {
+    if (isOpen) {
+      const loadHandoverInventory = async () => {
+        try {
+          const devices = await fetchDeviceListHandover();
+          const options = processDevicesToOptions(devices, "DHG");
+          setHandoverInventory(options);
+        } catch (error) {
+          console.error("Lỗi lấy kho DHG:", error);
+        }
+      };
+      loadHandoverInventory();
+    }
+  }, [isOpen]);
+
+  // --- 3. Fetch Kho Cửa Hàng (Thu Hồi) ---
+  useEffect(() => {
+    if (isOpen && ticket?.Store) {
+      const loadStoreInventory = async () => {
+        try {
+          const devices = await fetchDeviceListRetrieve(ticket.Store);
+          const options = processDevicesToOptions(devices, ticket.Store);
+
+          const availableDevices = options.filter(d =>
+            !d.Status ||
+            d.Status === "Đang sử dụng" ||
+            d.Status === "Thiết bị cũ" ||
+            d.Status === "Thiết bị mới"
+          );
+
+          setStoreInventory(availableDevices);
+        } catch (error) {
+          console.error("Lỗi lấy tồn kho cửa hàng:", error);
+        }
+      };
+      loadStoreInventory();
+    }
+  }, [isOpen, ticket?.Store]);
+
+  // --- Reset State ---
   useEffect(() => {
     if (!isOpen) {
       setHandoverDevicesData([]);
@@ -1580,344 +190,212 @@ const TicketModal = ({
       setNewHandoverDevices([]);
       setNewRetrieveDevices([]);
       setEditingRowId(null);
+      setActiveTab("1");
+      setStoreInventory([]);
+      setHandoverInventory([]);
     }
   }, [isOpen]);
 
   const combinedHandoverData = [...handoverDevicesData, ...newHandoverDevices];
   const combinedRetrieveData = [...retrieveDevicesData, ...newRetrieveDevices];
 
-  const statusOptions = [
-    { value: "Đang sử dụng", label: "Đang sử dụng" }
+  // --- Options ---
+  const locationOptions = ["POS01", "POS02", "POS03", "POS04", "POS05", "Server", "KHO", "Quầy", "Bếp", "WIFI01", "WIFI02", "AP01", "RACK", "Manager"];
+  const storeOptions = ["DHG", "FMV", "Kohnan", "Sukiya", "Colowide"];
+  const deviceOptions = [
+    { value: "POS", label: "POS" }, { value: "Printer", label: "Printer" },
+    { value: "Scanner", label: "Scanner" }, { value: "Monitor", label: "Monitor" },
+    { value: "PC", label: "PC" }, { value: "Laptop", label: "Laptop" },
+    { value: "Handy", label: "Handy" }, { value: "Tablet", label: "Tablet" },
+    { value: "Server", label: "Server" }, { value: "UPS", label: "UPS" }
   ];
+  const devicestatusOptions = [{ value: "Thiết bị mới", label: "Thiết bị mới" }, { value: "Thiết bị cũ", label: "Thiết bị cũ" }];
+  const devicesoldtatusOptions = [{ value: "Hỏng", label: "Hỏng" }, { value: "Hết hạn sử dụng", label: "Hết hạn sử dụng" }, { value: "Đóng cửa", label: "Đóng cửa" }];
 
-  const devicestatusOptions = [
-    { value: "Thiết bị mới", label: "Thiết bị mới" },
-    { value: "Thiết bị cũ", label: "Thiết bị cũ" }
-  ];
-  const devicesoldtatusOptions = [
-    { value: "Hỏng", label: "Hỏng" },
-    { value: "Hết hạn sử dụng", label: "Hết hạn sử dụng" },
-    { value: "Đóng cửa", label: "Đóng cửa" }
-  ];
+  const userData = JSON.parse(localStorage.getItem("user")) || {};
+  const account = userData?.account || {};
 
+  // --- Handlers ---
   const handleAddRow = (type) => {
-    if (!ticket) {
-      message.error("Vui lòng chọn phiếu trước khi thêm thiết bị!");
-      return;
-    }
+    if (!ticket) return message.error("Vui lòng chọn phiếu!");
     const newDevice = {
       id: Date.now(),
-      Customer: ticket.Customer || "", // Sửa: bỏ .attributes
-      DeliveryDate: "",
+      Customer: ticket.Customer || "",
+      DeliveryDate: ticket.Date || "",
       DeviceName: "",
-      BrandName: "",
-      Model: "",
       SerialNumber: "",
-      Store:
-        type === "handover"
-          ? ticket.Store // Sửa: bỏ .attributes
-          : undefined,
+      // Nếu là Handover -> Lấy Store phiếu. Nếu Retrieve -> Để RỖNG (undefined)
+      Store: type === "handover" ? ticket.Store : undefined,
       Location: "",
       Status: type === "handover" ? "Đang sử dụng" : "Thu hồi",
       DeviceStatus: "",
       Note: "",
-      Votes: ticket.Votes, // Sửa: bỏ .attributes
-      StoreRecall: ticket.Store, // Sửa: bỏ .attributes
+      Votes: ticket.Votes,
+      StoreRecall: ticket.Store,
       isNew: true,
       Type: type === "handover" ? "Bàn giao" : "Thu hồi",
     };
-    if (type === "handover") {
-      setNewHandoverDevices((prev) => [...prev, newDevice]);
-    } else if (type === "retrieve") {
-      setNewRetrieveDevices((prev) => [...prev, newDevice]);
-    }
+    if (type === "handover") setNewHandoverDevices(prev => [...prev, newDevice]);
+    else setNewRetrieveDevices(prev => [...prev, newDevice]);
   };
 
   const handleInputChange = (id, field, value, type) => {
-    if (type === "handover") {
-      setNewHandoverDevices((prev) =>
-        prev.map((device) =>
-          device.id === id ? { ...device, [field]: value } : device
-        )
-      );
-    } else if (type === "retrieve") {
-      setNewRetrieveDevices((prev) =>
-        prev.map((device) =>
-          device.id === id ? { ...device, [field]: value } : device
-        )
-      );
-    }
+    const updater = type === "handover" ? setNewHandoverDevices : setNewRetrieveDevices;
+    updater(prev => prev.map(d => d.id === id ? { ...d, [field]: value } : d));
   };
 
   const handleSavedInputChange = (id, field, value, type) => {
-    if (type === "handover") {
-      setHandoverDevicesData((prev) =>
-        prev.map((device) =>
-          device.id === id ? { ...device, [field]: value } : device
-        )
-      );
-    } else if (type === "retrieve") {
-      setRetrieveDevicesData((prev) =>
-        prev.map((device) =>
-          device.id === id ? { ...device, [field]: value } : device
-        )
-      );
-    }
+    const updater = type === "handover" ? setHandoverDevicesData : setRetrieveDevicesData;
+    updater(prev => prev.map(d => d.id === id ? { ...d, [field]: value } : d));
   };
 
+  // --- SỬA LOGIC Ở ĐÂY: Store luôn undefined khi chọn serial ở tab Thu Hồi ---
   const handleSerialNumberChange = (value, record, type) => {
-    const selectedDevice = serialNumberOptions.find(
-      (option) => option.value === value
-    );
-    const updateFunction =
-      type === "handover"
-        ? editingRowId === record.id
-          ? handleSavedInputChange
-          : setNewHandoverDevices
-        : editingRowId === record.id
-          ? handleSavedInputChange
-          : setNewRetrieveDevices;
+    const sourceOptions = type === "handover" ? handoverInventory : storeInventory;
+    const selectedInfo = sourceOptions.find(op => op.value === value);
 
-    if (editingRowId === record.id || record.isNew === false) {
-      if (type === "handover") {
-        setHandoverDevicesData((prev) =>
-          prev.map((device) =>
-            device.id === record.id
-              ? {
-                ...device,
-                SerialNumber: value,
-                DeviceName: selectedDevice ? selectedDevice.DeviceName : "",
-                BrandName: selectedDevice ? selectedDevice.BrandName : "",
-                Model: selectedDevice ? selectedDevice.Model : "",
-                DeliveryDate: selectedDevice
-                  ? selectedDevice.DeliveryDate
-                  : ticket?.Date || "", // Sửa: bỏ .attributes
-                Location: selectedDevice ? selectedDevice.Location : "",
-                Status: "Đang sử dụng",
-                Note: selectedDevice ? selectedDevice.Note : "",
-              }
-              : device
-          )
-        );
-      } else {
-        setRetrieveDevicesData((prev) =>
-          prev.map((device) =>
-            device.id === record.id
-              ? {
-                ...device,
-                SerialNumber: value,
-                DeviceName: selectedDevice ? selectedDevice.DeviceName : "",
-                BrandName: selectedDevice ? selectedDevice.BrandName : "",
-                Model: selectedDevice ? selectedDevice.Model : "",
-                DeliveryDate: selectedDevice
-                  ? selectedDevice.DeliveryDate
-                  : ticket?.Date || "", // Sửa: bỏ .attributes
-                Location: selectedDevice ? selectedDevice.Location : "",
-                Status: "Thu hồi",
-                Note: selectedDevice ? selectedDevice.Note : "",
-              }
-              : device
-          )
-        );
-      }
+    const updateLogic = (prev) => prev.map(d => {
+      if (d.id !== record.id) return d;
+      return {
+        ...d,
+        SerialNumber: value,
+        DeviceName: selectedInfo?.DeviceName || d.DeviceName,
+        BrandName: selectedInfo?.BrandName || "",
+        Model: selectedInfo?.Model || d.Model,
+        DeliveryDate: selectedInfo?.DeliveryDate || (ticket?.Date || ""),
+        Location: selectedInfo?.Location || d.Location,
+        Note: selectedInfo?.Note || "",
+        Status: type === "handover" ? "Đang sử dụng" : "Thu hồi",
+
+        // --- QUAN TRỌNG: ---
+        // Bàn giao: Store = ticket.Store
+        // Thu hồi: Store = undefined (Để người dùng tự chọn)
+        Store: type === "retrieve" ? undefined : ticket.Store,
+      };
+    });
+
+    if (type === "handover") {
+      if (record.isNew) setNewHandoverDevices(updateLogic);
+      else setHandoverDevicesData(updateLogic);
     } else {
-      updateFunction((prev) =>
-        prev.map((device) =>
-          device.id === record.id
-            ? {
-              ...device,
-              SerialNumber: value,
-              DeviceName: selectedDevice ? selectedDevice.DeviceName : "",
-              BrandName: selectedDevice ? selectedDevice.BrandName : "",
-              Model: selectedDevice ? selectedDevice.Model : "",
-              DeliveryDate: selectedDevice
-                ? selectedDevice.DeliveryDate
-                : ticket?.Date || "", // Sửa: bỏ .attributes
-              Location: selectedDevice ? selectedDevice.Location : "",
-              Status: type === "handover" ? "Đang sử dụng" : "Thu hồi",
-              Note: selectedDevice ? selectedDevice.Note : "",
-            }
-            : device
-        )
-      );
+      if (record.isNew) setNewRetrieveDevices(updateLogic);
+      else setRetrieveDevicesData(updateLogic);
     }
   };
 
   const handleDeleteRow = (id, type) => {
-    if (type === "handover") {
-      setNewHandoverDevices((prev) =>
-        prev.filter((device) => device.id !== id)
-      );
-    } else if (type === "retrieve") {
-      setNewRetrieveDevices((prev) =>
-        prev.filter((device) => device.id !== id)
-      );
-    }
+    if (type === "handover") setNewHandoverDevices(prev => prev.filter(d => d.id !== id));
+    else setNewRetrieveDevices(prev => prev.filter(d => d.id !== id));
   };
 
-  const handleUpdateRow = async (id, type) => {
-    let device;
-    if (type === "handover") {
-      device = handoverDevicesData.find((d) => d.id === id);
-    } else {
-      device = retrieveDevicesData.find((d) => d.id === id);
-    }
-
-    if (!device) {
-      message.warning("Thiết bị không hợp lệ để cập nhật.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      if (type === "handover") {
-        await updateDevicesDetailHandover(device.id, {
-          ...device, // Sửa: không cần .attributes vì device đã phẳng
-          Status: device.Status || "Đang sử dụng",
-        });
-      } else {
-        await updateDevicesDetailRetrieve(device.id, {
-          ...device,
-          Status: "Thu hồi",
-        });
-      }
-
-      message.success("Cập nhật thiết bị thành công!");
-      setEditingRowId(null);
-
-      fetchDevices();
-      fetchTickets();
-    } catch (error) {
-      console.error("Lỗi khi cập nhật thiết bị:", error);
-      message.error("Lỗi khi cập nhật thiết bị.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Hàm lưu thiết bị
-  const handleSaveNewDevices = async () => {
-    setLoading(true);
-    try {
-      const newDevices = [...newHandoverDevices, ...newRetrieveDevices];
-      const requiredFields = [
-        "Customer",
-        "DeliveryDate",
-        "DeviceName",
-        "BrandName",
-        "Model",
-        "SerialNumber",
-        "Store",
-        "Location",
-        "Status",
-        "DeviceStatus",
-      ];
-
-      // Kiểm tra dữ liệu bắt buộc
-      for (const device of newDevices) {
-        for (const field of requiredFields) {
-          if (!device[field] || device[field].toString().trim() === "") {
-            message.warning(
-              `Vui lòng điền đầy đủ trường "${field}" cho tất cả các hàng (ngoại trừ "Ghi Chú").`
-            );
-            return false; // ❌ báo không thành công
-          }
-        }
-      }
-
-      // Lưu thiết bị bàn giao
-      const handoverPromises = newHandoverDevices
-        .filter((device) => device.SerialNumber)
-        .map((device) => {
-          const deviceData = {
-            ...device,
-            Votes: ticket.Votes, // Sửa: bỏ .attributes
-            Customer: ticket.Customer, // Sửa: bỏ .attributes
-            Store: ticket.Store, // Sửa: bỏ .attributes
-            Status: device.Status || "Đang sử dụng",
-          };
-          console.log("Payload handover deviceData:", deviceData);
-          return createDevicesDetailHandover(deviceData);
-        });
-
-      // Lưu thiết bị thu hồi
-      const retrievePromises = newRetrieveDevices
-        .filter((device) => device.SerialNumber)
-        .map((device) => {
-          const deviceData = {
-            ...device,
-            Votes: ticket.Votes, // Sửa: bỏ .attributes
-            Customer: ticket.Customer, // Sửa: bỏ .attributes
-            Status: "Thu hồi",
-          };
-          console.log("Payload retrieve deviceData:", deviceData);
-          return createDevicesDetailRetrieve(deviceData);
-        });
-
-      await Promise.all([...handoverPromises, ...retrievePromises]);
-      onClose();
-      message.success("Lưu thiết bị thành công!");
-      fetchDevices();
-      fetchTickets();
-      return true; // ✅ báo thành công
-    } catch (error) {
-      console.error("Lỗi khi lưu thiết bị:", error);
-      message.error("Lỗi khi lưu thiết bị.");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Hàm gửi phiếu (xác nhận phiếu)
-  const handleConfirmTicket = async () => {
-    try {
-      setLoading(true);
-
-      // Trước tiên phải lưu thiết bị
-      const isSaved = await handleSaveNewDevices();
-      if (!isSaved) {
-        return; // ❌ Nếu lưu lỗi → không chuyển trạng thái
-      }
-
-      // Nếu lưu OK → update trạng thái phiếu
-      await updateTicketStatus(ticket.id, "Đang chờ duyệt");
-      message.success("Phiếu đã chuyển sang trạng thái 'Đang chờ duyệt'!");
-
-      if (reloadTickets) {
-        console.log("🔄 Gọi reloadTickets()...");
-        await reloadTickets();
-      }
-
-      onClose();
-    } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái phiếu:", error);
-      message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  //--------------------------------------------------------------------------------
   const handleDeleteSavedRow = async (id, type) => {
     try {
       setLoading(true);
       if (type === "handover") {
         await deleteDeviceDetailHandover(id);
-        setHandoverDevicesData((prev) =>
-          prev.filter((device) => device.id !== id)
-        );
-      } else if (type === "retrieve") {
+        setHandoverDevicesData(prev => prev.filter(d => d.id !== id));
+      } else {
         await deleteDeviceDetailRetrieve(id);
-        setRetrieveDevicesData((prev) =>
-          prev.filter((device) => device.id !== id)
-        );
+        setRetrieveDevicesData(prev => prev.filter(d => d.id !== id));
       }
-      message.success("Đã xóa thiết bị thành công!");
+      message.success("Đã xóa!");
+    } catch { message.error("Lỗi xóa!"); } finally { setLoading(false); }
+  };
+
+  const handleUpdateRow = async (id, type) => {
+    let device = type === "handover" ? handoverDevicesData.find(d => d.id === id) : retrieveDevicesData.find(d => d.id === id);
+
+    if (!device) return;
+
+    try {
+      setLoading(true);
+      const { id: _, ...payload } = device;
+
+      if (type === "handover") {
+        await updateDevicesDetailHandover(device.id, { ...payload, Status: "Đang sử dụng" });
+      } else {
+        await updateDevicesDetailRetrieve(device.id, { ...payload, Status: "Thu hồi" });
+      }
+
+      message.success("Cập nhật xong!");
+      setEditingRowId(null);
+      if (fetchTickets) fetchTickets();
     } catch (error) {
-      console.error("Lỗi khi xóa thiết bị đã lưu:", error);
-      message.error("Lỗi khi xóa thiết bị đã lưu.");
+      console.error("Lỗi update:", error);
+      message.error("Lỗi cập nhật!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveNewDevices = async (shouldClose = true) => {
+    if (newHandoverDevices.length === 0 && newRetrieveDevices.length === 0) {
+      return true;
+    }
+
+    setLoading(true);
+    try {
+      const allNew = [...newHandoverDevices, ...newRetrieveDevices];
+      for (const d of allNew) {
+        if (!d.SerialNumber) {
+          message.warning("Vui lòng nhập Serial Number cho các dòng mới");
+          setLoading(false);
+          return false;
+        }
+        // Validate Store cho Thu Hồi
+        if (d.Type !== "Bàn giao" && !d.Store) {
+          message.warning("Vui lòng chọn Store (Kho/Cửa hàng) cho thiết bị thu hồi!");
+          setLoading(false);
+          return false;
+        }
+      }
+
+      const promisesH = newHandoverDevices.map(d => createDevicesDetailHandover({ ...d, Status: "Đang sử dụng" }));
+      const promisesR = newRetrieveDevices.map(d => createDevicesDetailRetrieve({ ...d, Status: "Thu hồi" }));
+
+      await Promise.all([...promisesH, ...promisesR]);
+
+      message.success("Lưu thiết bị thành công!");
+      setNewHandoverDevices([]);
+      setNewRetrieveDevices([]);
+
+      if (fetchTickets) fetchTickets();
+      if (shouldClose) onClose();
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      message.error("Lỗi khi lưu thiết bị!");
+      return false;
+    } finally {
+      if (shouldClose) setLoading(false);
+    }
+  };
+
+  const handleConfirmTicket = async () => {
+    setLoading(true);
+    const saveSuccess = await handleSaveNewDevices(false);
+
+    if (!saveSuccess) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const ticketId = ticket.documentId || ticket.id;
+      if (!ticketId) {
+        message.error("Lỗi ID phiếu!");
+        return;
+      }
+
+      await updateTicketStatus(ticketId, "Đang chờ duyệt");
+      message.success("Đã gửi phiếu thành công!");
+
+      if (reloadTickets) await reloadTickets();
+      onClose();
+    } catch (error) {
+      console.error("Lỗi gửi phiếu:", error);
+      message.error("Lỗi khi cập nhật trạng thái phiếu!");
     } finally {
       setLoading(false);
     }
@@ -1926,48 +404,49 @@ const TicketModal = ({
   const handleApproveTicket = async () => {
     try {
       setLoading(true);
+      const saved = [...handoverDevicesData, ...retrieveDevicesData];
 
-      const savedDevices = [...handoverDevicesData, ...retrieveDevicesData];
-
-      if (savedDevices.length === 0) {
-        message.warning("Không có thiết bị đã lưu để duyệt.");
+      if (!saved.length) {
+        message.warning("Phiếu trống!");
         setLoading(false);
         return;
       }
 
-      const updatePromises = savedDevices.map((device) => {
-        if (device.isNew) {
-          console.warn(
-            `Bỏ qua thiết bị mới (chưa lưu): ${device.SerialNumber}`
-          );
-          return Promise.resolve(null);
+      let successCount = 0;
+      const key = 'updatable';
+      message.loading({ content: 'Đang xử lý thiết bị 0/' + saved.length, key });
+
+      for (let i = 0; i < saved.length; i++) {
+        const d = saved[i];
+        try {
+          message.loading({ content: `Đang xử lý thiết bị ${i + 1}/${saved.length}...`, key });
+
+          await updateDeviceBySerial(d.SerialNumber, {
+            ...d,
+            DeliveryDate: d.DeliveryDate || null,
+            Status: d.Status,
+            Note: d.Note
+          });
+          successCount++;
+        } catch (err) {
+          console.error(`Lỗi update serial: ${d.SerialNumber}`, err);
         }
-
-        const updatedData = {
-          ...device, // Sửa: đã phẳng, không cần .attributes
-          DeliveryDate: device.DeliveryDate || null,
-          Status: device.Status,
-          Note: device.Note
-        };
-
-        return updateDeviceBySerial(device.SerialNumber, updatedData);
-      });
-
-      await Promise.all(updatePromises);
-
-      await updateTicketStatus(ticket.id, "Đã duyệt");
-
-      message.success("Duyệt phiếu thành công!");
-      if (reloadTickets) {
-        console.log("🔄 Gọi reloadTickets()...");
-        await reloadTickets();
       }
 
-      fetchDevices();
-      onClose();
+      if (successCount === saved.length) {
+        const ticketId = ticket.documentId || ticket.id;
+        await updateTicketStatus(ticketId, "Đã duyệt");
+
+        message.success({ content: "Duyệt phiếu thành công!", key, duration: 2 });
+        if (reloadTickets) await reloadTickets();
+        onClose();
+      } else {
+        message.warning({ content: `Hoàn thành ${successCount}/${saved.length}. Có lỗi xảy ra!`, key, duration: 3 });
+      }
+
     } catch (error) {
       console.error("Lỗi duyệt phiếu:", error);
-      message.error("Lỗi duyệt phiếu.");
+      message.error("Lỗi hệ thống khi duyệt phiếu!");
     } finally {
       setLoading(false);
     }
@@ -1976,936 +455,258 @@ const TicketModal = ({
   const handleReturnTicket = async () => {
     try {
       setLoading(true);
-      await updateTicketStatus(ticket.id, "Đang tạo phiếu");
-      message.success("Phiếu đã được trả về trạng thái 'Đang tạo phiếu'!");
-      if (reloadTickets) {
-        console.log("🔄 Gọi reloadTickets()...");
-        await reloadTickets();
-      }
+      const ticketId = ticket.documentId || ticket.id;
+      await updateTicketStatus(ticketId, "Đang tạo phiếu");
+      message.success("Đã trả phiếu!");
+      if (reloadTickets) await reloadTickets();
       onClose();
-    } catch (error) {
-      message.error("Lỗi khi trả phiếu!");
-    } finally {
-      setLoading(false);
-    }
+    } catch {
+      message.error("Lỗi trả phiếu!");
+    } finally { setLoading(false); }
   };
 
   const handleConfirmAdminTicket = async () => {
     try {
       setLoading(true);
-      await updateTicketStatus(ticket.id, "Đã nhận phiếu");
-      message.success("Phiếu đã được trả về trạng thái 'Đã nhận phiếu'!");
-      if (reloadTickets) {
-        console.log("🔄 Gọi reloadTickets()...");
-        await reloadTickets();
-      }
+      const ticketId = ticket.documentId || ticket.id;
+      await updateTicketStatus(ticketId, "Đã nhận phiếu");
+      message.success("Đã nhận!");
+      if (reloadTickets) await reloadTickets();
       onClose();
-    } catch (error) {
-      message.error("Lỗi khi trả phiếu!");
-    } finally {
-      setLoading(false);
-    }
+    } catch {
+      message.error("Lỗi nhận phiếu!");
+    } finally { setLoading(false); }
   };
 
-  const locationOptions = [
-    "POS01",
-    "POS02",
-    "POS03",
-    "POS04",
-    "POS05",
-    "POS06",
-    "Server",
-    "RACK",
-    "KD01",
-    "KD02",
-    "KP01",
-    "KP02",
-    "KP03",
-    "KP04",
-    "KP05",
-    "AP01",
-    "AP02",
-    "WIFI01",
-    "WIFI02",
-    "Handy01",
-    "Handy02",
-    "Handy03",
-    "Handy04",
-    "Handy05",
-    "Handy06",
-    "Handy07",
-    "Handy08",
-  ];
-  const storeOptions = ["DHG", "FMV", "Kohnan", "Sukiya", "Colowide"];
-  const deviceOptions = [
-    { value: "POS", label: "POS" },
-    { value: "Drawer", label: "Drawer" },
-    { value: "Scanner", label: "Scanner" },
-    { value: "Printer", label: "Printer" },
-    { value: "Keyboard", label: "Keyboard" },
-    { value: "Handy", label: "Handy" },
-    { value: "Switch", label: "Switch" },
-    { value: "Monitor", label: "Monitor" },
-    { value: "UPS", label: "UPS" },
-    { value: "WIFI", label: "WIFI" },
-    { value: "Mouse", label: "Mouse" },
-    { value: "Server", label: "Server" },
-    { value: "Hard Drive", label: "Hard Drive" },
-    { value: "PCC", label: "PCC" },
-    { value: "Laptop", label: "Laptop" },
-    { value: "PDA", label: "PDA" },
-    { value: "KD", label: "KD" },
-    { value: "KP", label: "KP" },
-    { value: "Cisco", label: "Cisco" },
-    { value: "Router", label: "Router" },
-    { value: "AP", label: "AP" },
-    { value: "Firewall", label: "Firewall" },
-    { value: "POE", label: "POE" },
-    { value: "Rack", label: "Rack" },
-    { value: "Arm", label: "Arm" },
-    { value: "Giá treo gỗ", label: "Giá treo gỗ" },
-    { value: "Ổ điện", label: "Ổ điện" },
-  ];
+  // --- Render Table Columns ---
+  const getColumns = (type) => {
+    const isHandover = type === "handover";
+    const currentData = isHandover ? combinedHandoverData : combinedRetrieveData;
+    const commonStyle = { width: "100%" };
 
-  const brandOptions = [
-    { value: "Toshiba", label: "Toshiba" },
-    { value: "Maken", label: "Maken" },
-    { value: "Aida", label: "Aida" },
-    { value: "Datalogic", label: "Datalogic" },
-    { value: "Dell", label: "Dell" },
-    { value: "VSP", label: "VSP" },
-    { value: "Tplink", label: "Tplink" },
-    { value: "Ares", label: "Ares" },
-    { value: "Brother", label: "Brother" },
-    { value: "Canon", label: "Canon" },
-    { value: "Cisco", label: "Cisco" },
-  ];
+    return [
+      {
+        title: "Khách Hàng", dataIndex: "Customer", width: 150,
+        render: (_, r) => r.isNew ? <Input value={r.Customer} onChange={e => handleInputChange(r.id, "Customer", e.target.value, type)} /> : <Text strong>{r.Customer}</Text>
+      },
+      {
+        title: "Số Serial", dataIndex: "SerialNumber", width: 220,
+        render: (_, r) => {
+          const selectedSerials = currentData.filter(d => d.id !== r.id).map(d => d.SerialNumber);
 
-  const userData = JSON.parse(localStorage.getItem("user")) || {};
-  const account = userData?.account || {};
+          let source = isHandover ? handoverInventory : storeInventory;
+          if (!source) source = [];
+
+          const filteredOptions = source.filter(op => !selectedSerials.includes(op.value));
+
+          if (r.isNew || editingRowId === r.id) {
+            return (
+              <AutoComplete
+                options={filteredOptions}
+                style={commonStyle}
+                value={r.SerialNumber || ""}
+                onChange={(val) => handleSerialNumberChange(val, r, type)}
+                placeholder={isHandover ? "Tìm trong kho DHG" : "Tìm tại cửa hàng"}
+                filterOption={(inputValue, option) => {
+                  if (!option || !option.label) return false;
+                  return String(option.label).toUpperCase().includes(inputValue.toUpperCase());
+                }}
+                status={!r.SerialNumber ? "error" : ""}
+                onFocus={() => { }}
+              />
+            );
+          }
+          return <Tag color="blue">{r.SerialNumber}</Tag>;
+        },
+      },
+      {
+        title: "Thiết Bị", dataIndex: "DeviceName", width: 180,
+        render: (_, r) => r.isNew || editingRowId === r.id ? <Select showSearch value={r.DeviceName} style={commonStyle} options={deviceOptions} onChange={(v) => r.isNew ? handleInputChange(r.id, "DeviceName", v, type) : handleSavedInputChange(r.id, "DeviceName", v, type)} /> : r.DeviceName
+      },
+      { title: "Model", dataIndex: "Model", width: 150, render: (_, r) => <Text type="secondary">{r.Model}</Text> },
+      {
+        title: "Vị Trí", dataIndex: "Location", width: 140,
+        render: (_, r) => r.isNew || editingRowId === r.id ? <Select style={commonStyle} value={r.Location} options={locationOptions.map(l => ({ label: l, value: l }))} onChange={(v) => r.isNew ? handleInputChange(r.id, "Location", v, type) : handleSavedInputChange(r.id, "Location", v, type)} /> : <Tag color="cyan">{r.Location}</Tag>
+      },
+      {
+        title: "Tình Trạng", dataIndex: "DeviceStatus", width: 150,
+        render: (_, r) => r.isNew || editingRowId === r.id ? <Select style={commonStyle} value={r.DeviceStatus} options={isHandover ? devicestatusOptions : devicesoldtatusOptions} onChange={(v) => r.isNew ? handleInputChange(r.id, "DeviceStatus", v, type) : handleSavedInputChange(r.id, "DeviceStatus", v, type)} /> : <Tag color={r.DeviceStatus === "Hỏng" ? "red" : "green"}>{r.DeviceStatus}</Tag>
+      },
+      {
+        title: "Ngày Giao", dataIndex: "DeliveryDate", width: 140,
+        render: (_, r) => {
+          const d = r.DeliveryDate ? dayjs(r.DeliveryDate) : null;
+          if (r.isNew || editingRowId === r.id) return <DatePicker value={d} format="DD-MM-YYYY" style={commonStyle} onChange={(date) => { const v = date ? date.format("YYYY-MM-DD") : ""; r.isNew ? handleInputChange(r.id, "DeliveryDate", v, type) : handleSavedInputChange(r.id, "DeliveryDate", v, type) }} />;
+          return d ? d.format("DD-MM-YYYY") : "-";
+        }
+      },
+      {
+        title: "Ghi Chú", dataIndex: "Note", width: 180,
+        render: (_, r) => r.isNew || editingRowId === r.id ? <Input value={r.Note} onChange={(e) => r.isNew ? handleInputChange(r.id, "Note", e.target.value, type) : handleSavedInputChange(r.id, "Note", e.target.value, type)} /> : r.Note
+      },
+      {
+        title: "Store", dataIndex: "Store", width: 120,
+        render: (_, r) => {
+          // Bàn giao (!isHandover): Hiển thị Select và buộc chọn (mặc định rỗng)
+          if (!isHandover && (r.isNew || editingRowId === r.id)) {
+            return (
+              <Select
+                style={commonStyle}
+                value={r.Store}
+                options={storeOptions.map(s => ({ label: s, value: s }))}
+                onChange={(v) => r.isNew ? handleInputChange(r.id, "Store", v, type) : handleSavedInputChange(r.id, "Store", v, type)}
+                placeholder="Chọn kho" // Placeholder quan trọng để user biết cần chọn
+                status={!r.Store ? "warning" : ""} // Viền vàng nếu chưa chọn
+              />
+            );
+          }
+          return r.Store || r.StoreRecall;
+        }
+      },
+      {
+        title: "Thao tác", fixed: "right", width: 110,
+        render: (_, r) => {
+          const canEdit = ticket?.Person === account?.Name && ticket?.Status === "Đang tạo phiếu";
+          if (r.isNew) return <Popconfirm title="Xóa dòng?" onConfirm={() => handleDeleteRow(r.id, type)}><Button type="text" danger icon={<DeleteOutlined />} /></Popconfirm>;
+          if (editingRowId === r.id) return <Space size="small"><Button type="primary" size="small" icon={<CheckOutlined />} onClick={() => handleUpdateRow(r.id, type)} /><Button size="small" icon={<CloseOutlined />} onClick={() => setEditingRowId(null)} /></Space>;
+          return <Space size="small">
+            {canEdit && <Button type="text" icon={<EditOutlined style={{ color: '#1890ff' }} />} onClick={() => setEditingRowId(r.id)} />}
+            {canEdit && <Popconfirm title="Xóa?" onConfirm={() => handleDeleteSavedRow(r.id, type)}><Button type="text" danger icon={<DeleteOutlined />} /></Popconfirm>}
+            <Tooltip title="In Nhãn"><Button type="text" icon={<PrinterOutlined />} onClick={() => { setSelectedDevice(r); type === "handover" ? setIsPrintModalOpenH(true) : setIsPrintModalOpenR(true); }} /></Tooltip>
+          </Space>;
+        }
+      }
+    ];
+  };
 
   return (
     <Modal
-      title="Chi Tiết Phiếu"
       open={isOpen}
       onCancel={onClose}
-      getContainer={document.body}
-      footer={[
-        <Button key="cancel" icon={<CloseOutlined />} onClick={onClose}>
-          Đóng
-        </Button>,
-        account.Leader === true &&
-        ticket?.Status === "Đang chờ duyệt" && ( // Sửa: bỏ .attributes
-          <Button
-            key="return"
-            type="default"
-            danger
-            icon={<RollbackOutlined />}
-            onClick={handleReturnTicket}
-          >
-            Trả Phiếu
-          </Button>
-        ),
-        account.Leader === true &&
-        ticket?.Status === "Đang chờ duyệt" && ( // Sửa: bỏ .attributes
-          <Button
-            key="approve"
-            type="primary"
-            icon={<CheckOutlined />}
-            onClick={handleApproveTicket}
-            style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-          >
-            Duyệt Phiếu
-          </Button>
-        ),
-        ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-        ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-          <Button
-            key="saveNew"
-            type="default"
-            icon={<SaveOutlined />}
-            onClick={handleSaveNewDevices}
-          >
-            Lưu
-          </Button>
-        ),
-        ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-        ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-          <Button
-            key="confirm"
-            type="primary"
-            icon={<FileDoneOutlined />}
-            onClick={handleConfirmTicket}
-            style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-          >
-            Gửi Phiếu
-          </Button>
-        ),
-        account.Receivelist === true &&
-        ticket?.Status === "Đã duyệt" && ( // Sửa: bỏ .attributes
-          <Button
-            key="confirm"
-            type="primary"
-            icon={<CheckCircleOutlined />}
-            onClick={handleConfirmAdminTicket}
-            style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-          >
-            Nhận Phiếu
-          </Button>
-        ),
-        ticket?.Status === "Đang chờ duyệt" && // Sửa: bỏ .attributes
-        ticket?.Person === account?.Name && // Sửa: bỏ .attributes
-        (
-          <Button
-            key="print"
-            type="primary"
-            onClick={() => setPrintVisible(true)}
-          >
-            In Phiếu
-          </Button>
-        ),
-      ]}
-      width="75vw"
-      style={{ maxWidth: "1200px" }}
+      footer={null}
+      width="90vw"
+      style={{ top: 20 }}
+      closable={false}
+      styles={{ content: { padding: 0, borderRadius: 8 } }}
     >
-      <h3>Thiết Bị Bàn Giao</h3>
-      <Table
-        dataSource={combinedHandoverData}
-        rowKey="id"
-        pagination={false}
-        columns={[
-          {
-            title: "Khách Hàng",
-            dataIndex: "Customer",
-            key: "Customer",
-            width: 150,
-            render: (_, record) =>
-              record.isNew ? (
-                <Input
-                  value={record.Customer}
-                  style={{ width: "100%" }}
-                  onChange={(e) =>
-                    handleInputChange(
-                      record.id,
-                      "Customer",
-                      e.target.value,
-                      "handover"
-                    )
-                  }
-                  placeholder="Nhập khách hàng"
-                />
-              ) : (
-                <span>{record.Customer || "-"}</span>
-              ),
-          },
-          {
-            title: "Số Serial",
-            dataIndex: "SerialNumber",
-            key: "SerialNumber",
-            width: 240,
-            render: (_, record) => {
-              const selectedSerials = combinedHandoverData
-                .filter((device) => device.id !== record.id)
-                .map((device) => device.SerialNumber);
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #001529 0%, #0050b3 100%)", padding: "16px 24px", borderRadius: "8px 8px 0 0", display: "flex", justifyContent: "space-between", alignItems: "center", color: "#fff" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <FileDoneOutlined style={{ fontSize: 20 }} />
+          <span style={{ fontSize: 18, fontWeight: 600 }}>Chi Tiết Phiếu: {ticket?.Votes}</span>
+        </div>
+        <CloseOutlined onClick={onClose} style={{ cursor: "pointer", fontSize: 18 }} />
+      </div>
 
-              const filteredOptions = serialNumberOptions.filter(
-                (option) =>
-                  option.Store === "DHG" &&
-                  option.label &&
-                  !selectedSerials.includes(option.value)
-              );
+      {/* Body */}
+      <div style={{ padding: "16px 24px", minHeight: "60vh", background: "#f5f7fa" }}>
+        <Card size="small" bordered={false} style={{ marginBottom: 16, boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+          <Space split={<div style={{ width: 1, height: 16, background: '#e8e8e8' }} />}>
+            <Text strong><InfoCircleOutlined /> Người tạo: <Text type="secondary">{ticket?.Person}</Text></Text>
+            <Text strong>Cửa hàng: <Text type="secondary">{ticket?.Store}</Text></Text>
+            <Text strong>Trạng thái: <Tag color={ticket?.Status === 'Đã duyệt' ? 'green' : 'blue'}>{ticket?.Status}</Tag></Text>
+          </Space>
+        </Card>
 
-              if (record.isNew || editingRowId === record.id) {
-                return (
-                  <div style={{ position: "relative" }}>
-                    <AutoComplete
-                      options={filteredOptions}
-                      style={{ width: "100%", height: "32px" }}
-                      onChange={(value) =>
-                        handleSerialNumberChange(value, record, "handover")
-                      }
-                      value={record.SerialNumber || ""}
-                      placeholder="Nhập số serial"
-                      filterOption={(inputValue, option) => {
-                        const label = option?.label || "";
-                        return label
-                          .toUpperCase()
-                          .includes(inputValue?.toUpperCase() || "");
-                      }}
+        <div style={{ background: "#fff", padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+          <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            type="card"
+            items={[
+              {
+                key: "1",
+                label: <span><ExportOutlined /> Bàn Giao Thiết Bị</span>,
+                children: (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <Table
+                      dataSource={combinedHandoverData}
+                      rowKey="id"
+                      columns={getColumns("handover")}
+                      pagination={false}
+                      size="middle"
+                      bordered
+                      scroll={{ x: 1300, y: 400 }}
                     />
-                    {!record.SerialNumber && (
-                      <span
-                        style={{
-                          position: "absolute",
-                          bottom: "-18px",
-                          left: 0,
-                          color: "red",
-                          fontSize: "12px",
-                        }}
+                    {ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name && (
+                      <Button
+                        type="dashed"
+                        block
+                        onClick={() => handleAddRow("handover")}
+                        style={{ marginTop: 12, borderColor: "#1890ff", color: "#1890ff" }}
+                        icon={<PlusOutlined />}
                       >
-                        * Vui lòng nhập số serial
-                      </span>
+                        Thêm thiết bị bàn giao
+                      </Button>
                     )}
-                  </div>
-                );
-              }
-              return <span>{record.SerialNumber || "-"}</span>;
-            },
-          },
-          {
-            title: "Ngày Giao",
-            dataIndex: "DeliveryDate",
-            key: "DeliveryDate",
-            width: 150,
-            render: (_, record) => {
-              const dateValue = record.DeliveryDate
-                ? dayjs(record.DeliveryDate, "YYYY-MM-DD")
-                : null;
-
-              const handleChange = (date) => {
-                const formattedDate = date ? date.format("YYYY-MM-DD") : "";
-                const handler = record.isNew
-                  ? handleInputChange
-                  : handleSavedInputChange;
-                handler(record.id, "DeliveryDate", formattedDate, "handover");
-              };
-
-              if (record.isNew || editingRowId === record.id) {
-                return (
-                  <Tooltip
-                    title={
-                      record.DeliveryDate
-                        ? `Ngày gốc: ${dayjs(record.DeliveryDate).format(
-                          "DD-MM-YYYY"
-                        )}`
-                        : "Chưa có"
-                    }
-                  >
-                    <DatePicker
-                      value={dateValue}
-                      onChange={handleChange}
-                      format="DD-MM-YYYY"
-                      placeholder="Chọn ngày giao"
-                      size="small"
-                      style={{ width: "100%" }}
-                      disabledDate={(current) =>
-                        current &&
-                        current < dayjs().subtract(1, "month").startOf("day")
-                      }
+                  </motion.div>
+                ),
+              },
+              {
+                key: "2",
+                label: <span><ImportOutlined /> Thu Hồi Thiết Bị</span>,
+                children: (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                    <Table
+                      dataSource={combinedRetrieveData}
+                      rowKey="id"
+                      columns={getColumns("retrieve")}
+                      pagination={false}
+                      size="middle"
+                      bordered
+                      scroll={{ x: 1300, y: 400 }}
                     />
-                  </Tooltip>
-                );
-              }
-              return (
-                <span>
-                  {record.DeliveryDate
-                    ? dayjs(record.DeliveryDate).format("DD-MM-YYYY")
-                    : "-"}
-                </span>
-              );
-            },
-          },
-          {
-            title: "Tên Thiết Bị",
-            dataIndex: "DeviceName",
-            key: "DeviceName",
-            width: 180,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Select
-                  showSearch
-                  value={record.DeviceName || undefined}
-                  style={{ width: "100%" }}
-                  onChange={(value) => {
-                    if (record.isNew) {
-                      handleInputChange(
-                        record.id,
-                        "DeviceName",
-                        value,
-                        "handover"
-                      );
-                    } else {
-                      handleSavedInputChange(
-                        record.id,
-                        "DeviceName",
-                        value,
-                        "handover"
-                      );
-                    }
-                  }}
-                  options={deviceOptions}
-                  placeholder="Chọn thiết bị"
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                />
-              ) : (
-                <span>{record.DeviceName || "-"}</span>
-              ),
-          },
-          {
-            title: "Thương Hiệu",
-            dataIndex: "BrandName",
-            key: "BrandName",
-            width: 150,
-            render: (_, record) => <span>{record.BrandName || "-"}</span>,
-          },
-          {
-            title: "Model",
-            dataIndex: "Model",
-            key: "Model",
-            width: 220,
-            render: (_, record) => <span>{record.Model || "-"}</span>,
-          },
-          {
-            title: "Cửa Hàng",
-            dataIndex: "Store",
-            key: "Store",
-            width: 150,
-            render: (_, record) => <span>{record.Store || "-"}</span>,
-          },
-          {
-            title: "Vị Trí",
-            dataIndex: "Location",
-            key: "Location",
-            width: 150,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Select
-                  style={{ width: "100%" }}
-                  value={record.Location || null}
-                  onChange={(value) => {
-                    const handler = record.isNew
-                      ? handleInputChange
-                      : handleSavedInputChange;
-                    handler(record.id, "Location", value, "handover");
-                  }}
-                  options={locationOptions.map((loc) => ({
-                    value: loc,
-                    label: loc,
-                  }))}
-                  placeholder="Chọn vị trí"
-                />
-              ) : (
-                <span>{record.Location || "-"}</span>
-              ),
-          },
-          {
-            title: "Trạng Thái",
-            dataIndex: "Status",
-            key: "Status",
-            width: 150,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Select
-                  style={{ width: "100%" }}
-                  value={record.Status || "Đang sử dụng"}
-                  onChange={(value) => {
-                    const handler = record.isNew
-                      ? handleInputChange
-                      : handleSavedInputChange;
-                    handler(record.id, "Status", value, "handover");
-                  }}
-                  options={statusOptions}
-                  placeholder="Chọn trạng thái"
-                />
-              ) : (
-                <span>{record.Status || "Đang sử dụng"}</span>
-              ),
-          },
-          {
-            title: "Tình trạng",
-            dataIndex: "DeviceStatus",
-            key: "DeviceStatus",
-            width: 150,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Select
-                  style={{ width: "100%" }}
-                  value={record.DeviceStatus}
-                  onChange={(value) => {
-                    const handler = record.isNew
-                      ? handleInputChange
-                      : handleSavedInputChange;
-                    handler(record.id, "DeviceStatus", value, "handover");
-                  }}
-                  options={devicestatusOptions}
-                  placeholder="Chọn trạng thái"
-                />
-              ) : (
-                <span>{record.DeviceStatus}</span>
-              ),
-          },
-          {
-            title: "Ghi Chú",
-            dataIndex: "Note",
-            key: "Note",
-            width: 200,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Input
-                  value={record.Note || ""}
-                  onChange={(e) => {
-                    const handler = record.isNew
-                      ? handleInputChange
-                      : handleSavedInputChange;
-                    handler(record.id, "Note", e.target.value, "handover");
-                  }}
-                  style={{ width: "100%" }}
-                  placeholder="Nhập ghi chú"
-                />
-              ) : (
-                <span>{record.Note || "-"}</span>
-              ),
-          },
-          {
-            title: "Số Phiếu",
-            dataIndex: "Votes",
-            key: "Votes",
-            width: 180,
-            render: (_, record) => <span>{record.Votes || "-"}</span>,
-          },
-          {
-            title: "Hành động",
-            key: "action",
-            render: (_, record) => {
-              const isCreator = ticket?.Person === account?.Name; // Sửa: bỏ .attributes
-              const isPending = ticket?.Status === "Đang tạo phiếu"; // Sửa: bỏ .attributes
-              const canDelete = isCreator && isPending;
-
-              if (record.isNew) {
-                return canDelete ? (
-                  <Popconfirm
-                    title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-                    onConfirm={() => handleDeleteRow(record.id, "handover")}
-                    okText="Có"
-                    cancelText="Không"
-                  >
-                    <Button type="danger" icon={<DeleteOutlined />} />
-                  </Popconfirm>
-                ) : null;
-              } else {
-                if (editingRowId === record.id) {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "5px",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {ticket?.Status === "Đang tạo phiếu" && ( // Sửa: bỏ .attributes
-                        <Button
-                          type="primary"
-                          onClick={() => handleUpdateRow(record.id, "handover")}
-                        >
-                          Lưu
-                        </Button>
-                      )}
-                      <Button onClick={() => setEditingRowId(null)}>Hủy</Button>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "5px",
-                        justifyContent: "center",
-                      }}
-                    >
+                    {ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name && (
                       <Button
-                        type="default"
-                        icon={<EditOutlined style={{ color: "#1890ff" }} />}
-                        onClick={() => setEditingRowId(record.id)}
-                      />
-                      {canDelete && (
-                        <Popconfirm
-                          title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-                          onConfirm={() =>
-                            handleDeleteSavedRow(record.id, "handover")
-                          }
-                          okText="Có"
-                          cancelText="Không"
-                        >
-                          <Button type="danger" icon={<DeleteOutlined />} />
-                        </Popconfirm>
-                      )}
-                      <Button
-                        type="primary"
-                        icon={<PrinterOutlined />}
-                        onClick={() => {
-                          console.log("Record:", record);
-                          setSelectedDevice(record);
-                          setIsPrintModalOpenH(true);
-                        }}
+                        type="dashed"
+                        block
+                        onClick={() => handleAddRow("retrieve")}
+                        style={{ marginTop: 12, borderColor: "#ff4d4f", color: "#ff4d4f" }}
+                        icon={<PlusOutlined />}
                       >
-                        In Nhãn
+                        Thêm thiết bị thu hồi
                       </Button>
-                    </div>
-                  );
-                }
-              }
-            },
-            width: 120,
-          },
-        ]}
-        scroll={{ x: "max-content" }}
-      />
-      {ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-        ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-          <Button
-            type="dashed"
-            onClick={() => handleAddRow("handover")}
-            style={{ marginTop: 10, marginLeft: 10 }}
-          >
-            ➕ Thêm Hàng (Bàn giao)
-          </Button>
+                    )}
+                  </motion.div>
+                ),
+              },
+            ]}
+          />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: "16px 24px", borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "flex-end", gap: 12, background: "#fff", borderRadius: "0 0 8px 8px" }}>
+        <Button key="cancel" onClick={onClose}>Đóng</Button>
+
+        {ticket?.Status === "Đang chờ duyệt" && ticket?.Person === account?.Name && (
+          <Button key="print" icon={<PrinterOutlined />} onClick={() => setPrintVisible(true)}>In Phiếu</Button>
         )}
 
-      <h3 style={{ marginTop: 20 }}>Thiết Bị Thu Hồi</h3>
-      <Table
-        dataSource={combinedRetrieveData}
-        rowKey="id"
-        pagination={false}
-        columns={[
-          {
-            title: "Khách Hàng",
-            dataIndex: "Customer",
-            key: "Customer",
-            width: 150,
-            render: (_, record) =>
-              record.isNew ? (
-                <Input
-                  value={record.Customer}
-                  style={{ width: "100%" }}
-                  onChange={(e) =>
-                    handleInputChange(
-                      record.id,
-                      "Customer",
-                      e.target.value,
-                      "retrieve"
-                    )
-                  }
-                />
-              ) : (
-                <span>{record.Customer || "-"}</span>
-              ),
-          },
-          {
-            title: "Số Serial",
-            dataIndex: "SerialNumber",
-            key: "SerialNumber",
-            width: 240,
-            render: (_, record) => {
-              const selectedSerials = combinedRetrieveData
-                .filter((device) => device.id !== record.id)
-                .map((device) => device.SerialNumber);
-
-              const filteredOptions = serialNumberOptions.filter(
-                (option) =>
-                  option.Store === ticket?.Store && // Sửa: bỏ .attributes
-                  option.label &&
-                  !selectedSerials.includes(option.value)
-              );
-
-              const isEditing = editingRowId === record.id;
-
-              return record.isNew || isEditing ? (
-                <div style={{ position: "relative" }}>
-                  <AutoComplete
-                    options={filteredOptions}
-                    style={{ width: "100%" }}
-                    onChange={(value) =>
-                      handleSerialNumberChange(value, record, "retrieve")
-                    }
-                    value={record.SerialNumber || ""}
-                    placeholder="Nhập số serial"
-                    filterOption={(inputValue, option) => {
-                      const label = option?.label || "";
-                      return label
-                        .toUpperCase()
-                        .includes(inputValue?.toUpperCase() || "");
-                    }}
-                  />
-                  {!record.SerialNumber && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        bottom: "-18px",
-                        left: 0,
-                        color: "red",
-                        fontSize: "12px",
-                      }}
-                    >
-                      * Vui lòng nhập số serial
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <span>{record.SerialNumber || "-"}</span>
-              );
-            },
-          },
-          {
-            title: "Ngày Giao",
-            dataIndex: "DeliveryDate",
-            key: "DeliveryDate",
-            width: 150,
-            render: (_, record) => <span>{record.DeliveryDate || "-"}</span>,
-          },
-          {
-            title: "Tên Thiết Bị",
-            dataIndex: "DeviceName",
-            key: "DeviceName",
-            width: 180,
-            render: (_, record) => <span>{record.DeviceName || "-"}</span>,
-          },
-          {
-            title: "Thương Hiệu",
-            dataIndex: "BrandName",
-            key: "BrandName",
-            width: 150,
-            render: (_, record) => <span>{record.BrandName || "-"}</span>,
-          },
-          {
-            title: "Model",
-            dataIndex: "Model",
-            key: "Model",
-            width: 220,
-            render: (_, record) => <span>{record.Model || "-"}</span>,
-          },
-          {
-            title: "Cửa Hàng",
-            dataIndex: "StoreRecall",
-            key: "StoreRecall",
-            width: 150,
-            render: (_, record) => <span>{record.StoreRecall || "-"}</span>,
-          },
-          {
-            title: "Vị Trí",
-            dataIndex: "Location",
-            key: "Location",
-            width: 150,
-            render: (_, record) => <span>{record.Location || "-"}</span>,
-          },
-          {
-            title: "Trạng Thái",
-            dataIndex: "Status",
-            key: "Status",
-            width: 150,
-            render: () => <span>Thu hồi</span>,
-          },
-          {
-            title: "Tình trạng",
-            dataIndex: "DeviceStatus",
-            key: "DeviceStatus",
-            width: 170,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Select
-                  style={{ width: "100%" }}
-                  value={record.DeviceStatus}
-                  onChange={(value) => {
-                    const handler = record.isNew
-                      ? handleInputChange
-                      : handleSavedInputChange;
-                    handler(record.id, "DeviceStatus", value, "retrieve");
-                  }}
-                  options={devicesoldtatusOptions}
-                  placeholder="Chọn trạng thái"
-                />
-              ) : (
-                <span>{record.DeviceStatus}</span>
-              ),
-          },
-          {
-            title: "Ghi Chú",
-            dataIndex: "Note",
-            key: "Note",
-            width: 200,
-            render: (_, record) =>
-              record.isNew || editingRowId === record.id ? (
-                <Input
-                  value={record.Note || ""}
-                  onChange={(e) => {
-                    const handler = record.isNew
-                      ? handleInputChange
-                      : handleSavedInputChange;
-                    handler(record.id, "Note", e.target.value, "retrieve");
-                  }}
-                  style={{ width: "100%" }}
-                  placeholder="Nhập ghi chú"
-                />
-              ) : (
-                <span>{record.Note || "-"}</span>
-              ),
-          },
-          {
-            title: "Số Phiếu",
-            dataIndex: "Votes",
-            key: "Votes",
-            width: 180,
-            render: (_, record) => <span>{record.Votes || "-"}</span>,
-          },
-
-          {
-            title: "Vị trí nhận",
-            dataIndex: "Store",
-            key: "Store",
-            width: 150,
-            render: (_, record) => {
-              if (record.isNew) {
-                // 👉 Row mới: Select trống, user phải chọn
-                return (
-                  <Select
-                    style={{ width: "100%" }}
-                    value={undefined}
-                    onChange={(value) =>
-                      handleInputChange(record.id, "Store", value, "retrieve")
-                    }
-                    options={storeOptions.map((loc) => ({
-                      value: loc,
-                      label: loc,
-                    }))}
-                    placeholder="Chọn vị trí"
-                  />
-                );
-              }
-
-              if (editingRowId === record.id) {
-                // 👉 Row đang edit: cho phép đổi giá trị
-                return (
-                  <Select
-                    style={{ width: "100%" }}
-                    value={record.Store}
-                    onChange={(value) =>
-                      handleSavedInputChange(
-                        record.id,
-                        "Store",
-                        value,
-                        "retrieve"
-                      )
-                    }
-                    options={storeOptions.map((loc) => ({
-                      value: loc,
-                      label: loc,
-                    }))}
-                  />
-                );
-              }
-
-              // 👉 Row bình thường: chỉ text
-              return <span>{record.Store || "-"}</span>;
-            },
-          },
-          {
-            title: "Hành động",
-            key: "action",
-            render: (_, record) => {
-              const isCreator = ticket?.Person === account?.Name; // Sửa: bỏ .attributes
-              const isPending = ticket?.Status === "Đang tạo phiếu"; // Sửa: bỏ .attributes
-              const canDelete = isCreator && isPending;
-
-              if (record.isNew) {
-                return canDelete ? (
-                  <Popconfirm
-                    title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-                    onConfirm={() => handleDeleteRow(record.id, "retrieve")}
-                    okText="Có"
-                    cancelText="Không"
-                  >
-                    <Button type="danger" icon={<DeleteOutlined />} />
-                  </Popconfirm>
-                ) : null;
-              } else {
-                if (editingRowId === record.id) {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "5px",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {ticket?.Status === "Đang tạo phiếu" && ( // Sửa: bỏ .attributes
-                        <Button
-                          type="primary"
-                          onClick={() => handleUpdateRow(record.id, "retrieve")}
-                        >
-                          Lưu
-                        </Button>
-                      )}
-                      <Button onClick={() => setEditingRowId(null)}>Hủy</Button>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: "5px",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Button
-                        type="default"
-                        icon={<EditOutlined style={{ color: "#1890ff" }} />}
-                        onClick={() => setEditingRowId(record.id)}
-                      />
-                      {canDelete && (
-                        <Popconfirm
-                          title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-                          onConfirm={() =>
-                            handleDeleteSavedRow(record.id, "retrieve")
-                          }
-                          okText="Có"
-                          cancelText="Không"
-                        >
-                          <Button type="danger" icon={<DeleteOutlined />} />
-                        </Popconfirm>
-                      )}
-                      <Button
-                        type="primary"
-                        icon={<PrinterOutlined />}
-                        onClick={() => {
-                          console.log("Record:", record);
-                          setSelectedDevice(record);
-                          setIsPrintModalOpenR(true);
-                        }}
-                      >
-                        In Nhãn
-                      </Button>
-                    </div>
-                  );
-                }
-              }
-            },
-            width: 120,
-          },
-        ]}
-        scroll={{ x: "max-content" }}
-      />
-      {ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-        ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-          <Button
-            type="dashed"
-            onClick={() => handleAddRow("retrieve")}
-            style={{ marginTop: 10, marginLeft: 10 }}
-          >
-            ➕ Thêm Hàng (Thu hồi)
-          </Button>
+        {account.Leader && ticket?.Status === "Đang chờ duyệt" && (
+          <>
+            <Button danger icon={<RollbackOutlined />} onClick={handleReturnTicket}>Trả Phiếu</Button>
+            <Button type="primary" style={{ background: "#52c41a", borderColor: "#52c41a" }} icon={<CheckOutlined />} onClick={handleApproveTicket}>Duyệt Phiếu</Button>
+          </>
         )}
+
+        {account.Receivelist && ticket?.Status === "Đã duyệt" && (
+          <Button type="primary" icon={<CheckCircleOutlined />} onClick={handleConfirmAdminTicket}>Nhận Phiếu</Button>
+        )}
+
+        {ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name && (
+          <>
+            <Button icon={<SaveOutlined />} onClick={handleSaveNewDevices} loading={loading}>Lưu Nháp</Button>
+            <Button type="primary" icon={<FileDoneOutlined />} onClick={handleConfirmTicket} loading={loading}>Gửi Phiếu</Button>
+          </>
+        )}
+      </div>
+
+      {/* Modals In */}
       <PrintTicketModal
         isOpen={printVisible}
         onClose={() => setPrintVisible(false)}
-        ticket={ticket || {}} // Sửa: bỏ attributes rỗng
+        ticket={ticket || {}}
         handoverDevices={handoverDevicesData || []}
         retrieveDevices={retrieveDevicesData || []}
         autoPrint={true}
