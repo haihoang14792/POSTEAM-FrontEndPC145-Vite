@@ -3,7 +3,8 @@ import { toast } from "react-toastify";
 
 // Set config defaults when creating the instance
 const strapiInstance = axios.create({
-  baseURL: import.meta.env.VITE_STRAPI_UR || "http://113.161.81.49:1338",
+  // baseURL: import.meta.env.VITE_STRAPI_URL || "http://113.161.81.49:1338",
+  baseURL: import.meta.env.VITE_STRAPI_URL,
   headers: {
     "Content-Type": "application/json",
   },

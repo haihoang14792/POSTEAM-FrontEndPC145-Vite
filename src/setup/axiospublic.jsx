@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 // Set config defaults when creating the instance
 const strapi = axios.create({
-  baseURL: import.meta.env.VITE_STRAPI_UR || "http://113.161.81.49:1338", // Dùng biến môi trường hoặc fallback URL
+  baseURL: import.meta.env.VITE_STRAPI_URL, // Dùng biến môi trường hoặc fallback URL
 });
 
 strapi.defaults.withCredentials = true;
