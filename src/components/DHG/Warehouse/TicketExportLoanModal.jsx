@@ -1127,6 +1127,40 @@ const TicketExportLoanModal = ({
 
   // --- COLUMNS CONFIGURATION ---
   const columns = [
+    // {
+    //   title: "Tên Thiết Bị",
+    //   dataIndex: "ProductName",
+    //   key: "ProductName",
+    //   width: 250,
+    //   render: (_, record) => record.isNew ? (
+    //     <Select
+    //       showSearch
+    //       value={record.ProductName || undefined}
+    //       style={{ width: "100%" }}
+    //       placeholder="Chọn thiết bị"
+    //       onChange={(value) => handleProductChange(record.id, value)}
+    //       options={Array.from(new Set(exportList.filter(item => item.Status === "Đang mượn").map(item => item.ProductName)))
+    //         .sort().map(name => ({ value: name, label: name }))}
+    //       filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+    //     />
+    //   ) : <span style={{ fontWeight: 600, color: '#1890ff' }}>{record.ProductName}</span>,
+    // },
+    // {
+    //   title: "Model",
+    //   dataIndex: "Model",
+    //   key: "Model",
+    //   width: 200,
+    //   render: (_, record) => record.isNew ? (
+    //     <Select
+    //       showSearch
+    //       value={record.Model || undefined}
+    //       style={{ width: "100%" }}
+    //       placeholder="Model"
+    //       onChange={(value) => handleModelChange(record.id, value)}
+    //       options={(record.availableModels || []).map(model => ({ value: model, label: model }))}
+    //     />
+    //   ) : <span>{record.Model}</span>,
+    // },
     {
       title: "Tên Thiết Bị",
       dataIndex: "ProductName",
@@ -1157,7 +1191,22 @@ const TicketExportLoanModal = ({
           style={{ width: "100%" }}
           placeholder="Model"
           onChange={(value) => handleModelChange(record.id, value)}
-          options={(record.availableModels || []).map(model => ({ value: model, label: model }))}
+          // --- BẮT ĐẦU SỬA ĐỔI TẠI ĐÂY ---
+          options={(record.availableModels || [])
+            .filter((model) => {
+              // 1. Lấy danh sách tất cả các Model đang có trong bảng (cả cũ và mới)
+              // 2. Loại trừ dòng hiện tại (record.id) để không tự ẩn chính nó khi đang chọn lại
+              const usedModels = combinedExportLoanData
+                .filter((r) => r.id !== record.id)
+                .map((r) => r.Model)
+                .filter(Boolean); // Lọc bỏ giá trị rỗng/null
+
+              // 3. Chỉ trả về những model CHƯA có trong danh sách usedModels
+              return !usedModels.includes(model);
+            })
+            .map((model) => ({ value: model, label: model }))
+          }
+        // --- KẾT THÚC SỬA ĐỔI ---
         />
       ) : <span>{record.Model}</span>,
     },
