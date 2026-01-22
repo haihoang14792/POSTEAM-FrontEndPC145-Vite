@@ -1,4922 +1,4 @@
-// import Draggable from "react-draggable";
-// import React, { useState, useEffect } from "react";
-// import {
-//   Modal,
-//   Button,
-//   Input,
-//   Table,
-//   message,
-//   Select,
-//   Popconfirm,
-//   InputNumber,
-// } from "antd";
-// import {
-//   createExportLoanPOS,
-//   fetchExportLoanPOS,
-//   deleteExportLoanPOS,
-//   updateExportLoanTicket,
-//   fetchExportlists,
-//   updateExportLoanPOS,
-//   updateExportlistsSerial,
-//   updateExportLoanTicketPersonInvoice,
-//   createImportDeviceServices,
-//   updateExportLoanTicketInvoice,
-//   fetchWarehouseDetails,
-//   updateWarehouseDetails,
-//   updateExportLoanTicketv1,
-// } from "../../../services/dhgServices";
-// import PrintTicketExportLoan from "./PrintTicketExportLoan"; // Import modal con
-// import ExportInvoiceModal from "./ExportInvoiceModal";
-// import { Spin } from "antd";
-// import {
-//   EditOutlined,
-//   DeleteOutlined,
-//   CloseOutlined,
-//   SafetyCertificateTwoTone,
-//   MinusCircleTwoTone,
-//   SaveTwoTone,
-//   FileAddTwoTone,
-//   CalculatorTwoTone,
-//   WarningTwoTone,
-//   CheckSquareTwoTone,
-//   LeftSquareTwoTone,
-//   LeftCircleTwoTone,
-//   ReconciliationTwoTone,
-//   CheckCircleTwoTone,
-//   PrinterTwoTone,
-// } from "@ant-design/icons"; // PrinterOutlined
-
-// const TicketExportLoanModal = ({
-//   isOpen,
-//   onClose,
-//   ticket,
-//   fetchDevices,
-//   fetchTickets,
-//   reloadTickets,
-//   serialNumberOptions = [],
-// }) => {
-//   const [disabled, setDisabled] = useState(false); // Điều khiển việc kéo modal
-//   const [loading, setLoading] = useState(false);
-
-//   //const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
-
-//   // Dữ liệu đã lưu từ API
-//   const [exportLoanData, setExportLoanData] = useState([]);
-
-//   // Dữ liệu mới thêm vào (chưa lưu)
-//   const [newExportLoans, setNewExportLoans] = useState([]);
-
-//   const [exportList, setExportList] = useState([]); // Danh sách thiết bị từ API fetchExportlists
-
-//   // State quản lý dòng đang được chỉnh sửa (cho các dòng đã lưu)
-//   const [editingRowId, setEditingRowId] = useState(null);
-
-//   const [printVisible, setPrintVisible] = useState(false);
-
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [invoiceNumber, setInvoiceNumber] = useState("");
-
-//   useEffect(() => {
-//     fetchExportlists().then((response) => {
-//       setExportList(response.data); // Lưu danh sách thiết bị vào state
-//     });
-//   }, []);
-
-//   // Khi modal mở và có ticket, fetch dữ liệu từ API
-//   useEffect(() => {
-//     if (isOpen && ticket?.attributes?.Votes) {
-//       console.log("Ticket value:", ticket.attributes.Votes);
-//       // Fetch bàn giao
-//       fetchExportLoanPOS(ticket.attributes.Votes)
-//         .then((responseData) => {
-//           console.log("Response Handover API:", responseData);
-//           const devices =
-//             responseData && responseData.data
-//               ? responseData.data.map((item) => ({
-//                 id: item.id,
-//                 ...item.attributes,
-//               }))
-//               : Array.isArray(responseData)
-//                 ? responseData.map((item) => ({
-//                   id: item.id,
-//                   ...item.attributes,
-//                 }))
-//                 : [];
-//           console.log("Mapped exportloan devices:", devices);
-//           setExportLoanData(devices);
-//         })
-//         .catch((error) => {
-//           console.error("Lỗi tải thiết bị bàn giao:", error);
-//           message.error("Lỗi tải thiết bị bàn giao.");
-//         });
-//     }
-//   }, [isOpen, ticket?.attributes?.Votes]);
-
-//   // Reset state khi modal đóng
-//   useEffect(() => {
-//     if (!isOpen) {
-//       setExportLoanData([]);
-//       setNewExportLoans([]);
-//       setEditingRowId(null);
-//     }
-//   }, [isOpen]);
-
-//   // Kết hợp dữ liệu hiển thị
-//   const combinedExportLoanData = [...exportLoanData, ...newExportLoans];
-
-//   // Hàm thêm dòng mới
-//   const handleAddRow = (type) => {
-//     if (!ticket) {
-//       message.error("Vui lòng chọn phiếu trước khi thêm thiết bị!");
-//       return;
-//     }
-
-//     // Lấy trực tiếp tên từ account
-//     const newDevice = {
-//       id: Date.now(), // id tạm thời
-//       ProductName: ticket.attributes.ProductName || "",
-//       Model: "",
-//       BrandName: "",
-//       DVT: "",
-//       TypeKho: "",
-//       totalexport: "",
-//       SerialNumber: "",
-//       Ticket: ticket.attributes.Ticket,
-//       Votes: ticket.attributes.Votes,
-//       NameExportLoan: account?.Name || "", // GÁN TRỰC TIẾP TỪ account
-//       Status: "",
-//       Note: "",
-//       Type: "",
-//       isNew: true,
-//     };
-
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) => [...prev, newDevice]);
-//     }
-//   };
-
-//   // Hàm cập nhật giá trị cho dòng mới (dành cho new rows)
-//   const handleInputChange = (id, field, value, type) => {
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) =>
-//         prev.map((device) =>
-//           device.id === id ? { ...device, [field]: value } : device
-//         )
-//       );
-//     }
-//   };
-
-//   // Hàm xóa dòng mới (chỉ áp dụng cho new rows)
-//   const handleDeleteRow = (id, type) => {
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) => prev.filter((device) => device.id !== id));
-//     }
-//   };
-
-//   // Hàm cập nhật một dòng đã lưu (sửa saved row)
-//   const handleUpdateRow = async (id, type) => {
-//     let device;
-//     if (type === "exportloan") {
-//       device = exportLoanData.find((d) => d.id === id);
-//     }
-//     if (!device || !device.SerialNumber) {
-//       message.warning("Thiết bị không hợp lệ để cập nhật.");
-//       return;
-//     }
-//     try {
-//       setLoading(true);
-//       // Giả sử updateDeviceBySerial cập nhật dựa trên SerialNumber
-//       //  await updateDeviceBySerial(device.SerialNumber, device, [device]);
-//       message.success("Cập nhật thiết bị thành công!");
-//       setEditingRowId(null);
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật thiết bị:", error);
-//       message.error("Lỗi khi cập nhật thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSaveAndUpdateExportlists = async () => {
-//     try {
-//       const newDevices = [...newExportLoans];
-
-//       // ✅ Bước 1: Kiểm tra toàn bộ trước khi xử lý
-//       const invalidDevices = newDevices.filter(
-//         (device) =>
-//           device.Type !== "Vật tư" && // Chỉ check thiết bị
-//           (!device.SerialNumber ||
-//             (Array.isArray(device.SerialNumber) &&
-//               device.SerialNumber.length === 0) ||
-//             (typeof device.SerialNumber === "string" &&
-//               device.SerialNumber.trim() === ""))
-//       );
-
-//       if (invalidDevices.length > 0) {
-//         const names = invalidDevices
-//           .map((d) => `${d.ProductName} - ${d.Model}`)
-//           .join(", ");
-//         message.error(`Các thiết bị sau chưa nhập SerialNumber: ${names}`);
-//         throw new Error("Thiếu SerialNumber"); // ❌ Dừng toàn bộ
-//       }
-
-//       // ✅ Bước 2: Nếu tất cả ok thì mới lưu
-//       await handleSaveNewDevices();
-
-//       // ✅ Bước 3: Bắt đầu cập nhật exportlists
-//       for (const device of newDevices) {
-//         const matchingExportItems = exportList.filter(
-//           (item) =>
-//             item.attributes.ProductName === device.ProductName &&
-//             item.attributes.Model === device.Model &&
-//             item.attributes.TypeKho === device.TypeKho &&
-//             item.attributes.Status === "Đang mượn"
-//         );
-
-//         for (const exportListItem of matchingExportItems) {
-//           const exportListId = exportListItem.id;
-
-//           // --- Lấy Serial cũ ---
-//           const oldSerialArray = (exportListItem.attributes.SerialNumber || "")
-//             .split(",")
-//             .map((sn) => sn.trim())
-//             .filter(Boolean);
-
-//           // --- Serial từ phiếu xuất ---
-//           const deviceSerials = Array.isArray(device.SerialNumber)
-//             ? device.SerialNumber
-//             : (device.SerialNumber || "")
-//               .split(",")
-//               .map((sn) => sn.trim())
-//               .filter(Boolean);
-
-//           // --- Xác định Serial nào được xuất ---
-//           const usedSerials = deviceSerials.filter((sn) =>
-//             oldSerialArray.includes(sn)
-//           );
-//           if (usedSerials.length === 0) continue;
-
-//           // --- Serial còn lại ---
-//           const newSerialArray = oldSerialArray.filter(
-//             (sn) => !usedSerials.includes(sn)
-//           );
-//           const newSerialString = newSerialArray.join(",");
-
-//           // --- SerialLoan ---
-//           const oldSerialLoanArray = (
-//             exportListItem.attributes.SerialNumberLoan || ""
-//           )
-//             .split(",")
-//             .map((sn) => sn.trim())
-//             .filter(Boolean);
-//           const newSerialLoanArray = Array.from(
-//             new Set([...oldSerialLoanArray, ...usedSerials])
-//           );
-//           const newSerialLoanString = newSerialLoanArray.join(",");
-
-//           // --- Số lượng ---
-//           const oldQuantity = exportListItem.attributes.totalexport ?? 0;
-//           const newTotalExport = Math.max(0, oldQuantity - usedSerials.length);
-
-//           const oldLoanQuantity =
-//             exportListItem.attributes.totalexportLoan ?? 0;
-//           const newTotalExportLoan = oldLoanQuantity + usedSerials.length;
-
-//           // --- Update API ---
-//           await updateExportlistsSerial(
-//             exportListId,
-//             newSerialString,
-//             newSerialLoanString,
-//             newTotalExport,
-//             newTotalExportLoan
-//           );
-
-//           // --- Update state ---
-//           setExportList((prev) =>
-//             prev.map((item) =>
-//               item.id === exportListId
-//                 ? {
-//                   ...item,
-//                   attributes: {
-//                     ...item.attributes,
-//                     SerialNumber: newSerialString,
-//                     SerialNumberLoan: newSerialLoanString,
-//                     totalexport: newTotalExport,
-//                     totalexportLoan: newTotalExportLoan,
-//                   },
-//                 }
-//                 : item
-//             )
-//           );
-//         }
-//       }
-
-//       message.success(
-//         "Lưu thiết bị thành công và đã cập nhật exportlists (Serial + Số lượng)!"
-//       );
-//     } catch (error) {
-//       console.error("Lỗi khi lưu thiết bị và cập nhật exportlists:", error);
-//       message.error("Đã có lỗi xảy ra khi lưu và cập nhật.");
-//       throw error; // ❗ Quan trọng: để nút 'Gửi phiếu' biết dừng
-//     }
-//   };
-
-//   const handleSaveNewDevices = async () => {
-//     setLoading(true);
-//     try {
-//       const newDevices = [...newExportLoans];
-//       // Danh sách các trường bắt buộc (SerialNumber chỉ bắt buộc nếu không phải Vật tư)
-//       const requiredFields = [
-//         "ProductName",
-//         "Model",
-//         "BrandName",
-//         "TypeKho",
-//         "totalexport",
-//       ];
-
-//       // Kiểm tra từng thiết bị mới
-//       for (const device of newDevices) {
-//         for (const field of requiredFields) {
-//           if (!device[field] || device[field].toString().trim() === "") {
-//             message.warning(`Vui lòng điền đầy đủ trường cho tất cả các hàng.`);
-//             setLoading(false);
-//             return;
-//           }
-//         }
-
-//         // Nếu không phải vật tư thì SerialNumber bắt buộc
-//         if (
-//           device.Type !== "Vật tư" &&
-//           (!device.SerialNumber || device.SerialNumber.toString().trim() === "")
-//         ) {
-//           message.warning(
-//             `SerialNumber là bắt buộc cho các thiết bị không phải vật tư.`
-//           );
-//           setLoading(false);
-//           return;
-//         }
-//       }
-
-//       // Nếu validation thành công, tiếp tục gọi API lưu cho từng nhóm
-//       const exportloanPromises = newExportLoans
-//         .filter((device) => device.Type === "Vật tư" || device.SerialNumber) // Vật tư không cần SerialNumber
-//         .map((device) => {
-//           const deviceData = {
-//             ...device,
-//             SerialNumber:
-//               device.Type === "Vật tư"
-//                 ? ""
-//                 : Array.isArray(device.SerialNumber)
-//                   ? device.SerialNumber.join(",").trim()
-//                   : device.SerialNumber,
-//             Votes: ticket.attributes?.Votes || "",
-//             Ticket: ticket.attributes?.Ticket || "",
-//             Status: device.Status || "Đang chờ duyệt",
-//           };
-//           console.log("Payload exportloan deviceData:", deviceData);
-//           return createExportLoanPOS(deviceData);
-//         });
-
-//       await Promise.all([...exportloanPromises]);
-//       message.success("Lưu thiết bị thành công!");
-//       onClose();
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi lưu thiết bị:", error);
-//       message.error("Lỗi khi lưu thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleDeleteSavedRow = async (id, type) => {
-//     try {
-//       setLoading(true);
-//       if (type === "exportloan") {
-//         await deleteExportLoanPOS(id);
-//         // Cập nhật state của dữ liệu đã lưu cho bàn giao
-//         setExportLoanData((prev) => prev.filter((device) => device.id !== id));
-//       }
-//       message.success("Đã xóa thiết bị thành công!");
-//     } catch (error) {
-//       console.error("Lỗi khi xóa thiết bị đã lưu:", error);
-//       message.error("Lỗi khi xóa thiết bị đã lưu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicketAndUpdateDevices = async () => {
-//     try {
-//       await handleApproveTicket(); // 1. Duyệt phiếu
-
-//       const savedDevices = [...exportLoanData]; // 2. Dữ liệu từ phiếu
-//       if (savedDevices.length === 0) return;
-
-//       // 3. Cập nhật trạng thái thiết bị
-//       await Promise.all(
-//         savedDevices.map((device) => updateExportLoanPOS(device.id, "Duyệt"))
-//       );
-
-//       // 4. Cập nhật kho theo danh sách thiết bị
-//       await updateWarehouseFromDevices(savedDevices);
-
-//       message.success("✅ Thiết bị và kho đã được cập nhật!");
-//     } catch (error) {
-//       console.error("❌ Lỗi khi duyệt phiếu và cập nhật kho:", error);
-//       message.error("Đã có lỗi xảy ra khi cập nhật.");
-//     }
-//   };
-
-//   const updateWarehouseFromDevices = async (devices) => {
-//     try {
-//       const warehouseResponse = await fetchWarehouseDetails();
-//       const warehouseList = warehouseResponse.data;
-
-//       for (const device of devices) {
-//         if (!device) {
-//           console.warn("Thiết bị không hợp lệ:", device);
-//           continue;
-//         }
-
-//         const { Model, TypeKho, totalexport, Type } = device;
-
-//         if (!Model) {
-//           console.warn("Thiết bị thiếu Model:", device);
-//           continue;
-//         }
-
-//         // Tìm kho theo Model
-//         const kho = warehouseList.find((k) => k.attributes.Model === Model);
-//         if (!kho) {
-//           console.warn(`❌ Không tìm thấy kho cho Model: ${Model}`);
-//           continue;
-//         }
-
-//         const id = kho.id;
-//         const attributes = kho.attributes;
-
-//         // if (Type === "Vật tư") {
-//         //     console.log(`📦 Bỏ qua hoặc xử lý riêng vật tư: ${Model}`);
-//         //     continue;
-//         // }
-
-//         let updatedPOS = attributes.POS || 0;
-//         let updatedPOSHN = attributes.POSHN || 0;
-//         let totalXTK = attributes.totalXTK || 0;
-
-//         if (TypeKho === "POS") {
-//           updatedPOS -= totalexport || 0;
-//         } else if (TypeKho === "POSHN") {
-//           updatedPOSHN -= totalexport || 0;
-//         }
-
-//         totalXTK += totalexport || 0;
-
-//         const inventoryCK =
-//           (attributes.inventoryDK || 0) + (attributes.totalNTK || 0) - totalXTK;
-
-//         await updateWarehouseDetails(id, {
-//           POS: updatedPOS,
-//           POSHN: updatedPOSHN,
-//           totalXTK,
-//           inventoryCK,
-//         });
-
-//         console.log(`✅ Đã cập nhật kho cho Model ${Model}`);
-//       }
-//     } catch (error) {
-//       console.error("❌ Lỗi khi cập nhật kho:", error);
-//     }
-//   };
-
-//   //-----------------------------------------------------------------------------------------------------------
-
-//   const handleImportDeviceServicesTicket = async () => {
-//     // Cập nhật trạng thái phiếu
-//     await updateExportLoanTicket(ticket.id, "Đã giao");
-//     message.success("Phiếu đã chuyển sang trạng thái 'Đã giao'!");
-
-//     if (!exportLoanData || exportLoanData.length === 0) {
-//       message.warning("Không có thiết bị để xuất!");
-//       return;
-//     }
-
-//     // Cập nhật danh sách phiếu ngay sau khi xác nhận
-//     if (reloadTickets) {
-//       await reloadTickets();
-//     }
-
-//     try {
-//       // Gửi từng thiết bị lên API để nhập vào kho (trừ "Vật tư")
-//       for (const device of exportLoanData) {
-//         // Bỏ qua nếu là vật tư
-//         // if (device.Type === "Vật tư") continue;
-//         if (device.TypeDevice === "QLTB") continue;
-
-//         const serialNumbers = device.SerialNumber.includes(",")
-//           ? device.SerialNumber.split(",").map((s) => s.trim())
-//           : [device.SerialNumber];
-
-//         for (const serial of serialNumbers) {
-//           await createImportDeviceServices({
-//             Model: device.Model,
-//             BrandName: device.BrandName,
-//             SerialNumber: serial,
-//             Store: "DHG",
-//           });
-//         }
-//       }
-
-//       message.success("Xuất thiết bị thành công!");
-//       onClose(); // Đóng modal
-//     } catch (error) {
-//       console.error("Lỗi xuất thiết bị:", error);
-//       message.error("Lỗi khi xuất thiết bị.");
-//     }
-//   };
-
-//   const handleApproveTicket = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...exportLoanData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để duyệt.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       //await updateExportLoanTicket(ticket.id, "Duyệt");
-
-//       // message.success("Duyệt phiếu thành công!");
-
-//       await updateExportLoanTicketv1(ticket.id, {
-//         Status: "Duyệt",
-//         PersonApprove: account.Name,
-//       });
-
-//       message.success(`✅ Phiếu được duyệt bởi: ${account.Name}`);
-//       // Cập nhật danh sách phiếu ngay sau khi duyệt
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices(); // Cập nhật danh sách thiết bị
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi duyệt phiếu:", error);
-//       message.error("Lỗi duyệt phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicketcallback = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...exportLoanData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để trả.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       await updateExportLoanTicket(ticket.id, "Đang chờ duyệt");
-
-//       message.success("Trả phiếu thành công!");
-//       // Cập nhật danh sách phiếu ngay sau khi duyệt
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices(); // Cập nhật danh sách thiết bị
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi trả phiếu:", error);
-//       message.error("Lỗi trả phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveReturnWarehouse = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...exportLoanData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để trả.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       await updateExportLoanTicket(ticket.id, "Trả kho");
-
-//       message.success("Trả phiếu thành công!");
-//       // Cập nhật danh sách phiếu ngay sau khi duyệt
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices(); // Cập nhật danh sách thiết bị
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi trả phiếu:", error);
-//       message.error("Lỗi trả phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmTicket = async () => {
-//     try {
-//       setLoading(true);
-
-//       // Xác định loại xử lý dựa vào Type
-//       const isSupplies = newExportLoans.some(
-//         (device) => device.Type === "Vật tư"
-//       );
-
-//       if (isSupplies) {
-//         await handleSaveAndUpdateExportlistsForSupplies();
-//       } else {
-//         await handleSaveAndUpdateExportlists();
-//       }
-
-//       // Sau khi lưu thành công, cập nhật trạng thái phiếu
-//       await updateExportLoanTicket(ticket.id, "Đang chờ duyệt");
-//       message.success(
-//         "Phiếu đã lưu và chuyển sang trạng thái 'Đang chờ duyệt'!"
-//       );
-
-//       // Cập nhật danh sách phiếu ngay sau khi xác nhận
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       // Đóng modal sau khi cập nhật
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSaveAndUpdateExportlistsForSupplies = async () => {
-//     try {
-//       await handleSaveNewDevices(); // Bước 1: Lưu thiết bị cũ
-
-//       const newSupplies = [...newExportLoans];
-//       for (const supply of newSupplies) {
-//         if (supply.Type !== "Vật tư") continue;
-
-//         let remainingQuantity = supply.totalexport;
-//         let sortedExportItems = exportList
-//           .filter(
-//             (item) =>
-//               item.attributes.ProductName === supply.ProductName &&
-//               item.attributes.Model === supply.Model &&
-//               item.attributes.TypeKho === supply.TypeKho &&
-//               item.attributes.Status === "Đang mượn"
-//           )
-//           .sort(
-//             (a, b) =>
-//               new Date(a.attributes.createdAt) -
-//               new Date(b.attributes.createdAt)
-//           );
-
-//         for (const exportListItem of sortedExportItems) {
-//           if (remainingQuantity <= 0) break;
-
-//           const exportListId = exportListItem.id;
-//           let oldQuantity = exportListItem.attributes.totalexport ?? 0;
-//           let oldLoanQuantity = exportListItem.attributes.totalexportLoan ?? 0;
-
-//           let usedQuantity = Math.min(remainingQuantity, oldQuantity);
-//           let newTotalExport = oldQuantity - usedQuantity;
-//           let newTotalExportLoan = oldLoanQuantity + usedQuantity;
-//           remainingQuantity -= usedQuantity;
-
-//           await updateExportlistsSerial(
-//             exportListId,
-//             "", // Không cần serial number
-//             "", // Không cần serial number loan
-//             newTotalExport,
-//             newTotalExportLoan
-//           );
-
-//           setExportList((prev) =>
-//             prev.map((item) =>
-//               item.id === exportListId
-//                 ? {
-//                   ...item,
-//                   attributes: {
-//                     ...item.attributes,
-//                     totalexport: newTotalExport,
-//                     totalexportLoan: newTotalExportLoan,
-//                   },
-//                 }
-//                 : item
-//             )
-//           );
-//         }
-//       }
-
-//       message.success("Lưu vật tư thành công và đã cập nhật exportlists!");
-//     } catch (error) {
-//       console.error("Lỗi khi lưu vật tư và cập nhật exportlists:", error);
-//       message.error("Đã có lỗi xảy ra khi lưu vật tư.");
-//     }
-//   };
-
-//   const handleExportTicket = async () => {
-//     try {
-//       if (!invoiceNumber.trim()) {
-//         message.warning("Vui lòng nhập số hóa đơn!");
-//         return;
-//       }
-
-//       setLoading(true);
-
-//       // Gọi API mới updateExportLoanTicketInvoice
-//       await updateExportLoanTicketInvoice(
-//         ticket.id,
-//         "Đã xuất hóa đơn",
-//         invoiceNumber
-//       );
-
-//       message.success("Phiếu đã chuyển sang trạng thái 'Đã xuất hóa đơn'!");
-
-//       // Cập nhật danh sách phiếu ngay sau khi xác nhận
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       // Đóng modal sau khi cập nhật
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleHandoverTicket = async () => {
-//     try {
-//       setLoading(true);
-//       console.log("📌 Account:", account); // Kiểm tra giá trị account
-//       if (!account?.Name) {
-//         throw new Error("Không tìm thấy thông tin tài khoản.");
-//       }
-
-//       // Cập nhật trạng thái phiếu
-//       await updateExportLoanTicket(ticket.id, "Chờ xuất hóa đơn");
-//       message.success("Phiếu đã chuyển sang trạng thái 'Chờ xuất hóa đơn'!");
-
-//       // Cập nhật người xuất hóa đơn
-//       console.log(`🔄 Gửi API cập nhật người xuất hóa đơn: ${account.Name}`);
-//       await updateExportLoanTicketPersonInvoice(ticket.id, account.Name);
-//       message.success(`Người xuất hóa đơn: ${account.Name}`);
-
-//       // Cập nhật danh sách phiếu ngay sau khi xác nhận
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       // Đóng modal sau khi cập nhật
-//       onClose();
-//     } catch (error) {
-//       console.error("⛔ Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   //   const handleHandoverTicket = async () => {
-//   //   try {
-//   //     setLoading(true);
-//   //     console.log("📌 Account:", account);
-//   //     if (!account?.Name) {
-//   //       throw new Error("Không tìm thấy thông tin tài khoản.");
-//   //     }
-
-//   //     // Cập nhật trạng thái phiếu
-//   //     await updateExportLoanTicket(ticket.id, "Chờ xuất hóa đơn");
-//   //     message.success("Phiếu đã chuyển sang trạng thái 'Chờ xuất hóa đơn'!");
-
-//   //     // Cập nhật người xuất hóa đơn
-//   //     console.log(`🔄 Gửi API cập nhật người xuất hóa đơn: ${account.Name}`);
-//   //     await updateExportLoanTicketPersonInvoice(ticket.id, account.Name);
-//   //     message.success(`Người xuất hóa đơn: ${account.Name}`);
-
-//   //     // Cập nhật danh sách phiếu ngay sau khi xác nhận
-//   //     if (reloadTickets) {
-//   //       console.log("🔄 Gọi reloadTickets()...");
-//   //       await reloadTickets(); // Đảm bảo chờ reloadTickets hoàn tất
-//   //     }
-
-//   //     // Đóng modal sau khi tất cả tác vụ hoàn tất
-//   //     onClose();
-//   //   } catch (error) {
-//   //     console.error("⛔ Lỗi khi cập nhật trạng thái phiếu:", error);
-//   //     message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//   //   } finally {
-//   //     setLoading(false);
-//   //   }
-//   // };
-
-//   const handleReturnTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Đang tạo phiếu");
-//       message.success("Phiếu đã được trả về trạng thái 'Đang tạo phiếu'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets(); // Load lại danh sách phiếu
-//       }
-
-//       onClose(); // Đóng modal sau khi cập nhật
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   //---------------------------------------------------------------------------------------------------------------------
-//   const handleConfirmAdminTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Xác nhận");
-//       message.success("Phiếu đã được trả về trạng thái 'Xác nhận'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets(); // Load lại danh sách phiếu
-//       }
-
-//       onClose(); // Đóng modal sau khi cập nhật
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmWarranty = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Bảo hành");
-//       message.success("Phiếu đã được trả về trạng thái 'Bảo hành'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets(); // Load lại danh sách phiếu
-//       }
-
-//       onClose(); // Đóng modal sau khi cập nhật
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleReturnLeaderTicket = async () => {
-//     try {
-//       await handleApproveTicketcallback(); // 1. Duyệt phiếu
-
-//       const savedDevices = [...exportLoanData]; // 2. Dữ liệu từ phiếu
-//       if (savedDevices.length === 0) return;
-
-//       // 3. Cập nhật trạng thái thiết bị
-//       await Promise.all(
-//         savedDevices.map((device) =>
-//           updateExportLoanPOS(device.id, "Đang chờ duyệt")
-//         )
-//       );
-
-//       // 4. Cập nhật kho theo danh sách thiết bị
-//       await updateWarehouseFromDevicescallback(savedDevices);
-
-//       message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
-//     } catch (error) {
-//       console.error("❌ Lỗi khi trả phiếu và hoàn kho:", error);
-//       message.error("Có lỗi xảy ra khi hoàn kho.");
-//     }
-//   };
-
-//   const handleReturnWarehouse = async () => {
-//     try {
-//       await handleApproveReturnWarehouse(); // 1. Duyệt phiếu
-
-//       const savedDevices = [...exportLoanData]; // 2. Dữ liệu từ phiếu
-//       if (savedDevices.length === 0) return;
-
-//       // 3. Cập nhật trạng thái thiết bị
-//       await Promise.all(
-//         savedDevices.map((device) => updateExportLoanPOS(device.id, "Trả kho"))
-//       );
-
-//       // 4. Cập nhật kho theo danh sách thiết bị
-//       await updateWarehouseFromDevicescallback(savedDevices);
-
-//       message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
-//     } catch (error) {
-//       console.error("❌ Lỗi khi trả phiếu và hoàn kho:", error);
-//       message.error("Có lỗi xảy ra khi hoàn kho.");
-//     }
-//   };
-
-//   const updateWarehouseFromDevicescallback = async (devices) => {
-//     try {
-//       const warehouseResponse = await fetchWarehouseDetails();
-//       const warehouseList = warehouseResponse.data;
-
-//       for (const device of devices) {
-//         if (!device) {
-//           console.warn("Thiết bị không hợp lệ:", device);
-//           continue;
-//         }
-
-//         const { Model, TypeKho, totalexport } = device;
-
-//         if (!Model) {
-//           console.warn("Thiết bị thiếu Model:", device);
-//           continue;
-//         }
-
-//         const kho = warehouseList.find((k) => k.attributes.Model === Model);
-//         if (!kho) {
-//           console.warn(`❌ Không tìm thấy kho cho Model: ${Model}`);
-//           continue;
-//         }
-
-//         const id = kho.id;
-//         const attributes = kho.attributes;
-
-//         let updatedPOS = attributes.POS || 0;
-//         let updatedPOSHN = attributes.POSHN || 0;
-//         let totalXTK = attributes.totalXTK || 0;
-
-//         if (TypeKho === "POS") {
-//           updatedPOS += totalexport || 0;
-//         } else if (TypeKho === "POSHN") {
-//           updatedPOSHN += totalexport || 0;
-//         }
-
-//         totalXTK -= totalexport || 0;
-
-//         const inventoryCK =
-//           (attributes.inventoryDK || 0) + (attributes.totalNTK || 0) - totalXTK;
-
-//         await updateWarehouseDetails(id, {
-//           POS: updatedPOS,
-//           POSHN: updatedPOSHN,
-//           totalXTK,
-//           inventoryCK,
-//         });
-
-//         console.log(`↩️ Đã hoàn kho Model ${Model}: +${totalexport}`);
-//       }
-//     } catch (error) {
-//       console.error("❌ Lỗi khi hoàn kho:", error);
-//     }
-//   };
-
-//   //------------------------------------------------------------------------------------------------------
-//   const handleProductChange = (id, value) => {
-//     // Lọc ra các sản phẩm có cùng tên dựa trên giá trị mới
-//     const matchedProducts = exportList.filter(
-//       (item) => item.attributes.ProductName === value
-//     );
-
-//     // Lấy danh sách Model duy nhất
-//     const availableModels = [
-//       ...new Set(matchedProducts.map((item) => item.attributes.Model)),
-//     ];
-
-//     // Cập nhật lại device có id tương ứng
-//     setNewExportLoans((prev) =>
-//       prev.map((device) => {
-//         if (device.id === id) {
-//           return {
-//             ...device,
-//             ProductName: value,
-//             availableModels, // cập nhật danh sách model có sẵn cho device này
-//             // Nếu device đã có Model không còn trong availableModels, có thể reset về undefined
-//             Model: availableModels.includes(device.Model)
-//               ? device.Model
-//               : undefined,
-//           };
-//         }
-//         return device;
-//       })
-//     );
-//   };
-
-//   const handleModelChange = (id, model) => {
-//     // Tìm thông tin DVT từ exportList dựa trên model đã chọn
-//     const selectedItem = exportList.find(
-//       (item) => item.attributes.Model === model
-//     );
-//     const dvt = selectedItem ? selectedItem.attributes.DVT : "";
-//     const brandName = selectedItem ? selectedItem.attributes.BrandName : "";
-//     const types = selectedItem ? selectedItem.attributes.Type : "";
-
-//     // Cập nhật cho dòng mới
-//     setNewExportLoans((prev) =>
-//       prev.map((item) =>
-//         item.id === id
-//           ? {
-//             ...item,
-//             Model: model,
-//             DVT: dvt,
-//             BrandName: brandName,
-//             Type: types,
-//           }
-//           : item
-//       )
-//     );
-
-//     // Nếu dòng đã lưu cũng cần cập nhật:
-//     setExportLoanData((prev) =>
-//       prev.map((item) =>
-//         item.id === id
-//           ? {
-//             ...item,
-//             Model: model,
-//             DVT: dvt,
-//             BrandName: brandName,
-//             Type: types,
-//           }
-//           : item
-//       )
-//     );
-//   };
-
-//   const getAvailableWarehouses = (productName, model) => {
-//     // Lọc các record phù hợp với productName, model và có số lượng tồn > 0
-//     const matchingRecords = exportList.filter(
-//       (item) =>
-//         item.attributes.ProductName === productName &&
-//         item.attributes.Model === model &&
-//         item.attributes.totalexport > 0
-//     );
-
-//     // Lấy danh sách kho duy nhất
-//     const distinctWarehouses = Array.from(
-//       new Set(matchingRecords.map((item) => item.attributes.TypeKho))
-//     );
-
-//     return distinctWarehouses.map((typeKho) => ({
-//       value: typeKho,
-//       label: typeKho,
-//     }));
-//   };
-//   const handleWarehouseChange = (id, selectedWarehouse) => {
-//     setNewExportLoans((prev) =>
-//       prev.map((item) =>
-//         item.id === id ? { ...item, TypeKho: selectedWarehouse } : item
-//       )
-//     );
-//   };
-
-//   const handleSerialChange = (id, value) => {
-//     // Nếu mode là multiple thì value là mảng, nếu không thì là string.
-//     // Cập nhật state của newExportLoans (hoặc exportLoanData nếu dùng cho dòng đã lưu)
-//     setNewExportLoans((prev) =>
-//       prev.map((item) =>
-//         item.id === id ? { ...item, SerialNumber: value } : item
-//       )
-//     );
-//   };
-
-//   const handleTotalExportChange = (id, value) => {
-//     setNewExportLoans((prev) =>
-//       prev.map((device) => {
-//         if (device.id === id) {
-//           return { ...device, totalexport: value };
-//         }
-//         return device;
-//       })
-//     );
-//   };
-
-//   const handleReturnDevice = async (record) => {
-//     try {
-//       // 1. Lọc ra tất cả exportListItem có cùng ProductName, Model, TypeKho và Status = "Đang mượn"
-//       const matchingExportItems = exportList.filter(
-//         (item) =>
-//           item.attributes.ProductName === record.ProductName &&
-//           item.attributes.Model === record.Model &&
-//           item.attributes.TypeKho === record.TypeKho &&
-//           item.attributes.Status === "Đang mượn"
-//       );
-
-//       if (matchingExportItems.length === 0) {
-//         message.warning(
-//           "Không tìm thấy bản ghi kho tương ứng để trả thiết bị!"
-//         );
-//         return;
-//       }
-
-//       // 2. Lấy danh sách serial mà người dùng muốn trả (từ record)
-//       let deviceSerials = [];
-//       if (Array.isArray(record.SerialNumber)) {
-//         deviceSerials = record.SerialNumber;
-//       } else if (typeof record.SerialNumber === "string") {
-//         deviceSerials = record.SerialNumber.split(",")
-//           .map((sn) => sn.trim())
-//           .filter(Boolean);
-//       }
-
-//       // 3. Với mỗi exportListItem khớp, chuyển serial từ SerialNumberLoan -> SerialNumber
-//       for (const exportListItem of matchingExportItems) {
-//         const exportListId = exportListItem.id;
-
-//         // Lấy SerialNumber gốc
-//         const oldSerialString = exportListItem.attributes.SerialNumber || "";
-//         const oldSerialArray = oldSerialString
-//           .split(",")
-//           .map((sn) => sn.trim())
-//           .filter(Boolean);
-
-//         // Lấy SerialNumberLoan (đã mượn)
-//         const oldLoanString = exportListItem.attributes.SerialNumberLoan || "";
-//         const oldLoanArray = oldLoanString
-//           .split(",")
-//           .map((sn) => sn.trim())
-//           .filter(Boolean);
-
-//         // Xác định serial nào thực sự thuộc exportListItem này và đang nằm trong Loan
-//         // (phần giao nhau giữa deviceSerials và oldLoanArray)
-//         const usedSerials = deviceSerials.filter((sn) =>
-//           oldLoanArray.includes(sn)
-//         );
-//         if (usedSerials.length === 0) {
-//           // Không có serial nào của exportListItem này cần trả => bỏ qua
-//           continue;
-//         }
-
-//         // 4. Bỏ các serial trả khỏi Loan
-//         const newLoanArray = oldLoanArray.filter(
-//           (sn) => !usedSerials.includes(sn)
-//         );
-//         const newLoanString = newLoanArray.join(",");
-
-//         // 5. Thêm serial trả về SerialNumber gốc
-//         const newSerialArray = Array.from(
-//           new Set([...oldSerialArray, ...usedSerials])
-//         );
-//         const newSerialString = newSerialArray.join(",");
-
-//         // 6. Cập nhật số lượng
-//         const oldQuantity = exportListItem.attributes.totalexport ?? 0;
-//         const oldLoanQuantity = exportListItem.attributes.totalexportLoan ?? 0;
-//         const returnedCount = usedSerials.length;
-
-//         // Tăng lại totalexport theo số serial trả
-//         const newTotalExport = oldQuantity + returnedCount;
-
-//         // Giảm totalexportLoan
-//         let newTotalExportLoan = oldLoanQuantity - returnedCount;
-//         if (newTotalExportLoan < 0) {
-//           newTotalExportLoan = 0; // tránh âm
-//         }
-
-//         // 7. Gọi API updateExportlistsSerial (nếu có) để cập nhật server
-//         await updateExportlistsSerial(
-//           exportListId,
-//           newSerialString, // SerialNumber
-//           newLoanString, // SerialNumberLoan
-//           newTotalExport, // totalexport
-//           newTotalExportLoan // totalexportLoan
-//         );
-
-//         // 8. Cập nhật state exportList để UI hiển thị ngay
-//         setExportList((prev) =>
-//           prev.map((item) => {
-//             if (item.id === exportListId) {
-//               return {
-//                 ...item,
-//                 attributes: {
-//                   ...item.attributes,
-//                   SerialNumber: newSerialString,
-//                   SerialNumberLoan: newLoanString,
-//                   totalexport: newTotalExport,
-//                   totalexportLoan: newTotalExportLoan,
-//                 },
-//               };
-//             }
-//             return item;
-//           })
-//         );
-//       }
-
-//       // 9. Thông báo trả thành công
-//       message.success("Trả thiết bị thành công!");
-
-//       // 10. (Tuỳ chọn) Xóa dòng record vừa trả
-//       //    Nếu bạn muốn xóa hẳn row này khỏi bảng hiển thị.
-//       //    handleDeleteSavedRow là hàm bạn dùng cho nút Xoá.
-//       handleDeleteSavedRow(record.id, "exportloan");
-//     } catch (error) {
-//       console.error("Lỗi khi trả thiết bị:", error);
-//       message.error("Đã có lỗi xảy ra khi trả thiết bị.");
-//     }
-//   };
-
-//   //------------------------------------------------------------------------------------------------
-
-//   const handleSaveBasedOnType = async () => {
-//     try {
-//       // Kiểm tra xem có vật tư trong danh sách không
-//       const isSupplies = newExportLoans.some(
-//         (device) => device.Type === "Vật tư"
-//       );
-
-//       if (isSupplies) {
-//         await handleSaveAndUpdateExportlistsForSupplies();
-//       } else {
-//         await handleSaveAndUpdateExportlists();
-//       }
-//     } catch (error) {
-//       console.error("Lỗi khi lưu dữ liệu theo loại thiết bị/vật tư:", error);
-//       message.error("Có lỗi xảy ra khi lưu.");
-//     }
-//   };
-
-//   const userData = JSON.parse(localStorage.getItem("user")) || {};
-//   const account = userData?.account || {};
-
-//   return (
-//     <>
-//       <Modal
-//         // title={
-//         //   <div
-//         //     style={{ cursor: "move" }} // Đặt chiều rộng đúng cách
-//         //     onMouseOver={() => setDisabled(false)}
-//         //     onMouseOut={() => setDisabled(true)}
-//         //   >
-//         //     Chi Tiết Phiếu
-//         //   </div>
-//         // }
-//         title="Chi Tiết Phiếu"
-//         open={isOpen}
-//         onCancel={onClose}
-//         getContainer={document.body} // Đảm bảo Modal "portal" ra ngoài
-//         footer={[
-//           <Button key="cancel" icon={<CloseOutlined />} onClick={onClose}>
-//             Đóng
-//           </Button>,
-//           account.Leader === true &&
-//           ticket?.attributes?.Status === "Đang chờ duyệt" && (
-//             <Button
-//               key="return"
-//               type="default"
-//               danger
-//               icon={<LeftSquareTwoTone />}
-//               onClick={handleReturnTicket}
-//             >
-//               Trả Phiếu
-//             </Button>
-//           ),
-//           account.Exportlist === true &&
-//           ticket?.attributes?.Status === "Đang chờ duyệt" && (
-//             <Button
-//               key="approve"
-//               type="primary"
-//               icon={<CheckCircleTwoTone />}
-//               onClick={handleApproveTicketAndUpdateDevices}
-//               loading={loading} // ✅ hiện spinner khi loading = true
-//               disabled={loading} // ✅ không cho click lại khi đang xử lý
-//               style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-//             >
-//               {loading ? "Đang xử lý..." : "Duyệt Phiếu"}{" "}
-//               {/* ✅ thay đổi text theo trạng thái */}
-//             </Button>
-//           ),
-//           ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//           ticket?.attributes?.Person === account?.Name && (
-//             <Button
-//               key="saveNew"
-//               type="default"
-//               icon={<SaveTwoTone />}
-//               onClick={handleSaveBasedOnType} // gọi hàm bọc
-//             >
-//               Lưu
-//             </Button>
-//           ),
-//           ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//           ticket?.attributes?.Person === account?.Name && (
-//             <Button
-//               key="sendvotes"
-//               type="primary"
-//               icon={<FileAddTwoTone />}
-//               onClick={handleConfirmTicket}
-//               style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//             >
-//               Gửi phiếu
-//             </Button>
-//           ),
-//           (ticket?.attributes?.Status === "Duyệt" ||
-//             ticket?.attributes?.Status === "Đã giao") &&
-//           ticket?.attributes?.Person === account?.Name && (
-//             <Button
-//               key="print"
-//               type="primary"
-//               icon={<PrinterTwoTone />}
-//               onClick={() => setPrintVisible(true)}
-//               style={{ backgroundColor: "#b65959ff", borderColor: "#9b59b6" }}
-//             >
-//               In Phiếu
-//             </Button>
-//           ),
-//           ticket?.attributes?.Status === "Duyệt" &&
-//           ticket?.attributes?.Person === account?.Name && (
-//             <Button
-//               key="exportvotes"
-//               type="primary"
-//               icon={<WarningTwoTone />}
-//               onClick={handleImportDeviceServicesTicket}
-//               style={{
-//                 backgroundColor: "#ee0909ff",
-//                 borderColor: "#ee0909ff",
-//               }}
-//             >
-//               Xuất Phiếu
-//             </Button>
-//           ),
-//           account.Receivelistkho === true &&
-//           ticket?.attributes?.Status === "Đã giao" && (
-//             <Button
-//               key="confirm"
-//               type="primary"
-//               icon={<CheckSquareTwoTone />}
-//               onClick={handleConfirmAdminTicket}
-//               style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//             >
-//               Xác nhận
-//             </Button>
-//           ),
-//           account.Leader === true && (ticket?.attributes?.Status === "Duyệt" ||
-//             ticket?.attributes?.Status === "Đã giao") && (
-//             <Button
-//               key="deleapproval"
-//               type="primary"
-//               icon={<MinusCircleTwoTone />}
-//               onClick={handleReturnLeaderTicket}
-//               style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//             >
-//               Hủy duyệt
-//             </Button>
-//           ),
-//           account.Leader === true &&
-//           ticket?.attributes?.Status === "Xác nhận" && (
-//             <Button
-//               key="guarantee"
-//               type="primary"
-//               icon={<ReconciliationTwoTone />}
-//               onClick={handleConfirmWarranty}
-//               style={{
-//                 backgroundColor: "#e8f00cff",
-//                 borderColor: "#e8f00cff",
-//               }}
-//             >
-//               Bảo hành
-//             </Button>
-//           ),
-//           ticket?.attributes?.Status === "Xác nhận" &&
-//           account.Invoiceer === true && (
-//             <Button
-//               key="complete"
-//               type="primary"
-//               icon={<SafetyCertificateTwoTone />}
-//               onClick={handleHandoverTicket} // Gọi hàm bọc
-//               style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-//             >
-//               Hoàn thành
-//             </Button>
-//           ),
-//           ticket?.attributes?.Status === "Chờ xuất hóa đơn" &&
-//           account.Invoiceer === true && (
-//             <Button
-//               key="issueinvoice"
-//               type="primary"
-//               icon={<CalculatorTwoTone />}
-//               onClick={() => setIsModalVisible(true)} // Mở modal nhập InvoiceNumber
-//               style={{ backgroundColor: "#DD0000", borderColor: "#DD0000" }}
-//             >
-//               Xuất hóa đơn
-//             </Button>
-//           ),
-//         ]}
-//         width="100vw"
-//       // style={{ maxWidth: "1200px" }} // Giới hạn tối đa
-//       // modalRender={(modal) => (
-//       //   // <Draggable disabled={disabled}>
-//       //   //   <div style={{ width: "100%" }}>{modal}</div>
-//       //   // </Draggable>
-//       //   <div style={{ width: "100%" }}>{modal}</div>
-//       // )}
-//       >
-//         <Spin spinning={loading} tip="Đang xử lý dữ liệu...">
-//           <h3>Thiết Bị Mượn Từ POS</h3>
-//           <Table
-//             dataSource={combinedExportLoanData}
-//             rowKey="id"
-//             pagination={false}
-//             columns={[
-//               {
-//                 title: "Tên Thiết Bị",
-//                 dataIndex: "ProductName",
-//                 key: "ProductName",
-//                 width: 220,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Select
-//                       showSearch
-//                       value={record.ProductName || undefined}
-//                       style={{ width: "100%" }}
-//                       onChange={(value) =>
-//                         handleProductChange(record.id, value)
-//                       }
-//                       options={Array.from(
-//                         new Set(
-//                           exportList
-//                             .filter(
-//                               (item) => item.attributes.Status === "Đang mượn"
-//                             )
-//                             .map((item) => item.attributes.ProductName)
-//                         )
-//                       )
-//                         .sort((a, b) => a.localeCompare(b)) // Sắp xếp A-Z
-//                         .map((productName) => ({
-//                           value: productName,
-//                           label: productName,
-//                         }))}
-//                       filterOption={(input, option) =>
-//                         (option?.label ?? "")
-//                           .toLowerCase()
-//                           .includes(input.toLowerCase())
-//                       }
-//                     />
-//                   ) : (
-//                     <span>{record.ProductName || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Model",
-//                 dataIndex: "Model",
-//                 key: "Model",
-//                 width: 200,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Select
-//                       showSearch
-//                       value={record.Model || undefined}
-//                       style={{ width: "100%" }}
-//                       onChange={(value) => handleModelChange(record.id, value)}
-//                       options={(record.availableModels || [])
-//                         .slice() // tránh mutate array gốc
-//                         .sort((a, b) => a.localeCompare(b)) // sắp xếp A-Z
-//                         .map((model) => ({
-//                           value: model,
-//                           label: model,
-//                         }))}
-//                       filterOption={(input, option) =>
-//                         (option?.label ?? "")
-//                           .toLowerCase()
-//                           .includes(input.toLowerCase())
-//                       }
-//                     />
-//                   ) : (
-//                     <span>{record.Model || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Thương Hiệu",
-//                 dataIndex: "BrandName",
-//                 key: "BrandName",
-//                 width: 150,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.BrandName || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.BrandName || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Kiểu sản phẩm",
-//                 dataIndex: "Type",
-//                 key: "Type",
-//                 width: 150,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Type || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.Type || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Đvt",
-//                 dataIndex: "DVT",
-//                 key: "DVT",
-//                 width: 80,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.DVT || ""}
-//                       style={{ width: "100%", textAlign: "center" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span style={{ display: "block", textAlign: "center" }}>
-//                       {record.DVT || "-"}
-//                     </span>
-//                   ),
-//               },
-//               {
-//                 title: "Kho",
-//                 dataIndex: "TypeKho",
-//                 key: "TypeKho",
-//                 width: 100,
-//                 render: (_, record) => {
-//                   const availableWarehouses =
-//                     record.ProductName && record.Model
-//                       ? getAvailableWarehouses(record.ProductName, record.Model)
-//                       : [];
-
-//                   return record.isNew ? (
-//                     <Select
-//                       value={record.TypeKho || undefined}
-//                       style={{ width: "100%" }}
-//                       onChange={(value) =>
-//                         handleWarehouseChange(record.id, value)
-//                       }
-//                       options={availableWarehouses}
-//                       placeholder="Chọn kho"
-//                     />
-//                   ) : (
-//                     <span>{record.TypeKho || "-"}</span>
-//                   );
-//                 },
-//               },
-//               {
-//                 title: "Số lượng",
-//                 dataIndex: "totalexport",
-//                 key: "totalexport",
-//                 width: 100,
-//                 render: (_, record) => {
-//                   const productName =
-//                     record.ProductName || record.attributes?.ProductName;
-//                   const model = record.Model || record.attributes?.Model;
-//                   const warehouse =
-//                     record.TypeKho || record.attributes?.TypeKho;
-
-//                   // Tìm tất cả item khớp điều kiện
-//                   const matchedItems = exportList.filter(
-//                     (item) =>
-//                       item.attributes.ProductName === productName &&
-//                       item.attributes.Model === model &&
-//                       item.attributes.TypeKho === warehouse &&
-//                       item.attributes.Status === "Đang mượn"
-//                   );
-
-//                   // Số lượng tối đa từ dữ liệu gốc
-//                   const maxQuantityFromData = matchedItems.reduce(
-//                     (total, item) => total + (item.attributes.totalexport || 0),
-//                     0
-//                   );
-
-//                   // Tổng số lượng đã chọn ở các hàng khác trong bảng (trừ record hiện tại)
-//                   const usedQuantityInTable = combinedExportLoanData
-//                     .filter(
-//                       (r) =>
-//                         r.id !== record.id &&
-//                         (r.ProductName || r.attributes?.ProductName) ===
-//                         productName &&
-//                         (r.Model || r.attributes?.Model) === model &&
-//                         (r.TypeKho || r.attributes?.TypeKho) === warehouse
-//                     )
-//                     .reduce((sum, r) => sum + (Number(r.totalexport) || 0), 0);
-
-//                   // Số lượng tối đa còn lại cho record này
-//                   const remainingMaxQuantity =
-//                     maxQuantityFromData - usedQuantityInTable;
-
-//                   return record.isNew ? (
-//                     <div style={{ display: "flex", alignItems: "center" }}>
-//                       <InputNumber
-//                         min={1}
-//                         max={remainingMaxQuantity}
-//                         value={record.totalexport}
-//                         onChange={(value) => {
-//                           const currentSNCount = Array.isArray(
-//                             record.SerialNumber
-//                           )
-//                             ? record.SerialNumber.length
-//                             : (record.SerialNumber || "")
-//                               .split(",")
-//                               .filter((sn) => sn).length;
-
-//                           if (
-//                             record.Type !== "Vật tư" &&
-//                             value < currentSNCount
-//                           ) {
-//                             message.error(
-//                               `Bạn đã chọn ${currentSNCount} serial, không thể giảm xuống ${value}.`
-//                             );
-//                             return; // không cập nhật
-//                           }
-
-//                           handleTotalExportChange(record.id, value);
-//                         }}
-//                         style={{ width: "70px" }}
-//                       />
-//                       {remainingMaxQuantity > 0 && (
-//                         <span
-//                           style={{
-//                             color: "red",
-//                             fontSize: "12px",
-//                             marginLeft: "8px",
-//                             whiteSpace: "nowrap",
-//                           }}
-//                         >
-//                           Tối đa: {remainingMaxQuantity}
-//                         </span>
-//                       )}
-//                     </div>
-//                   ) : (
-//                     <span>{record.totalexport || 0}</span>
-//                   );
-//                 },
-//               },
-//               {
-//                 title: "SerialNumber",
-//                 dataIndex: "SerialNumber",
-//                 key: "SerialNumber",
-//                 width: 200,
-//                 render: (_, record) => {
-//                   // Lấy thông tin ProductName, Model và TypeKho từ record (hoặc attributes)
-//                   const productName =
-//                     record.ProductName || record.attributes?.ProductName;
-//                   const model = record.Model || record.attributes?.Model;
-//                   const warehouse =
-//                     record.TypeKho || record.attributes?.TypeKho;
-
-//                   // Tìm nguồn dữ liệu dựa trên ProductName, Model, TypeKho và Status
-//                   const sources = exportList.filter(
-//                     (item) =>
-//                       item.attributes.ProductName === productName &&
-//                       item.attributes.Model === model &&
-//                       item.attributes.TypeKho === warehouse &&
-//                       item.attributes.Status === "Đang mượn"
-//                   );
-
-//                   // Gom tất cả SerialNumber thành 1 list
-//                   const allSerialString = sources.reduce((acc, curr) => {
-//                     const serial = curr.attributes.SerialNumber || "";
-//                     return acc ? `${acc},${serial}` : serial;
-//                   }, "");
-
-//                   let serialList = allSerialString
-//                     ? allSerialString
-//                       .split(",")
-//                       .map((sn) => sn.trim())
-//                       .filter((sn) => sn.length > 0)
-//                     : [];
-
-//                   // Lấy tất cả serial đã được chọn ở record khác
-//                   const selectedSerialsInTable = combinedExportLoanData
-//                     .filter((r) => r.id !== record.id) // các record khác
-//                     .flatMap((r) =>
-//                       Array.isArray(r.SerialNumber)
-//                         ? r.SerialNumber
-//                         : (r.SerialNumber || "")
-//                           .split(",")
-//                           .map((sn) => sn.trim())
-//                           .filter((sn) => sn)
-//                     );
-
-//                   // Lấy serial hiện tại của record
-//                   const currentSerials = Array.isArray(record.SerialNumber)
-//                     ? record.SerialNumber
-//                     : (record.SerialNumber || "")
-//                       .split(",")
-//                       .map((sn) => sn.trim())
-//                       .filter((sn) => sn);
-
-//                   // Lọc: bỏ serial đã chọn ở record khác, giữ lại serial của record hiện tại
-//                   const availableSerials = serialList.filter(
-//                     (sn) =>
-//                       !selectedSerialsInTable.includes(sn) ||
-//                       currentSerials.includes(sn)
-//                   );
-
-//                   let currentValue = record.SerialNumber;
-//                   if (
-//                     Array.isArray(currentValue) &&
-//                     currentValue.length === 0
-//                   ) {
-//                     currentValue = undefined;
-//                   } else if (
-//                     typeof currentValue === "string" &&
-//                     !currentValue.trim()
-//                   ) {
-//                     currentValue = undefined;
-//                   }
-
-//                   // 👉 Nếu record.isNew thì cho chọn Select, ngược lại hiển thị text
-//                   if (record.isNew) {
-//                     return (
-//                       <Select
-//                         mode="multiple"
-//                         placeholder="Chọn Serial Number"
-//                         style={{
-//                           width: "100%",
-//                           border:
-//                             record.Type !== "Vật tư" &&
-//                               Array.isArray(currentValue) &&
-//                               currentValue.length !== Number(record.totalexport)
-//                               ? "1px solid red"
-//                               : undefined,
-//                         }}
-//                         value={currentValue}
-//                         onChange={(value) => {
-//                           const limit = Number(record.totalexport) || 0;
-
-//                           if (
-//                             record.Type !== "Vật tư" &&
-//                             value.length > limit
-//                           ) {
-//                             message.error(
-//                               `Chỉ được chọn tối đa ${limit} serial.`
-//                             );
-//                             return;
-//                           }
-
-//                           handleSerialChange(record.id, value);
-//                         }}
-//                         options={availableSerials.map((sn) => ({
-//                           value: sn,
-//                           label: sn,
-//                           disabled:
-//                             record.Type !== "Vật tư" &&
-//                             Array.isArray(currentValue) &&
-//                             currentValue.length >= Number(record.totalexport) &&
-//                             !currentValue.includes(sn),
-//                         }))}
-//                       />
-//                     );
-//                   } else {
-//                     // Hiển thị text khi đã lưu
-//                     return (
-//                       <span>
-//                         {Array.isArray(currentSerials)
-//                           ? currentSerials.join(", ")
-//                           : currentSerials || "-"}
-//                       </span>
-//                     );
-//                   }
-//                 },
-//               },
-//               {
-//                 title: "Số Phiếu",
-//                 dataIndex: "Votes",
-//                 key: "Votes",
-//                 width: 185,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Votes || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.Votes || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Ticket",
-//                 dataIndex: "Ticket",
-//                 key: "Ticket",
-//                 width: 150,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Ticket || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.Ticket || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Người mượn",
-//                 dataIndex: "NameExportLoan",
-//                 key: "NameExportLoan",
-//                 width: 200,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.NameExportLoan || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.NameExportLoan || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Trạng Thái",
-//                 dataIndex: "Status",
-//                 key: "Status",
-//                 width: 160,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Status || "Đang chờ duyệt"}
-//                       disabled
-//                       style={{ width: "100%" }}
-//                     />
-//                   ) : (
-//                     <span>{record.Status || "Đang chờ duyệt"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Hành động",
-//                 key: "action",
-//                 render: (_, record) => {
-//                   const isCreator =
-//                     ticket?.attributes?.Person === account?.Name; // Kiểm tra user có phải người tạo phiếu không
-//                   const isPending =
-//                     ticket?.attributes?.Status === "Đang tạo phiếu"; // Kiểm tra trạng thái phiếu
-//                   const canDelete = isCreator && isPending; // Chỉ cho phép xóa nếu là người tạo + phiếu đang "Đang tạo phiếu"
-
-//                   if (record.isNew) {
-//                     return canDelete ? (
-//                       <Popconfirm
-//                         title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                         onConfirm={() =>
-//                           handleDeleteRow(record.id, "exportloan")
-//                         }
-//                         okText="Có"
-//                         cancelText="Không"
-//                       >
-//                         <Button type="danger" icon={<DeleteOutlined />} />
-//                       </Popconfirm>
-//                     ) : null;
-//                   } else {
-//                     if (editingRowId === record.id) {
-//                       return (
-//                         <div
-//                           style={{
-//                             display: "flex",
-//                             flexDirection: "row",
-//                             gap: "5px",
-//                             justifyContent: "center",
-//                           }}
-//                         >
-//                           <Button
-//                             type="primary"
-//                             icon={<EditOutlined />}
-//                             onClick={() =>
-//                               handleUpdateRow(record.id, "exportloan")
-//                             }
-//                           />
-//                           <Button onClick={() => setEditingRowId(null)}>
-//                             Hủy
-//                           </Button>
-//                         </div>
-//                       );
-//                     } else {
-//                       return (
-//                         <div
-//                           style={{
-//                             display: "flex",
-//                             flexDirection: "row",
-//                             gap: "5px",
-//                             justifyContent: "center",
-//                           }}
-//                         >
-//                           <Button
-//                             type="default"
-//                             icon={<EditOutlined style={{ color: "#1890ff" }} />}
-//                             onClick={() => setEditingRowId(record.id)}
-//                           />
-//                           {canDelete && !record.id && (
-//                             <Popconfirm
-//                               title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                               onConfirm={() =>
-//                                 handleDeleteSavedRow(record.id, "exportloan")
-//                               }
-//                               okText="Có"
-//                               cancelText="Không"
-//                             >
-//                               <Button type="danger" icon={<DeleteOutlined />} />
-//                             </Popconfirm>
-//                           )}
-//                           {/* Nút Trả thiết bị (chỉ hiển thị nếu hàng đã lưu) */}
-//                           {ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//                             record.id && (
-//                               <Popconfirm
-//                                 title="Bạn có chắc muốn trả toàn bộ thiết bị của hàng này?"
-//                                 onConfirm={() => handleReturnDevice(record)}
-//                                 okText="Có"
-//                                 cancelText="Không"
-//                               >
-//                                 <Button
-//                                   type="default"
-//                                   icon={<LeftCircleTwoTone />}
-//                                 >
-//                                   Trả thiết bị
-//                                 </Button>
-//                               </Popconfirm>
-//                             )}
-//                         </div>
-//                       );
-//                     }
-//                   }
-//                 },
-//                 width: 120,
-//               },
-//             ]}
-//             scroll={{ x: "max-content" }}
-//           />
-//           {ticket?.attributes?.Status === "Đang tạo phiếu" &&
-//             ticket?.attributes?.Person === account?.Name && (
-//               <Button
-//                 type="dashed"
-//                 onClick={() => handleAddRow("exportloan")}
-//                 style={{ marginTop: 10, marginLeft: 10 }}
-//               >
-//                 ➕ Thêm Hàng (Thiết bị mượn)
-//               </Button>
-//             )}
-//           <PrintTicketExportLoan
-//             isOpen={printVisible}
-//             onClose={() => setPrintVisible(false)}
-//             ticket={ticket || { attributes: {} }}
-//             handoverDevices={exportLoanData || []}
-//             autoPrint={true} // Kích hoạt in ngay lập tức
-//           />
-//           <ExportInvoiceModal
-//             visible={isModalVisible}
-//             onClose={() => setIsModalVisible(false)}
-//             onConfirm={handleExportTicket}
-//             ticketId={ticket.id}
-//             invoiceNumber={invoiceNumber}
-//             setInvoiceNumber={setInvoiceNumber}
-//           />
-//         </Spin>
-//       </Modal>
-//     </>
-//   );
-// };
-
-// export default TicketExportLoanModal;
-
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-// import React, { useState, useEffect } from "react";
-// import {
-//   Modal,
-//   Button,
-//   Input,
-//   Table,
-//   message,
-//   Select,
-//   Popconfirm,
-//   InputNumber,
-//   Spin,
-// } from "antd";
-// import {
-//   createExportLoanPOS,
-//   fetchExportLoanPOS,
-//   deleteExportLoanPOS,
-//   updateExportLoanTicket,
-//   fetchExportlists,
-//   updateExportLoanPOS,
-//   updateExportlistsSerial,
-//   updateExportLoanTicketPersonInvoice,
-//   createImportDeviceServices,
-//   updateExportLoanTicketInvoice,
-//   fetchWarehouseDetails,
-//   updateWarehouseDetails,
-//   updateExportLoanTicketv1,
-// } from "../../../services/dhgServices";
-// import PrintTicketExportLoan from "./PrintTicketExportLoan";
-// import ExportInvoiceModal from "./ExportInvoiceModal";
-// import {
-//   EditOutlined,
-//   DeleteOutlined,
-//   CloseOutlined,
-//   SafetyCertificateTwoTone,
-//   MinusCircleTwoTone,
-//   SaveTwoTone,
-//   FileAddTwoTone,
-//   CalculatorTwoTone,
-//   WarningTwoTone,
-//   CheckSquareTwoTone,
-//   LeftSquareTwoTone,
-//   LeftCircleTwoTone,
-//   ReconciliationTwoTone,
-//   CheckCircleTwoTone,
-//   PrinterTwoTone,
-// } from "@ant-design/icons";
-
-// const TicketExportLoanModal = ({
-//   isOpen,
-//   onClose,
-//   ticket,
-//   fetchDevices,
-//   fetchTickets,
-//   reloadTickets,
-//   serialNumberOptions = [],
-// }) => {
-//   const [disabled, setDisabled] = useState(false);
-//   const [loading, setLoading] = useState(false);
-//   const [exportLoanData, setExportLoanData] = useState([]);
-//   const [newExportLoans, setNewExportLoans] = useState([]);
-//   const [exportList, setExportList] = useState([]);
-//   const [editingRowId, setEditingRowId] = useState(null);
-//   const [printVisible, setPrintVisible] = useState(false);
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [invoiceNumber, setInvoiceNumber] = useState("");
-
-//   useEffect(() => {
-//     fetchExportlists().then((response) => {
-//       // Strapi v5: response.data là mảng hoặc response là mảng
-//       const data = Array.isArray(response) ? response : (response.data || []);
-//       setExportList(data);
-//     });
-//   }, []);
-
-//   // Khi modal mở và có ticket, fetch dữ liệu từ API
-//   useEffect(() => {
-//     // Sửa: bỏ .attributes
-//     if (isOpen && ticket?.Votes) {
-//       console.log("Ticket value:", ticket.Votes);
-//       fetchExportLoanPOS(ticket.Votes)
-//         .then((responseData) => {
-//           console.log("Response Handover API:", responseData);
-//           // Strapi v5 trả mảng trực tiếp hoặc trong data
-//           const rawData = Array.isArray(responseData) ? responseData : (responseData.data || []);
-
-//           const devices = rawData.map((item) => ({
-//             id: item.id || item.documentId,
-//             ...item // Sửa: bỏ .attributes, spread item trực tiếp
-//           }));
-
-//           console.log("Mapped exportloan devices:", devices);
-//           setExportLoanData(devices);
-//         })
-//         .catch((error) => {
-//           console.error("Lỗi tải thiết bị bàn giao:", error);
-//           message.error("Lỗi tải thiết bị bàn giao.");
-//         });
-//     }
-//   }, [isOpen, ticket?.Votes]); // Sửa dependency
-
-//   // Reset state khi modal đóng
-//   useEffect(() => {
-//     if (!isOpen) {
-//       setExportLoanData([]);
-//       setNewExportLoans([]);
-//       setEditingRowId(null);
-//     }
-//   }, [isOpen]);
-
-//   const combinedExportLoanData = [...exportLoanData, ...newExportLoans];
-
-//   const handleAddRow = (type) => {
-//     if (!ticket) {
-//       message.error("Vui lòng chọn phiếu trước khi thêm thiết bị!");
-//       return;
-//     }
-
-//     const newDevice = {
-//       id: Date.now(),
-//       ProductName: ticket.ProductName || "", // Sửa: bỏ .attributes
-//       Model: "",
-//       BrandName: "",
-//       DVT: "",
-//       TypeKho: "",
-//       totalexport: "",
-//       SerialNumber: "",
-//       Ticket: ticket.Ticket, // Sửa: bỏ .attributes
-//       Votes: ticket.Votes, // Sửa: bỏ .attributes
-//       NameExportLoan: account?.Name || "",
-//       Status: "",
-//       Note: "",
-//       Type: "",
-//       isNew: true,
-//     };
-
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) => [...prev, newDevice]);
-//     }
-//   };
-
-//   const handleInputChange = (id, field, value, type) => {
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) =>
-//         prev.map((device) =>
-//           device.id === id ? { ...device, [field]: value } : device
-//         )
-//       );
-//     }
-//   };
-
-//   const handleDeleteRow = (id, type) => {
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) => prev.filter((device) => device.id !== id));
-//     }
-//   };
-
-//   const handleUpdateRow = async (id, type) => {
-//     let device;
-//     if (type === "exportloan") {
-//       device = exportLoanData.find((d) => d.id === id);
-//     }
-//     if (!device || !device.SerialNumber) {
-//       message.warning("Thiết bị không hợp lệ để cập nhật.");
-//       return;
-//     }
-//     try {
-//       setLoading(true);
-//       // await updateDeviceBySerial...
-//       message.success("Cập nhật thiết bị thành công!");
-//       setEditingRowId(null);
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật thiết bị:", error);
-//       message.error("Lỗi khi cập nhật thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSaveAndUpdateExportlists = async () => {
-//     try {
-//       const newDevices = [...newExportLoans];
-
-//       const invalidDevices = newDevices.filter(
-//         (device) =>
-//           device.Type !== "Vật tư" &&
-//           (!device.SerialNumber ||
-//             (Array.isArray(device.SerialNumber) &&
-//               device.SerialNumber.length === 0) ||
-//             (typeof device.SerialNumber === "string" &&
-//               device.SerialNumber.trim() === ""))
-//       );
-
-//       if (invalidDevices.length > 0) {
-//         const names = invalidDevices
-//           .map((d) => `${d.ProductName} - ${d.Model}`)
-//           .join(", ");
-//         message.error(`Các thiết bị sau chưa nhập SerialNumber: ${names}`);
-//         throw new Error("Thiếu SerialNumber");
-//       }
-
-//       await handleSaveNewDevices();
-
-//       for (const device of newDevices) {
-//         // Sửa: bỏ .attributes trong filter
-//         const matchingExportItems = exportList.filter(
-//           (item) =>
-//             item.ProductName === device.ProductName &&
-//             item.Model === device.Model &&
-//             item.TypeKho === device.TypeKho &&
-//             item.Status === "Đang mượn"
-//         );
-
-//         for (const exportListItem of matchingExportItems) {
-//           const exportListId = exportListItem.id || exportListItem.documentId;
-
-//           // Sửa: bỏ .attributes khi lấy dữ liệu cũ
-//           const oldSerialArray = (exportListItem.SerialNumber || "")
-//             .split(",")
-//             .map((sn) => sn.trim())
-//             .filter(Boolean);
-
-//           const deviceSerials = Array.isArray(device.SerialNumber)
-//             ? device.SerialNumber
-//             : (device.SerialNumber || "")
-//               .split(",")
-//               .map((sn) => sn.trim())
-//               .filter(Boolean);
-
-//           const usedSerials = deviceSerials.filter((sn) =>
-//             oldSerialArray.includes(sn)
-//           );
-//           if (usedSerials.length === 0) continue;
-
-//           const newSerialArray = oldSerialArray.filter(
-//             (sn) => !usedSerials.includes(sn)
-//           );
-//           const newSerialString = newSerialArray.join(",");
-
-//           // Sửa: bỏ .attributes
-//           const oldSerialLoanArray = (
-//             exportListItem.SerialNumberLoan || ""
-//           )
-//             .split(",")
-//             .map((sn) => sn.trim())
-//             .filter(Boolean);
-//           const newSerialLoanArray = Array.from(
-//             new Set([...oldSerialLoanArray, ...usedSerials])
-//           );
-//           const newSerialLoanString = newSerialLoanArray.join(",");
-
-//           // Sửa: bỏ .attributes
-//           const oldQuantity = exportListItem.totalexport ?? 0;
-//           const newTotalExport = Math.max(0, oldQuantity - usedSerials.length);
-
-//           const oldLoanQuantity =
-//             exportListItem.totalexportLoan ?? 0;
-//           const newTotalExportLoan = oldLoanQuantity + usedSerials.length;
-
-//           await updateExportlistsSerial(
-//             exportListId,
-//             newSerialString,
-//             newSerialLoanString,
-//             newTotalExport,
-//             newTotalExportLoan
-//           );
-
-//           setExportList((prev) =>
-//             prev.map((item) =>
-//               (item.id === exportListId || item.documentId === exportListId)
-//                 ? {
-//                   ...item,
-//                   // Sửa: bỏ .attributes khi cập nhật state
-//                   SerialNumber: newSerialString,
-//                   SerialNumberLoan: newSerialLoanString,
-//                   totalexport: newTotalExport,
-//                   totalexportLoan: newTotalExportLoan,
-//                 }
-//                 : item
-//             )
-//           );
-//         }
-//       }
-
-//       message.success(
-//         "Lưu thiết bị thành công và đã cập nhật exportlists (Serial + Số lượng)!"
-//       );
-//     } catch (error) {
-//       console.error("Lỗi khi lưu thiết bị và cập nhật exportlists:", error);
-//       message.error("Đã có lỗi xảy ra khi lưu và cập nhật.");
-//       throw error;
-//     }
-//   };
-
-//   const handleSaveNewDevices = async () => {
-//     setLoading(true);
-//     try {
-//       const newDevices = [...newExportLoans];
-//       const requiredFields = [
-//         "ProductName",
-//         "Model",
-//         "BrandName",
-//         "TypeKho",
-//         "totalexport",
-//       ];
-
-//       for (const device of newDevices) {
-//         for (const field of requiredFields) {
-//           if (!device[field] || device[field].toString().trim() === "") {
-//             message.warning(`Vui lòng điền đầy đủ trường cho tất cả các hàng.`);
-//             setLoading(false);
-//             return;
-//           }
-//         }
-
-//         if (
-//           device.Type !== "Vật tư" &&
-//           (!device.SerialNumber || device.SerialNumber.toString().trim() === "")
-//         ) {
-//           message.warning(
-//             `SerialNumber là bắt buộc cho các thiết bị không phải vật tư.`
-//           );
-//           setLoading(false);
-//           return;
-//         }
-//       }
-
-//       const exportloanPromises = newExportLoans
-//         .filter((device) => device.Type === "Vật tư" || device.SerialNumber)
-//         .map((device) => {
-//           const deviceData = {
-//             ...device,
-//             SerialNumber:
-//               device.Type === "Vật tư"
-//                 ? ""
-//                 : Array.isArray(device.SerialNumber)
-//                   ? device.SerialNumber.join(",").trim()
-//                   : device.SerialNumber,
-//             Votes: ticket?.Votes || "", // Sửa: bỏ .attributes
-//             Ticket: ticket?.Ticket || "", // Sửa: bỏ .attributes
-//             Status: device.Status || "Đang chờ duyệt",
-//           };
-//           console.log("Payload exportloan deviceData:", deviceData);
-//           return createExportLoanPOS(deviceData);
-//         });
-
-//       await Promise.all([...exportloanPromises]);
-//       message.success("Lưu thiết bị thành công!");
-//       onClose();
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi lưu thiết bị:", error);
-//       message.error("Lỗi khi lưu thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleDeleteSavedRow = async (id, type) => {
-//     try {
-//       setLoading(true);
-//       if (type === "exportloan") {
-//         await deleteExportLoanPOS(id);
-//         setExportLoanData((prev) => prev.filter((device) => device.id !== id));
-//       }
-//       message.success("Đã xóa thiết bị thành công!");
-//     } catch (error) {
-//       console.error("Lỗi khi xóa thiết bị đã lưu:", error);
-//       message.error("Lỗi khi xóa thiết bị đã lưu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicketAndUpdateDevices = async () => {
-//     try {
-//       await handleApproveTicket();
-
-//       const savedDevices = [...exportLoanData];
-//       if (savedDevices.length === 0) return;
-
-//       await Promise.all(
-//         savedDevices.map((device) => updateExportLoanPOS(device.id, "Duyệt"))
-//       );
-
-//       await updateWarehouseFromDevices(savedDevices);
-
-//       message.success("✅ Thiết bị và kho đã được cập nhật!");
-//     } catch (error) {
-//       console.error("❌ Lỗi khi duyệt phiếu và cập nhật kho:", error);
-//       message.error("Đã có lỗi xảy ra khi cập nhật.");
-//     }
-//   };
-
-//   const updateWarehouseFromDevices = async (devices) => {
-//     try {
-//       const warehouseResponse = await fetchWarehouseDetails();
-//       // Sửa: xử lý response phẳng
-//       const warehouseList = Array.isArray(warehouseResponse) ? warehouseResponse : (warehouseResponse.data || []);
-
-//       for (const device of devices) {
-//         if (!device) {
-//           console.warn("Thiết bị không hợp lệ:", device);
-//           continue;
-//         }
-
-//         const { Model, TypeKho, totalexport, Type } = device;
-
-//         if (!Model) {
-//           console.warn("Thiết bị thiếu Model:", device);
-//           continue;
-//         }
-
-//         // Sửa: bỏ .attributes trong find
-//         const kho = warehouseList.find((k) => k.Model === Model);
-//         if (!kho) {
-//           console.warn(`❌ Không tìm thấy kho cho Model: ${Model}`);
-//           continue;
-//         }
-
-//         const id = kho.id || kho.documentId;
-//         // Sửa: bỏ .attributes, dùng trực tiếp kho
-//         const attributes = kho;
-
-//         let updatedPOS = attributes.POS || 0;
-//         let updatedPOSHN = attributes.POSHN || 0;
-//         let totalXTK = attributes.totalXTK || 0;
-
-//         if (TypeKho === "POS") {
-//           updatedPOS -= totalexport || 0;
-//         } else if (TypeKho === "POSHN") {
-//           updatedPOSHN -= totalexport || 0;
-//         }
-
-//         totalXTK += totalexport || 0;
-
-//         const inventoryCK =
-//           (attributes.inventoryDK || 0) + (attributes.totalNTK || 0) - totalXTK;
-
-//         await updateWarehouseDetails(id, {
-//           POS: updatedPOS,
-//           POSHN: updatedPOSHN,
-//           totalXTK,
-//           inventoryCK,
-//         });
-
-//         console.log(`✅ Đã cập nhật kho cho Model ${Model}`);
-//       }
-//     } catch (error) {
-//       console.error("❌ Lỗi khi cập nhật kho:", error);
-//     }
-//   };
-
-//   //-----------------------------------------------------------------------------------------------------------
-
-//   const handleImportDeviceServicesTicket = async () => {
-//     await updateExportLoanTicket(ticket.id, "Đã giao");
-//     message.success("Phiếu đã chuyển sang trạng thái 'Đã giao'!");
-
-//     if (!exportLoanData || exportLoanData.length === 0) {
-//       message.warning("Không có thiết bị để xuất!");
-//       return;
-//     }
-
-//     if (reloadTickets) {
-//       await reloadTickets();
-//     }
-
-//     try {
-//       for (const device of exportLoanData) {
-//         if (device.TypeDevice === "QLTB") continue;
-
-//         const serialNumbers = device.SerialNumber.includes(",")
-//           ? device.SerialNumber.split(",").map((s) => s.trim())
-//           : [device.SerialNumber];
-
-//         for (const serial of serialNumbers) {
-//           await createImportDeviceServices({
-//             Model: device.Model,
-//             BrandName: device.BrandName,
-//             SerialNumber: serial,
-//             Store: "DHG",
-//           });
-//         }
-//       }
-
-//       message.success("Xuất thiết bị thành công!");
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi xuất thiết bị:", error);
-//       message.error("Lỗi khi xuất thiết bị.");
-//     }
-//   };
-
-//   const handleApproveTicket = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...exportLoanData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để duyệt.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       await updateExportLoanTicketv1(ticket.id, {
-//         Status: "Duyệt",
-//         PersonApprove: account.Name,
-//       });
-
-//       message.success(`✅ Phiếu được duyệt bởi: ${account.Name}`);
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi duyệt phiếu:", error);
-//       message.error("Lỗi duyệt phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicketcallback = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...exportLoanData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để trả.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       await updateExportLoanTicket(ticket.id, "Đang chờ duyệt");
-
-//       message.success("Trả phiếu thành công!");
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi trả phiếu:", error);
-//       message.error("Lỗi trả phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveReturnWarehouse = async () => {
-//     try {
-//       setLoading(true);
-
-//       const savedDevices = [...exportLoanData];
-
-//       if (savedDevices.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để trả.");
-//         setLoading(false);
-//         return;
-//       }
-
-//       await updateExportLoanTicket(ticket.id, "Trả kho");
-
-//       message.success("Trả phiếu thành công!");
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi trả phiếu:", error);
-//       message.error("Lỗi trả phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmTicket = async () => {
-//     try {
-//       setLoading(true);
-
-//       const isSupplies = newExportLoans.some(
-//         (device) => device.Type === "Vật tư"
-//       );
-
-//       if (isSupplies) {
-//         await handleSaveAndUpdateExportlistsForSupplies();
-//       } else {
-//         await handleSaveAndUpdateExportlists();
-//       }
-
-//       await updateExportLoanTicket(ticket.id, "Đang chờ duyệt");
-//       message.success(
-//         "Phiếu đã lưu và chuyển sang trạng thái 'Đang chờ duyệt'!"
-//       );
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSaveAndUpdateExportlistsForSupplies = async () => {
-//     try {
-//       await handleSaveNewDevices();
-
-//       const newSupplies = [...newExportLoans];
-//       for (const supply of newSupplies) {
-//         if (supply.Type !== "Vật tư") continue;
-
-//         let remainingQuantity = supply.totalexport;
-//         let sortedExportItems = exportList
-//           .filter(
-//             (item) =>
-//               // Sửa: bỏ .attributes
-//               item.ProductName === supply.ProductName &&
-//               item.Model === supply.Model &&
-//               item.TypeKho === supply.TypeKho &&
-//               item.Status === "Đang mượn"
-//           )
-//           // Sửa: bỏ .attributes
-//           .sort(
-//             (a, b) =>
-//               new Date(a.createdAt) -
-//               new Date(b.createdAt)
-//           );
-
-//         for (const exportListItem of sortedExportItems) {
-//           if (remainingQuantity <= 0) break;
-
-//           const exportListId = exportListItem.id || exportListItem.documentId;
-//           // Sửa: bỏ .attributes
-//           let oldQuantity = exportListItem.totalexport ?? 0;
-//           let oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
-
-//           let usedQuantity = Math.min(remainingQuantity, oldQuantity);
-//           let newTotalExport = oldQuantity - usedQuantity;
-//           let newTotalExportLoan = oldLoanQuantity + usedQuantity;
-//           remainingQuantity -= usedQuantity;
-
-//           await updateExportlistsSerial(
-//             exportListId,
-//             "",
-//             "",
-//             newTotalExport,
-//             newTotalExportLoan
-//           );
-
-//           setExportList((prev) =>
-//             prev.map((item) =>
-//               (item.id === exportListId || item.documentId === exportListId)
-//                 ? {
-//                   ...item,
-//                   // Sửa: bỏ .attributes
-//                   totalexport: newTotalExport,
-//                   totalexportLoan: newTotalExportLoan,
-//                 }
-//                 : item
-//             )
-//           );
-//         }
-//       }
-
-//       message.success("Lưu vật tư thành công và đã cập nhật exportlists!");
-//     } catch (error) {
-//       console.error("Lỗi khi lưu vật tư và cập nhật exportlists:", error);
-//       message.error("Đã có lỗi xảy ra khi lưu vật tư.");
-//     }
-//   };
-
-//   const handleExportTicket = async () => {
-//     try {
-//       if (!invoiceNumber.trim()) {
-//         message.warning("Vui lòng nhập số hóa đơn!");
-//         return;
-//       }
-
-//       setLoading(true);
-
-//       await updateExportLoanTicketInvoice(
-//         ticket.id,
-//         "Đã xuất hóa đơn",
-//         invoiceNumber
-//       );
-
-//       message.success("Phiếu đã chuyển sang trạng thái 'Đã xuất hóa đơn'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleHandoverTicket = async () => {
-//     try {
-//       setLoading(true);
-//       console.log("📌 Account:", account);
-//       if (!account?.Name) {
-//         throw new Error("Không tìm thấy thông tin tài khoản.");
-//       }
-
-//       await updateExportLoanTicket(ticket.id, "Chờ xuất hóa đơn");
-//       message.success("Phiếu đã chuyển sang trạng thái 'Chờ xuất hóa đơn'!");
-
-//       console.log(`🔄 Gửi API cập nhật người xuất hóa đơn: ${account.Name}`);
-//       await updateExportLoanTicketPersonInvoice(ticket.id, account.Name);
-//       message.success(`Người xuất hóa đơn: ${account.Name}`);
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       console.error("⛔ Lỗi khi cập nhật trạng thái phiếu:", error);
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleReturnTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Đang tạo phiếu");
-//       message.success("Phiếu đã được trả về trạng thái 'Đang tạo phiếu'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   //---------------------------------------------------------------------------------------------------------------------
-//   const handleConfirmAdminTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Xác nhận");
-//       message.success("Phiếu đã được trả về trạng thái 'Xác nhận'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmWarranty = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Bảo hành");
-//       message.success("Phiếu đã được trả về trạng thái 'Bảo hành'!");
-
-//       if (reloadTickets) {
-//         console.log("🔄 Gọi reloadTickets()...");
-//         await reloadTickets();
-//       }
-
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleReturnLeaderTicket = async () => {
-//     try {
-//       await handleApproveTicketcallback();
-
-//       const savedDevices = [...exportLoanData];
-//       if (savedDevices.length === 0) return;
-
-//       await Promise.all(
-//         savedDevices.map((device) =>
-//           updateExportLoanPOS(device.id, "Đang chờ duyệt")
-//         )
-//       );
-
-//       await updateWarehouseFromDevicescallback(savedDevices);
-
-//       message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
-//     } catch (error) {
-//       console.error("❌ Lỗi khi trả phiếu và hoàn kho:", error);
-//       message.error("Có lỗi xảy ra khi hoàn kho.");
-//     }
-//   };
-
-//   const handleReturnWarehouse = async () => {
-//     try {
-//       await handleApproveReturnWarehouse();
-
-//       const savedDevices = [...exportLoanData];
-//       if (savedDevices.length === 0) return;
-
-//       await Promise.all(
-//         savedDevices.map((device) => updateExportLoanPOS(device.id, "Trả kho"))
-//       );
-
-//       await updateWarehouseFromDevicescallback(savedDevices);
-
-//       message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
-//     } catch (error) {
-//       console.error("❌ Lỗi khi trả phiếu và hoàn kho:", error);
-//       message.error("Có lỗi xảy ra khi hoàn kho.");
-//     }
-//   };
-
-//   const updateWarehouseFromDevicescallback = async (devices) => {
-//     try {
-//       const warehouseResponse = await fetchWarehouseDetails();
-//       // Sửa: response phẳng
-//       const warehouseList = Array.isArray(warehouseResponse) ? warehouseResponse : (warehouseResponse.data || []);
-
-//       for (const device of devices) {
-//         if (!device) {
-//           console.warn("Thiết bị không hợp lệ:", device);
-//           continue;
-//         }
-
-//         const { Model, TypeKho, totalexport } = device;
-
-//         if (!Model) {
-//           console.warn("Thiết bị thiếu Model:", device);
-//           continue;
-//         }
-
-//         // Sửa: bỏ .attributes
-//         const kho = warehouseList.find((k) => k.Model === Model);
-//         if (!kho) {
-//           console.warn(`❌ Không tìm thấy kho cho Model: ${Model}`);
-//           continue;
-//         }
-
-//         const id = kho.id || kho.documentId;
-//         // Sửa: bỏ .attributes, dùng trực tiếp kho
-//         const attributes = kho;
-
-//         let updatedPOS = attributes.POS || 0;
-//         let updatedPOSHN = attributes.POSHN || 0;
-//         let totalXTK = attributes.totalXTK || 0;
-
-//         if (TypeKho === "POS") {
-//           updatedPOS += totalexport || 0;
-//         } else if (TypeKho === "POSHN") {
-//           updatedPOSHN += totalexport || 0;
-//         }
-
-//         totalXTK -= totalexport || 0;
-
-//         const inventoryCK =
-//           (attributes.inventoryDK || 0) + (attributes.totalNTK || 0) - totalXTK;
-
-//         await updateWarehouseDetails(id, {
-//           POS: updatedPOS,
-//           POSHN: updatedPOSHN,
-//           totalXTK,
-//           inventoryCK,
-//         });
-
-//         console.log(`↩️ Đã hoàn kho Model ${Model}: +${totalexport}`);
-//       }
-//     } catch (error) {
-//       console.error("❌ Lỗi khi hoàn kho:", error);
-//     }
-//   };
-
-//   //------------------------------------------------------------------------------------------------------
-//   const handleProductChange = (id, value) => {
-//     // Sửa: bỏ .attributes trong filter
-//     const matchedProducts = exportList.filter(
-//       (item) => item.ProductName === value
-//     );
-
-//     // Sửa: bỏ .attributes trong map
-//     const availableModels = [
-//       ...new Set(matchedProducts.map((item) => item.Model)),
-//     ];
-
-//     setNewExportLoans((prev) =>
-//       prev.map((device) => {
-//         if (device.id === id) {
-//           return {
-//             ...device,
-//             ProductName: value,
-//             availableModels,
-//             Model: availableModels.includes(device.Model)
-//               ? device.Model
-//               : undefined,
-//           };
-//         }
-//         return device;
-//       })
-//     );
-//   };
-
-//   const handleModelChange = (id, model) => {
-//     // Sửa: bỏ .attributes trong find
-//     const selectedItem = exportList.find(
-//       (item) => item.Model === model
-//     );
-//     // Sửa: bỏ .attributes
-//     const dvt = selectedItem ? selectedItem.DVT : "";
-//     const brandName = selectedItem ? selectedItem.BrandName : "";
-//     const types = selectedItem ? selectedItem.Type : "";
-
-//     setNewExportLoans((prev) =>
-//       prev.map((item) =>
-//         item.id === id
-//           ? {
-//             ...item,
-//             Model: model,
-//             DVT: dvt,
-//             BrandName: brandName,
-//             Type: types,
-//           }
-//           : item
-//       )
-//     );
-
-//     setExportLoanData((prev) =>
-//       prev.map((item) =>
-//         item.id === id
-//           ? {
-//             ...item,
-//             Model: model,
-//             DVT: dvt,
-//             BrandName: brandName,
-//             Type: types,
-//           }
-//           : item
-//       )
-//     );
-//   };
-
-//   const getAvailableWarehouses = (productName, model) => {
-//     // Sửa: bỏ .attributes trong filter
-//     const matchingRecords = exportList.filter(
-//       (item) =>
-//         item.ProductName === productName &&
-//         item.Model === model &&
-//         item.totalexport > 0
-//     );
-
-//     // Sửa: bỏ .attributes trong map
-//     const distinctWarehouses = Array.from(
-//       new Set(matchingRecords.map((item) => item.TypeKho))
-//     );
-
-//     return distinctWarehouses.map((typeKho) => ({
-//       value: typeKho,
-//       label: typeKho,
-//     }));
-//   };
-//   const handleWarehouseChange = (id, selectedWarehouse) => {
-//     setNewExportLoans((prev) =>
-//       prev.map((item) =>
-//         item.id === id ? { ...item, TypeKho: selectedWarehouse } : item
-//       )
-//     );
-//   };
-
-//   const handleSerialChange = (id, value) => {
-//     setNewExportLoans((prev) =>
-//       prev.map((item) =>
-//         item.id === id ? { ...item, SerialNumber: value } : item
-//       )
-//     );
-//   };
-
-//   const handleTotalExportChange = (id, value) => {
-//     setNewExportLoans((prev) =>
-//       prev.map((device) => {
-//         if (device.id === id) {
-//           return { ...device, totalexport: value };
-//         }
-//         return device;
-//       })
-//     );
-//   };
-
-//   const handleReturnDevice = async (record) => {
-//     try {
-//       // Sửa: bỏ .attributes trong filter
-//       const matchingExportItems = exportList.filter(
-//         (item) =>
-//           item.ProductName === record.ProductName &&
-//           item.Model === record.Model &&
-//           item.TypeKho === record.TypeKho &&
-//           item.Status === "Đang mượn"
-//       );
-
-//       if (matchingExportItems.length === 0) {
-//         message.warning(
-//           "Không tìm thấy bản ghi kho tương ứng để trả thiết bị!"
-//         );
-//         return;
-//       }
-
-//       let deviceSerials = [];
-//       if (Array.isArray(record.SerialNumber)) {
-//         deviceSerials = record.SerialNumber;
-//       } else if (typeof record.SerialNumber === "string") {
-//         deviceSerials = record.SerialNumber.split(",")
-//           .map((sn) => sn.trim())
-//           .filter(Boolean);
-//       }
-
-//       for (const exportListItem of matchingExportItems) {
-//         const exportListId = exportListItem.id || exportListItem.documentId;
-
-//         // Sửa: bỏ .attributes
-//         const oldSerialString = exportListItem.SerialNumber || "";
-//         const oldSerialArray = oldSerialString
-//           .split(",")
-//           .map((sn) => sn.trim())
-//           .filter(Boolean);
-
-//         // Sửa: bỏ .attributes
-//         const oldLoanString = exportListItem.SerialNumberLoan || "";
-//         const oldLoanArray = oldLoanString
-//           .split(",")
-//           .map((sn) => sn.trim())
-//           .filter(Boolean);
-
-//         const usedSerials = deviceSerials.filter((sn) =>
-//           oldLoanArray.includes(sn)
-//         );
-//         if (usedSerials.length === 0) {
-//           continue;
-//         }
-
-//         const newLoanArray = oldLoanArray.filter(
-//           (sn) => !usedSerials.includes(sn)
-//         );
-//         const newLoanString = newLoanArray.join(",");
-
-//         const newSerialArray = Array.from(
-//           new Set([...oldSerialArray, ...usedSerials])
-//         );
-//         const newSerialString = newSerialArray.join(",");
-
-//         // Sửa: bỏ .attributes
-//         const oldQuantity = exportListItem.totalexport ?? 0;
-//         const oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
-//         const returnedCount = usedSerials.length;
-
-//         const newTotalExport = oldQuantity + returnedCount;
-
-//         let newTotalExportLoan = oldLoanQuantity - returnedCount;
-//         if (newTotalExportLoan < 0) {
-//           newTotalExportLoan = 0;
-//         }
-
-//         await updateExportlistsSerial(
-//           exportListId,
-//           newSerialString,
-//           newLoanString,
-//           newTotalExport,
-//           newTotalExportLoan
-//         );
-
-//         setExportList((prev) =>
-//           prev.map((item) => {
-//             if (item.id === exportListId) {
-//               return {
-//                 ...item,
-//                 // Sửa: bỏ .attributes
-//                 SerialNumber: newSerialString,
-//                 SerialNumberLoan: newLoanString,
-//                 totalexport: newTotalExport,
-//                 totalexportLoan: newTotalExportLoan,
-//               };
-//             }
-//             return item;
-//           })
-//         );
-//       }
-
-//       message.success("Trả thiết bị thành công!");
-
-//       handleDeleteSavedRow(record.id, "exportloan");
-//     } catch (error) {
-//       console.error("Lỗi khi trả thiết bị:", error);
-//       message.error("Đã có lỗi xảy ra khi trả thiết bị.");
-//     }
-//   };
-
-//   const handleSaveBasedOnType = async () => {
-//     try {
-//       const isSupplies = newExportLoans.some(
-//         (device) => device.Type === "Vật tư"
-//       );
-
-//       if (isSupplies) {
-//         await handleSaveAndUpdateExportlistsForSupplies();
-//       } else {
-//         await handleSaveAndUpdateExportlists();
-//       }
-//     } catch (error) {
-//       console.error("Lỗi khi lưu dữ liệu theo loại thiết bị/vật tư:", error);
-//       message.error("Có lỗi xảy ra khi lưu.");
-//     }
-//   };
-
-//   const userData = JSON.parse(localStorage.getItem("user")) || {};
-//   const account = userData?.account || {};
-
-//   return (
-//     <>
-//       <Modal
-//         title="Chi Tiết Phiếu"
-//         open={isOpen}
-//         onCancel={onClose}
-//         getContainer={document.body}
-//         footer={[
-//           <Button key="cancel" icon={<CloseOutlined />} onClick={onClose}>
-//             Đóng
-//           </Button>,
-//           account.Leader === true &&
-//           ticket?.Status === "Đang chờ duyệt" && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="return"
-//               type="default"
-//               danger
-//               icon={<LeftSquareTwoTone />}
-//               onClick={handleReturnTicket}
-//             >
-//               Trả Phiếu
-//             </Button>
-//           ),
-//           account.Exportlist === true &&
-//           ticket?.Status === "Đang chờ duyệt" && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="approve"
-//               type="primary"
-//               icon={<CheckCircleTwoTone />}
-//               onClick={handleApproveTicketAndUpdateDevices}
-//               loading={loading}
-//               disabled={loading}
-//               style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-//             >
-//               {loading ? "Đang xử lý..." : "Duyệt Phiếu"}
-//             </Button>
-//           ),
-//           ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-//           ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="saveNew"
-//               type="default"
-//               icon={<SaveTwoTone />}
-//               onClick={handleSaveBasedOnType}
-//             >
-//               Lưu
-//             </Button>
-//           ),
-//           ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-//           ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="sendvotes"
-//               type="primary"
-//               icon={<FileAddTwoTone />}
-//               onClick={handleConfirmTicket}
-//               style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//             >
-//               Gửi phiếu
-//             </Button>
-//           ),
-//           (ticket?.Status === "Duyệt" || // Sửa: bỏ .attributes
-//             ticket?.Status === "Đã giao") && // Sửa: bỏ .attributes
-//           ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="print"
-//               type="primary"
-//               icon={<PrinterTwoTone />}
-//               onClick={() => setPrintVisible(true)}
-//               style={{ backgroundColor: "#b65959ff", borderColor: "#9b59b6" }}
-//             >
-//               In Phiếu
-//             </Button>
-//           ),
-//           ticket?.Status === "Duyệt" && // Sửa: bỏ .attributes
-//           ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="exportvotes"
-//               type="primary"
-//               icon={<WarningTwoTone />}
-//               onClick={handleImportDeviceServicesTicket}
-//               style={{
-//                 backgroundColor: "#ee0909ff",
-//                 borderColor: "#ee0909ff",
-//               }}
-//             >
-//               Xuất Phiếu
-//             </Button>
-//           ),
-//           account.Receivelistkho === true &&
-//           ticket?.Status === "Đã giao" && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="confirm"
-//               type="primary"
-//               icon={<CheckSquareTwoTone />}
-//               onClick={handleConfirmAdminTicket}
-//               style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//             >
-//               Xác nhận
-//             </Button>
-//           ),
-//           account.Leader === true && (ticket?.Status === "Duyệt" || // Sửa: bỏ .attributes
-//             ticket?.Status === "Đã giao") && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="deleapproval"
-//               type="primary"
-//               icon={<MinusCircleTwoTone />}
-//               onClick={handleReturnLeaderTicket}
-//               style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
-//             >
-//               Hủy duyệt
-//             </Button>
-//           ),
-//           account.Leader === true &&
-//           ticket?.Status === "Xác nhận" && ( // Sửa: bỏ .attributes
-//             <Button
-//               key="guarantee"
-//               type="primary"
-//               icon={<ReconciliationTwoTone />}
-//               onClick={handleConfirmWarranty}
-//               style={{
-//                 backgroundColor: "#e8f00cff",
-//                 borderColor: "#e8f00cff",
-//               }}
-//             >
-//               Bảo hành
-//             </Button>
-//           ),
-//           ticket?.Status === "Xác nhận" && // Sửa: bỏ .attributes
-//           account.Invoiceer === true && (
-//             <Button
-//               key="complete"
-//               type="primary"
-//               icon={<SafetyCertificateTwoTone />}
-//               onClick={handleHandoverTicket}
-//               style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-//             >
-//               Hoàn thành
-//             </Button>
-//           ),
-//           ticket?.Status === "Chờ xuất hóa đơn" && // Sửa: bỏ .attributes
-//           account.Invoiceer === true && (
-//             <Button
-//               key="issueinvoice"
-//               type="primary"
-//               icon={<CalculatorTwoTone />}
-//               onClick={() => setIsModalVisible(true)}
-//               style={{ backgroundColor: "#DD0000", borderColor: "#DD0000" }}
-//             >
-//               Xuất hóa đơn
-//             </Button>
-//           ),
-//         ]}
-//         width="100vw"
-//       >
-//         <Spin spinning={loading} tip="Đang xử lý dữ liệu...">
-//           <h3>Thiết Bị Mượn Từ POS</h3>
-//           <Table
-//             dataSource={combinedExportLoanData}
-//             rowKey="id"
-//             pagination={false}
-//             columns={[
-//               {
-//                 title: "Tên Thiết Bị",
-//                 dataIndex: "ProductName", // Sửa: bỏ .attributes
-//                 key: "ProductName",
-//                 width: 220,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Select
-//                       showSearch
-//                       value={record.ProductName || undefined}
-//                       style={{ width: "100%" }}
-//                       onChange={(value) =>
-//                         handleProductChange(record.id, value)
-//                       }
-//                       options={Array.from(
-//                         new Set(
-//                           exportList
-//                             .filter(
-//                               // Sửa: bỏ .attributes
-//                               (item) => item.Status === "Đang mượn"
-//                             )
-//                             // Sửa: bỏ .attributes
-//                             .map((item) => item.ProductName)
-//                         )
-//                       )
-//                         .sort((a, b) => a.localeCompare(b))
-//                         .map((productName) => ({
-//                           value: productName,
-//                           label: productName,
-//                         }))}
-//                       filterOption={(input, option) =>
-//                         (option?.label ?? "")
-//                           .toLowerCase()
-//                           .includes(input.toLowerCase())
-//                       }
-//                     />
-//                   ) : (
-//                     <span>{record.ProductName || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Model",
-//                 dataIndex: "Model", // Sửa: bỏ .attributes
-//                 key: "Model",
-//                 width: 200,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Select
-//                       showSearch
-//                       value={record.Model || undefined}
-//                       style={{ width: "100%" }}
-//                       onChange={(value) => handleModelChange(record.id, value)}
-//                       options={(record.availableModels || [])
-//                         .slice()
-//                         .sort((a, b) => a.localeCompare(b))
-//                         .map((model) => ({
-//                           value: model,
-//                           label: model,
-//                         }))}
-//                       filterOption={(input, option) =>
-//                         (option?.label ?? "")
-//                           .toLowerCase()
-//                           .includes(input.toLowerCase())
-//                       }
-//                     />
-//                   ) : (
-//                     <span>{record.Model || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Thương Hiệu",
-//                 dataIndex: "BrandName", // Sửa: bỏ .attributes
-//                 key: "BrandName",
-//                 width: 150,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.BrandName || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.BrandName || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Kiểu sản phẩm",
-//                 dataIndex: "Type", // Sửa: bỏ .attributes
-//                 key: "Type",
-//                 width: 150,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Type || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.Type || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Đvt",
-//                 dataIndex: "DVT", // Sửa: bỏ .attributes
-//                 key: "DVT",
-//                 width: 80,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.DVT || ""}
-//                       style={{ width: "100%", textAlign: "center" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span style={{ display: "block", textAlign: "center" }}>
-//                       {record.DVT || "-"}
-//                     </span>
-//                   ),
-//               },
-//               {
-//                 title: "Kho",
-//                 dataIndex: "TypeKho", // Sửa: bỏ .attributes
-//                 key: "TypeKho",
-//                 width: 100,
-//                 render: (_, record) => {
-//                   const availableWarehouses =
-//                     record.ProductName && record.Model
-//                       ? getAvailableWarehouses(record.ProductName, record.Model)
-//                       : [];
-
-//                   return record.isNew ? (
-//                     <Select
-//                       value={record.TypeKho || undefined}
-//                       style={{ width: "100%" }}
-//                       onChange={(value) =>
-//                         handleWarehouseChange(record.id, value)
-//                       }
-//                       options={availableWarehouses}
-//                       placeholder="Chọn kho"
-//                     />
-//                   ) : (
-//                     <span>{record.TypeKho || "-"}</span>
-//                   );
-//                 },
-//               },
-//               {
-//                 title: "Số lượng",
-//                 dataIndex: "totalexport", // Sửa: bỏ .attributes
-//                 key: "totalexport",
-//                 width: 100,
-//                 render: (_, record) => {
-//                   const productName =
-//                     record.ProductName; // Sửa: bỏ .attributes
-//                   const model = record.Model; // Sửa: bỏ .attributes
-//                   const warehouse =
-//                     record.TypeKho; // Sửa: bỏ .attributes
-
-//                   const matchedItems = exportList.filter(
-//                     (item) =>
-//                       // Sửa: bỏ .attributes
-//                       item.ProductName === productName &&
-//                       item.Model === model &&
-//                       item.TypeKho === warehouse &&
-//                       item.Status === "Đang mượn"
-//                   );
-
-//                   const maxQuantityFromData = matchedItems.reduce(
-//                     (total, item) => total + (item.totalexport || 0), // Sửa: bỏ .attributes
-//                     0
-//                   );
-
-//                   const usedQuantityInTable = combinedExportLoanData
-//                     .filter(
-//                       (r) =>
-//                         r.id !== record.id &&
-//                         (r.ProductName) ===
-//                         productName &&
-//                         (r.Model) === model &&
-//                         (r.TypeKho) === warehouse
-//                     )
-//                     .reduce((sum, r) => sum + (Number(r.totalexport) || 0), 0);
-
-//                   const remainingMaxQuantity =
-//                     maxQuantityFromData - usedQuantityInTable;
-
-//                   return record.isNew ? (
-//                     <div style={{ display: "flex", alignItems: "center" }}>
-//                       <InputNumber
-//                         min={1}
-//                         max={remainingMaxQuantity}
-//                         value={record.totalexport}
-//                         onChange={(value) => {
-//                           const currentSNCount = Array.isArray(
-//                             record.SerialNumber
-//                           )
-//                             ? record.SerialNumber.length
-//                             : (record.SerialNumber || "")
-//                               .split(",")
-//                               .filter((sn) => sn).length;
-
-//                           if (
-//                             record.Type !== "Vật tư" &&
-//                             value < currentSNCount
-//                           ) {
-//                             message.error(
-//                               `Bạn đã chọn ${currentSNCount} serial, không thể giảm xuống ${value}.`
-//                             );
-//                             return;
-//                           }
-
-//                           handleTotalExportChange(record.id, value);
-//                         }}
-//                         style={{ width: "70px" }}
-//                       />
-//                       {remainingMaxQuantity > 0 && (
-//                         <span
-//                           style={{
-//                             color: "red",
-//                             fontSize: "12px",
-//                             marginLeft: "8px",
-//                             whiteSpace: "nowrap",
-//                           }}
-//                         >
-//                           Tối đa: {remainingMaxQuantity}
-//                         </span>
-//                       )}
-//                     </div>
-//                   ) : (
-//                     <span>{record.totalexport || 0}</span>
-//                   );
-//                 },
-//               },
-//               {
-//                 title: "SerialNumber",
-//                 dataIndex: "SerialNumber", // Sửa: bỏ .attributes
-//                 key: "SerialNumber",
-//                 width: 200,
-//                 render: (_, record) => {
-//                   const productName =
-//                     record.ProductName; // Sửa: bỏ .attributes
-//                   const model = record.Model; // Sửa: bỏ .attributes
-//                   const warehouse =
-//                     record.TypeKho; // Sửa: bỏ .attributes
-
-//                   const sources = exportList.filter(
-//                     (item) =>
-//                       // Sửa: bỏ .attributes
-//                       item.ProductName === productName &&
-//                       item.Model === model &&
-//                       item.TypeKho === warehouse &&
-//                       item.Status === "Đang mượn"
-//                   );
-
-//                   const allSerialString = sources.reduce((acc, curr) => {
-//                     const serial = curr.SerialNumber || ""; // Sửa: bỏ .attributes
-//                     return acc ? `${acc},${serial}` : serial;
-//                   }, "");
-
-//                   let serialList = allSerialString
-//                     ? allSerialString
-//                       .split(",")
-//                       .map((sn) => sn.trim())
-//                       .filter((sn) => sn.length > 0)
-//                     : [];
-
-//                   const selectedSerialsInTable = combinedExportLoanData
-//                     .filter((r) => r.id !== record.id)
-//                     .flatMap((r) =>
-//                       Array.isArray(r.SerialNumber)
-//                         ? r.SerialNumber
-//                         : (r.SerialNumber || "")
-//                           .split(",")
-//                           .map((sn) => sn.trim())
-//                           .filter((sn) => sn)
-//                     );
-
-//                   const currentSerials = Array.isArray(record.SerialNumber)
-//                     ? record.SerialNumber
-//                     : (record.SerialNumber || "")
-//                       .split(",")
-//                       .map((sn) => sn.trim())
-//                       .filter((sn) => sn);
-
-//                   const availableSerials = serialList.filter(
-//                     (sn) =>
-//                       !selectedSerialsInTable.includes(sn) ||
-//                       currentSerials.includes(sn)
-//                   );
-
-//                   let currentValue = record.SerialNumber;
-//                   if (
-//                     Array.isArray(currentValue) &&
-//                     currentValue.length === 0
-//                   ) {
-//                     currentValue = undefined;
-//                   } else if (
-//                     typeof currentValue === "string" &&
-//                     !currentValue.trim()
-//                   ) {
-//                     currentValue = undefined;
-//                   }
-
-//                   if (record.isNew) {
-//                     return (
-//                       <Select
-//                         mode="multiple"
-//                         placeholder="Chọn Serial Number"
-//                         style={{
-//                           width: "100%",
-//                           border:
-//                             record.Type !== "Vật tư" &&
-//                               Array.isArray(currentValue) &&
-//                               currentValue.length !== Number(record.totalexport)
-//                               ? "1px solid red"
-//                               : undefined,
-//                         }}
-//                         value={currentValue}
-//                         onChange={(value) => {
-//                           const limit = Number(record.totalexport) || 0;
-
-//                           if (
-//                             record.Type !== "Vật tư" &&
-//                             value.length > limit
-//                           ) {
-//                             message.error(
-//                               `Chỉ được chọn tối đa ${limit} serial.`
-//                             );
-//                             return;
-//                           }
-
-//                           handleSerialChange(record.id, value);
-//                         }}
-//                         options={availableSerials.map((sn) => ({
-//                           value: sn,
-//                           label: sn,
-//                           disabled:
-//                             record.Type !== "Vật tư" &&
-//                             Array.isArray(currentValue) &&
-//                             currentValue.length >= Number(record.totalexport) &&
-//                             !currentValue.includes(sn),
-//                         }))}
-//                       />
-//                     );
-//                   } else {
-//                     return (
-//                       <span>
-//                         {Array.isArray(currentSerials)
-//                           ? currentSerials.join(", ")
-//                           : currentSerials || "-"}
-//                       </span>
-//                     );
-//                   }
-//                 },
-//               },
-//               {
-//                 title: "Số Phiếu",
-//                 dataIndex: "Votes", // Sửa: bỏ .attributes
-//                 key: "Votes",
-//                 width: 185,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Votes || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.Votes || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Ticket",
-//                 dataIndex: "Ticket", // Sửa: bỏ .attributes
-//                 key: "Ticket",
-//                 width: 150,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Ticket || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.Ticket || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Người mượn",
-//                 dataIndex: "NameExportLoan", // Sửa: bỏ .attributes
-//                 key: "NameExportLoan",
-//                 width: 200,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.NameExportLoan || ""}
-//                       style={{ width: "100%" }}
-//                       disabled
-//                     />
-//                   ) : (
-//                     <span>{record.NameExportLoan || "-"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Trạng Thái",
-//                 dataIndex: "Status", // Sửa: bỏ .attributes
-//                 key: "Status",
-//                 width: 160,
-//                 render: (_, record) =>
-//                   record.isNew ? (
-//                     <Input
-//                       value={record.Status || "Đang chờ duyệt"}
-//                       disabled
-//                       style={{ width: "100%" }}
-//                     />
-//                   ) : (
-//                     <span>{record.Status || "Đang chờ duyệt"}</span>
-//                   ),
-//               },
-//               {
-//                 title: "Hành động",
-//                 key: "action",
-//                 render: (_, record) => {
-//                   const isCreator =
-//                     ticket?.Person === account?.Name; // Sửa: bỏ .attributes
-//                   const isPending =
-//                     ticket?.Status === "Đang tạo phiếu"; // Sửa: bỏ .attributes
-//                   const canDelete = isCreator && isPending;
-
-//                   if (record.isNew) {
-//                     return canDelete ? (
-//                       <Popconfirm
-//                         title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                         onConfirm={() =>
-//                           handleDeleteRow(record.id, "exportloan")
-//                         }
-//                         okText="Có"
-//                         cancelText="Không"
-//                       >
-//                         <Button type="danger" icon={<DeleteOutlined />} />
-//                       </Popconfirm>
-//                     ) : null;
-//                   } else {
-//                     if (editingRowId === record.id) {
-//                       return (
-//                         <div
-//                           style={{
-//                             display: "flex",
-//                             flexDirection: "row",
-//                             gap: "5px",
-//                             justifyContent: "center",
-//                           }}
-//                         >
-//                           <Button
-//                             type="primary"
-//                             icon={<EditOutlined />}
-//                             onClick={() =>
-//                               handleUpdateRow(record.id, "exportloan")
-//                             }
-//                           />
-//                           <Button onClick={() => setEditingRowId(null)}>
-//                             Hủy
-//                           </Button>
-//                         </div>
-//                       );
-//                     } else {
-//                       return (
-//                         <div
-//                           style={{
-//                             display: "flex",
-//                             flexDirection: "row",
-//                             gap: "5px",
-//                             justifyContent: "center",
-//                           }}
-//                         >
-//                           <Button
-//                             type="default"
-//                             icon={<EditOutlined style={{ color: "#1890ff" }} />}
-//                             onClick={() => setEditingRowId(record.id)}
-//                           />
-//                           {canDelete && !record.id && (
-//                             <Popconfirm
-//                               title="Bạn có chắc muốn xóa dữ liệu hàng này?"
-//                               onConfirm={() =>
-//                                 handleDeleteSavedRow(record.id, "exportloan")
-//                               }
-//                               okText="Có"
-//                               cancelText="Không"
-//                             >
-//                               <Button type="danger" icon={<DeleteOutlined />} />
-//                             </Popconfirm>
-//                           )}
-//                           {ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-//                             record.id && (
-//                               <Popconfirm
-//                                 title="Bạn có chắc muốn trả toàn bộ thiết bị của hàng này?"
-//                                 onConfirm={() => handleReturnDevice(record)}
-//                                 okText="Có"
-//                                 cancelText="Không"
-//                               >
-//                                 <Button
-//                                   type="default"
-//                                   icon={<LeftCircleTwoTone />}
-//                                 >
-//                                   Trả thiết bị
-//                                 </Button>
-//                               </Popconfirm>
-//                             )}
-//                         </div>
-//                       );
-//                     }
-//                   }
-//                 },
-//                 width: 120,
-//               },
-//             ]}
-//             scroll={{ x: "max-content" }}
-//           />
-//           {ticket?.Status === "Đang tạo phiếu" && // Sửa: bỏ .attributes
-//             ticket?.Person === account?.Name && ( // Sửa: bỏ .attributes
-//               <Button
-//                 type="dashed"
-//                 onClick={() => handleAddRow("exportloan")}
-//                 style={{ marginTop: 10, marginLeft: 10 }}
-//               >
-//                 ➕ Thêm Hàng (Thiết bị mượn)
-//               </Button>
-//             )}
-//           <PrintTicketExportLoan
-//             isOpen={printVisible}
-//             onClose={() => setPrintVisible(false)}
-//             ticket={ticket || {}} // Sửa: bỏ .attributes rỗng
-//             handoverDevices={exportLoanData || []}
-//             autoPrint={true}
-//           />
-//           <ExportInvoiceModal
-//             visible={isModalVisible}
-//             onClose={() => setIsModalVisible(false)}
-//             onConfirm={handleExportTicket}
-//             ticketId={ticket.id}
-//             invoiceNumber={invoiceNumber}
-//             setInvoiceNumber={setInvoiceNumber}
-//           />
-//         </Spin>
-//       </Modal>
-//     </>
-//   );
-// };
-
-// export default TicketExportLoanModal;
-
-
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------
-
-
-// import React, { useState, useEffect } from "react";
-// import {
-//   Modal,
-//   Button,
-//   Input,
-//   Table,
-//   message,
-//   Select,
-//   Popconfirm,
-//   InputNumber,
-//   Spin,
-//   Tag,
-//   Descriptions,
-//   Space,
-//   Divider,
-//   Card,
-//   Tooltip
-// } from "antd";
-// import {
-//   createExportLoanPOS,
-//   fetchExportLoanPOS,
-//   deleteExportLoanPOS,
-//   updateExportLoanTicket,
-//   fetchExportlists,
-//   updateExportLoanPOS,
-//   updateExportlistsSerial,
-//   updateExportLoanTicketPersonInvoice,
-//   createImportDeviceServices,
-//   updateExportLoanTicketInvoice,
-//   fetchWarehouseDetails,
-//   updateWarehouseDetails,
-//   updateExportLoanTicketv1,
-// } from "../../../services/dhgServices";
-// import PrintTicketExportLoan from "./PrintTicketExportLoan";
-// import ExportInvoiceModal from "./ExportInvoiceModal";
-// import {
-//   EditOutlined,
-//   DeleteOutlined,
-//   CloseOutlined,
-//   SafetyCertificateOutlined,
-//   MinusCircleOutlined,
-//   SaveOutlined,
-//   FileAddOutlined,
-//   CalculatorOutlined,
-//   ExportOutlined,
-//   CheckSquareOutlined,
-//   UndoOutlined,
-//   CheckCircleOutlined,
-//   PrinterOutlined,
-//   PlusOutlined,
-//   RollbackOutlined,
-//   ToolOutlined
-// } from "@ant-design/icons";
-
-// const TicketExportLoanModal = ({
-//   isOpen,
-//   onClose,
-//   ticket,
-//   fetchDevices,
-//   fetchTickets,
-//   reloadTickets,
-//   serialNumberOptions = [],
-// }) => {
-//   const [loading, setLoading] = useState(false);
-//   const [exportLoanData, setExportLoanData] = useState([]);
-//   const [newExportLoans, setNewExportLoans] = useState([]);
-//   const [exportList, setExportList] = useState([]);
-//   const [editingRowId, setEditingRowId] = useState(null);
-//   const [printVisible, setPrintVisible] = useState(false);
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [invoiceNumber, setInvoiceNumber] = useState("");
-
-//   const userData = JSON.parse(localStorage.getItem("user")) || {};
-//   const account = userData?.account || {};
-
-//   // --- Helpers for UI ---
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case "Duyệt": return "success";
-//       case "Đã giao": return "cyan";
-//       case "Đang chờ duyệt": return "processing";
-//       case "Trả kho": return "purple";
-//       case "Đang tạo phiếu": return "default";
-//       case "Hủy": return "error";
-//       default: return "default";
-//     }
-//   };
-
-//   // --- Effects ---
-//   useEffect(() => {
-//     fetchExportlists().then((response) => {
-//       const data = Array.isArray(response) ? response : (response.data || []);
-//       setExportList(data);
-//     });
-//   }, []);
-
-//   useEffect(() => {
-//     if (isOpen && ticket?.Votes) {
-//       fetchExportLoanPOS(ticket.Votes)
-//         .then((responseData) => {
-//           const rawData = Array.isArray(responseData) ? responseData : (responseData.data || []);
-//           const devices = rawData.map((item) => ({
-//             id: item.id || item.documentId,
-//             ...item
-//           }));
-//           setExportLoanData(devices);
-//         })
-//         .catch((error) => {
-//           console.error("Lỗi tải thiết bị bàn giao:", error);
-//           message.error("Lỗi tải thiết bị bàn giao.");
-//         });
-//     }
-//   }, [isOpen, ticket?.Votes]);
-
-//   useEffect(() => {
-//     if (!isOpen) {
-//       setExportLoanData([]);
-//       setNewExportLoans([]);
-//       setEditingRowId(null);
-//     }
-//   }, [isOpen]);
-
-//   const combinedExportLoanData = [...exportLoanData, ...newExportLoans];
-
-//   // --- Handlers (Logic kept intact) ---
-//   const handleAddRow = (type) => {
-//     if (!ticket) {
-//       message.error("Vui lòng chọn phiếu trước khi thêm thiết bị!");
-//       return;
-//     }
-
-//     const newDevice = {
-//       id: Date.now(),
-//       ProductName: ticket.ProductName || "",
-//       Model: "",
-//       BrandName: "",
-//       DVT: "",
-//       TypeKho: "",
-//       totalexport: 1,
-//       SerialNumber: "",
-//       Ticket: ticket.Ticket,
-//       Votes: ticket.Votes,
-//       NameExportLoan: account?.Name || "",
-//       Status: "Mới",
-//       Note: "",
-//       Type: "",
-//       isNew: true,
-//     };
-
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) => [...prev, newDevice]);
-//     }
-//   };
-
-//   const handleDeleteRow = (id, type) => {
-//     if (type === "exportloan") {
-//       setNewExportLoans((prev) => prev.filter((device) => device.id !== id));
-//     }
-//   };
-
-//   const handleUpdateRow = async (id, type) => {
-//     let device;
-//     if (type === "exportloan") {
-//       device = exportLoanData.find((d) => d.id === id);
-//     }
-//     if (!device || !device.SerialNumber) {
-//       message.warning("Thiết bị không hợp lệ để cập nhật.");
-//       return;
-//     }
-//     try {
-//       setLoading(true);
-//       message.success("Cập nhật thiết bị thành công!");
-//       setEditingRowId(null);
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật thiết bị:", error);
-//       message.error("Lỗi khi cập nhật thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSaveAndUpdateExportlists = async () => {
-//     try {
-//       const newDevices = [...newExportLoans];
-
-//       const invalidDevices = newDevices.filter(
-//         (device) =>
-//           device.Type !== "Vật tư" &&
-//           (!device.SerialNumber ||
-//             (Array.isArray(device.SerialNumber) && device.SerialNumber.length === 0) ||
-//             (typeof device.SerialNumber === "string" && device.SerialNumber.trim() === ""))
-//       );
-
-//       if (invalidDevices.length > 0) {
-//         const names = invalidDevices.map((d) => `${d.ProductName} - ${d.Model}`).join(", ");
-//         message.error(`Các thiết bị sau chưa nhập SerialNumber: ${names}`);
-//         throw new Error("Thiếu SerialNumber");
-//       }
-
-//       await handleSaveNewDevices();
-
-//       for (const device of newDevices) {
-//         const matchingExportItems = exportList.filter(
-//           (item) =>
-//             item.ProductName === device.ProductName &&
-//             item.Model === device.Model &&
-//             item.TypeKho === device.TypeKho &&
-//             item.Status === "Đang mượn"
-//         );
-
-//         for (const exportListItem of matchingExportItems) {
-//           const exportListId = exportListItem.id || exportListItem.documentId;
-//           const oldSerialArray = (exportListItem.SerialNumber || "").split(",").map((sn) => sn.trim()).filter(Boolean);
-//           const deviceSerials = Array.isArray(device.SerialNumber)
-//             ? device.SerialNumber
-//             : (device.SerialNumber || "").split(",").map((sn) => sn.trim()).filter(Boolean);
-
-//           const usedSerials = deviceSerials.filter((sn) => oldSerialArray.includes(sn));
-//           if (usedSerials.length === 0) continue;
-
-//           const newSerialArray = oldSerialArray.filter((sn) => !usedSerials.includes(sn));
-//           const newSerialString = newSerialArray.join(",");
-
-//           const oldSerialLoanArray = (exportListItem.SerialNumberLoan || "").split(",").map((sn) => sn.trim()).filter(Boolean);
-//           const newSerialLoanArray = Array.from(new Set([...oldSerialLoanArray, ...usedSerials]));
-//           const newSerialLoanString = newSerialLoanArray.join(",");
-
-//           const oldQuantity = exportListItem.totalexport ?? 0;
-//           const newTotalExport = Math.max(0, oldQuantity - usedSerials.length);
-//           const oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
-//           const newTotalExportLoan = oldLoanQuantity + usedSerials.length;
-
-//           await updateExportlistsSerial(exportListId, newSerialString, newSerialLoanString, newTotalExport, newTotalExportLoan);
-
-//           setExportList((prev) =>
-//             prev.map((item) =>
-//               (item.id === exportListId || item.documentId === exportListId)
-//                 ? { ...item, SerialNumber: newSerialString, SerialNumberLoan: newSerialLoanString, totalexport: newTotalExport, totalexportLoan: newTotalExportLoan }
-//                 : item
-//             )
-//           );
-//         }
-//       }
-//       message.success("Lưu thiết bị thành công và đã cập nhật exportlists!");
-//     } catch (error) {
-//       console.error("Lỗi khi lưu và cập nhật:", error);
-//       message.error("Đã có lỗi xảy ra khi lưu và cập nhật.");
-//       throw error;
-//     }
-//   };
-
-//   const handleSaveNewDevices = async () => {
-//     setLoading(true);
-//     try {
-//       const newDevices = [...newExportLoans];
-//       const requiredFields = ["ProductName", "Model", "BrandName", "TypeKho", "totalexport"];
-
-//       for (const device of newDevices) {
-//         for (const field of requiredFields) {
-//           if (!device[field] || device[field].toString().trim() === "") {
-//             message.warning(`Vui lòng điền đầy đủ trường cho tất cả các hàng.`);
-//             setLoading(false);
-//             return;
-//           }
-//         }
-//         if (device.Type !== "Vật tư" && (!device.SerialNumber || device.SerialNumber.toString().trim() === "")) {
-//           message.warning(`SerialNumber là bắt buộc cho các thiết bị không phải vật tư.`);
-//           setLoading(false);
-//           return;
-//         }
-//       }
-
-//       const exportloanPromises = newExportLoans
-//         .filter((device) => device.Type === "Vật tư" || device.SerialNumber)
-//         .map((device) => {
-//           const deviceData = {
-//             ...device,
-//             SerialNumber: device.Type === "Vật tư"
-//               ? ""
-//               : Array.isArray(device.SerialNumber)
-//                 ? device.SerialNumber.join(",").trim()
-//                 : device.SerialNumber,
-//             Votes: ticket?.Votes || "",
-//             Ticket: ticket?.Ticket || "",
-//             Status: device.Status || "Đang chờ duyệt",
-//           };
-//           return createExportLoanPOS(deviceData);
-//         });
-
-//       await Promise.all([...exportloanPromises]);
-//       message.success("Lưu thiết bị thành công!");
-//       onClose();
-//       fetchDevices();
-//       fetchTickets();
-//     } catch (error) {
-//       console.error("Lỗi khi lưu thiết bị:", error);
-//       message.error("Lỗi khi lưu thiết bị.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleDeleteSavedRow = async (id, type) => {
-//     try {
-//       setLoading(true);
-//       if (type === "exportloan") {
-//         await deleteExportLoanPOS(id);
-//         setExportLoanData((prev) => prev.filter((device) => device.id !== id));
-//       }
-//       message.success("Đã xóa thiết bị thành công!");
-//     } catch (error) {
-//       message.error("Lỗi khi xóa thiết bị đã lưu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicketAndUpdateDevices = async () => {
-//     try {
-//       await handleApproveTicket();
-//       const savedDevices = [...exportLoanData];
-//       if (savedDevices.length === 0) return;
-//       await Promise.all(savedDevices.map((device) => updateExportLoanPOS(device.id, "Duyệt")));
-//       await updateWarehouseFromDevices(savedDevices);
-//       message.success("✅ Thiết bị và kho đã được cập nhật!");
-//     } catch (error) {
-//       message.error("Đã có lỗi xảy ra khi cập nhật.");
-//     }
-//   };
-
-//   const updateWarehouseFromDevices = async (devices) => {
-//     try {
-//       const warehouseResponse = await fetchWarehouseDetails();
-//       const warehouseList = Array.isArray(warehouseResponse) ? warehouseResponse : (warehouseResponse.data || []);
-//       for (const device of devices) {
-//         if (!device || !device.Model) continue;
-//         const kho = warehouseList.find((k) => k.Model === device.Model);
-//         if (!kho) continue;
-
-//         const id = kho.id || kho.documentId;
-//         const attributes = kho;
-//         let updatedPOS = attributes.POS || 0;
-//         let updatedPOSHN = attributes.POSHN || 0;
-//         let totalXTK = attributes.totalXTK || 0;
-
-//         if (device.TypeKho === "POS") updatedPOS -= device.totalexport || 0;
-//         else if (device.TypeKho === "POSHN") updatedPOSHN -= device.totalexport || 0;
-
-//         totalXTK += device.totalexport || 0;
-//         const inventoryCK = (attributes.inventoryDK || 0) + (attributes.totalNTK || 0) - totalXTK;
-
-//         await updateWarehouseDetails(id, { POS: updatedPOS, POSHN: updatedPOSHN, totalXTK, inventoryCK });
-//       }
-//     } catch (error) {
-//       console.error("Lỗi cập nhật kho:", error);
-//     }
-//   };
-
-//   const handleImportDeviceServicesTicket = async () => {
-//     await updateExportLoanTicket(ticket.id, "Đã giao");
-//     message.success("Phiếu đã chuyển sang trạng thái 'Đã giao'!");
-//     if (!exportLoanData || exportLoanData.length === 0) {
-//       message.warning("Không có thiết bị để xuất!");
-//       return;
-//     }
-//     if (reloadTickets) await reloadTickets();
-//     try {
-//       for (const device of exportLoanData) {
-//         if (device.TypeDevice === "QLTB") continue;
-//         const serialNumbers = device.SerialNumber.includes(",") ? device.SerialNumber.split(",").map(s => s.trim()) : [device.SerialNumber];
-//         for (const serial of serialNumbers) {
-//           await createImportDeviceServices({ Model: device.Model, BrandName: device.BrandName, SerialNumber: serial, Store: "DHG" });
-//         }
-//       }
-//       message.success("Xuất thiết bị thành công!");
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi xuất thiết bị.");
-//     }
-//   };
-
-//   const handleApproveTicket = async () => {
-//     try {
-//       setLoading(true);
-//       if (exportLoanData.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để duyệt.");
-//         setLoading(false); return;
-//       }
-//       await updateExportLoanTicketv1(ticket.id, { Status: "Duyệt", PersonApprove: account.Name });
-//       message.success(`✅ Phiếu được duyệt bởi: ${account.Name}`);
-//       if (reloadTickets) await reloadTickets();
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi duyệt phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveTicketcallback = async () => {
-//     try {
-//       setLoading(true);
-//       if (exportLoanData.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để trả.");
-//         setLoading(false); return;
-//       }
-//       await updateExportLoanTicket(ticket.id, "Đang chờ duyệt");
-//       message.success("Trả phiếu thành công!");
-//       if (reloadTickets) await reloadTickets();
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi trả phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleApproveReturnWarehouse = async () => {
-//     try {
-//       setLoading(true);
-//       if (exportLoanData.length === 0) {
-//         message.warning("Không có thiết bị đã lưu để trả.");
-//         setLoading(false); return;
-//       }
-//       await updateExportLoanTicket(ticket.id, "Trả kho");
-//       message.success("Trả phiếu thành công!");
-//       if (reloadTickets) await reloadTickets();
-//       fetchDevices();
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi trả phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmTicket = async () => {
-//     try {
-//       setLoading(true);
-//       const isSupplies = newExportLoans.some((device) => device.Type === "Vật tư");
-//       if (isSupplies) await handleSaveAndUpdateExportlistsForSupplies();
-//       else await handleSaveAndUpdateExportlists();
-//       await updateExportLoanTicket(ticket.id, "Đang chờ duyệt");
-//       message.success("Phiếu đã lưu và chuyển sang trạng thái 'Đang chờ duyệt'!");
-//       if (reloadTickets) await reloadTickets();
-//       onClose();
-//     } catch (error) {
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSaveAndUpdateExportlistsForSupplies = async () => {
-//     try {
-//       await handleSaveNewDevices();
-//       const newSupplies = [...newExportLoans];
-//       for (const supply of newSupplies) {
-//         if (supply.Type !== "Vật tư") continue;
-//         let remainingQuantity = supply.totalexport;
-//         let sortedExportItems = exportList
-//           .filter((item) => item.ProductName === supply.ProductName && item.Model === supply.Model && item.TypeKho === supply.TypeKho && item.Status === "Đang mượn")
-//           .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-//         for (const exportListItem of sortedExportItems) {
-//           if (remainingQuantity <= 0) break;
-//           const exportListId = exportListItem.id || exportListItem.documentId;
-//           let oldQuantity = exportListItem.totalexport ?? 0;
-//           let oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
-//           let usedQuantity = Math.min(remainingQuantity, oldQuantity);
-//           let newTotalExport = oldQuantity - usedQuantity;
-//           let newTotalExportLoan = oldLoanQuantity + usedQuantity;
-//           remainingQuantity -= usedQuantity;
-//           await updateExportlistsSerial(exportListId, "", "", newTotalExport, newTotalExportLoan);
-//           setExportList((prev) => prev.map((item) => (item.id === exportListId || item.documentId === exportListId) ? { ...item, totalexport: newTotalExport, totalexportLoan: newTotalExportLoan } : item));
-//         }
-//       }
-//       message.success("Lưu vật tư thành công và đã cập nhật exportlists!");
-//     } catch (error) {
-//       message.error("Đã có lỗi xảy ra khi lưu vật tư.");
-//     }
-//   };
-
-//   const handleExportTicket = async () => {
-//     try {
-//       if (!invoiceNumber.trim()) {
-//         message.warning("Vui lòng nhập số hóa đơn!");
-//         return;
-//       }
-//       setLoading(true);
-//       await updateExportLoanTicketInvoice(ticket.id, "Đã xuất hóa đơn", invoiceNumber);
-//       message.success("Phiếu đã chuyển sang trạng thái 'Đã xuất hóa đơn'!");
-//       if (reloadTickets) await reloadTickets();
-//       onClose();
-//     } catch (error) {
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleHandoverTicket = async () => {
-//     try {
-//       setLoading(true);
-//       if (!account?.Name) throw new Error("Không tìm thấy thông tin tài khoản.");
-//       await updateExportLoanTicket(ticket.id, "Chờ xuất hóa đơn");
-//       message.success("Phiếu đã chuyển sang trạng thái 'Chờ xuất hóa đơn'!");
-//       await updateExportLoanTicketPersonInvoice(ticket.id, account.Name);
-//       if (reloadTickets) await reloadTickets();
-//       onClose();
-//     } catch (error) {
-//       message.error("Có lỗi xảy ra khi xác nhận phiếu.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleReturnTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Đang tạo phiếu");
-//       message.success("Phiếu đã được trả về trạng thái 'Đang tạo phiếu'!");
-//       if (reloadTickets) await reloadTickets();
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmAdminTicket = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Xác nhận");
-//       message.success("Phiếu đã được trả về trạng thái 'Xác nhận'!");
-//       if (reloadTickets) await reloadTickets();
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleConfirmWarranty = async () => {
-//     try {
-//       setLoading(true);
-//       await updateExportLoanTicket(ticket.id, "Bảo hành");
-//       message.success("Phiếu đã được trả về trạng thái 'Bảo hành'!");
-//       if (reloadTickets) await reloadTickets();
-//       onClose();
-//     } catch (error) {
-//       message.error("Lỗi khi trả phiếu!");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleReturnLeaderTicket = async () => {
-//     try {
-//       await handleApproveTicketcallback();
-//       const savedDevices = [...exportLoanData];
-//       if (savedDevices.length === 0) return;
-//       await Promise.all(savedDevices.map((device) => updateExportLoanPOS(device.id, "Đang chờ duyệt")));
-//       await updateWarehouseFromDevicescallback(savedDevices);
-//       message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
-//     } catch (error) {
-//       message.error("Có lỗi xảy ra khi hoàn kho.");
-//     }
-//   };
-
-//   const handleReturnWarehouse = async () => {
-//     try {
-//       await handleApproveReturnWarehouse();
-//       const savedDevices = [...exportLoanData];
-//       if (savedDevices.length === 0) return;
-//       await Promise.all(savedDevices.map((device) => updateExportLoanPOS(device.id, "Trả kho")));
-//       await updateWarehouseFromDevicescallback(savedDevices);
-//       message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
-//     } catch (error) {
-//       message.error("Có lỗi xảy ra khi hoàn kho.");
-//     }
-//   };
-
-//   const updateWarehouseFromDevicescallback = async (devices) => {
-//     try {
-//       const warehouseResponse = await fetchWarehouseDetails();
-//       const warehouseList = Array.isArray(warehouseResponse) ? warehouseResponse : (warehouseResponse.data || []);
-//       for (const device of devices) {
-//         if (!device || !device.Model) continue;
-//         const kho = warehouseList.find((k) => k.Model === device.Model);
-//         if (!kho) continue;
-//         const id = kho.id || kho.documentId;
-//         const attributes = kho;
-//         let updatedPOS = attributes.POS || 0;
-//         let updatedPOSHN = attributes.POSHN || 0;
-//         let totalXTK = attributes.totalXTK || 0;
-//         if (device.TypeKho === "POS") updatedPOS += device.totalexport || 0;
-//         else if (device.TypeKho === "POSHN") updatedPOSHN += device.totalexport || 0;
-//         totalXTK -= device.totalexport || 0;
-//         const inventoryCK = (attributes.inventoryDK || 0) + (attributes.totalNTK || 0) - totalXTK;
-//         await updateWarehouseDetails(id, { POS: updatedPOS, POSHN: updatedPOSHN, totalXTK, inventoryCK });
-//       }
-//     } catch (error) {
-//       console.error("Lỗi hoàn kho:", error);
-//     }
-//   };
-
-//   const handleProductChange = (id, value) => {
-//     const matchedProducts = exportList.filter((item) => item.ProductName === value);
-//     const availableModels = [...new Set(matchedProducts.map((item) => item.Model))];
-//     setNewExportLoans((prev) => prev.map((device) => {
-//       if (device.id === id) {
-//         return {
-//           ...device,
-//           ProductName: value,
-//           availableModels,
-//           Model: availableModels.includes(device.Model) ? device.Model : undefined,
-//         };
-//       }
-//       return device;
-//     }));
-//   };
-
-//   const handleModelChange = (id, model) => {
-//     const selectedItem = exportList.find((item) => item.Model === model);
-//     const dvt = selectedItem ? selectedItem.DVT : "";
-//     const brandName = selectedItem ? selectedItem.BrandName : "";
-//     const types = selectedItem ? selectedItem.Type : "";
-//     const updateFn = (prev) => prev.map((item) => item.id === id ? { ...item, Model: model, DVT: dvt, BrandName: brandName, Type: types } : item);
-//     setNewExportLoans(updateFn);
-//     setExportLoanData(updateFn);
-//   };
-
-//   const getAvailableWarehouses = (productName, model) => {
-//     const matchingRecords = exportList.filter((item) => item.ProductName === productName && item.Model === model && item.totalexport > 0);
-//     const distinctWarehouses = Array.from(new Set(matchingRecords.map((item) => item.TypeKho)));
-//     return distinctWarehouses.map((typeKho) => ({ value: typeKho, label: typeKho }));
-//   };
-
-//   const handleWarehouseChange = (id, selectedWarehouse) => {
-//     setNewExportLoans((prev) => prev.map((item) => item.id === id ? { ...item, TypeKho: selectedWarehouse } : item));
-//   };
-
-//   const handleSerialChange = (id, value) => {
-//     setNewExportLoans((prev) => prev.map((item) => item.id === id ? { ...item, SerialNumber: value } : item));
-//   };
-
-//   const handleTotalExportChange = (id, value) => {
-//     setNewExportLoans((prev) => prev.map((device) => device.id === id ? { ...device, totalexport: value } : device));
-//   };
-
-//   const handleReturnDevice = async (record) => {
-//     try {
-//       const matchingExportItems = exportList.filter(item => item.ProductName === record.ProductName && item.Model === record.Model && item.TypeKho === record.TypeKho && item.Status === "Đang mượn");
-//       if (matchingExportItems.length === 0) { message.warning("Không tìm thấy bản ghi kho tương ứng!"); return; }
-
-//       let deviceSerials = Array.isArray(record.SerialNumber) ? record.SerialNumber : (record.SerialNumber || "").split(",").map(sn => sn.trim()).filter(Boolean);
-
-//       for (const exportListItem of matchingExportItems) {
-//         const exportListId = exportListItem.id || exportListItem.documentId;
-//         const oldSerialArray = (exportListItem.SerialNumber || "").split(",").map(sn => sn.trim()).filter(Boolean);
-//         const oldLoanArray = (exportListItem.SerialNumberLoan || "").split(",").map(sn => sn.trim()).filter(Boolean);
-
-//         const usedSerials = deviceSerials.filter(sn => oldLoanArray.includes(sn));
-//         if (usedSerials.length === 0) continue;
-
-//         const newLoanArray = oldLoanArray.filter(sn => !usedSerials.includes(sn));
-//         const newSerialArray = Array.from(new Set([...oldSerialArray, ...usedSerials]));
-//         const oldQuantity = exportListItem.totalexport ?? 0;
-//         const oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
-//         const newTotalExport = oldQuantity + usedSerials.length;
-//         const newTotalExportLoan = Math.max(0, oldLoanQuantity - usedSerials.length);
-
-//         await updateExportlistsSerial(exportListId, newSerialArray.join(","), newLoanArray.join(","), newTotalExport, newTotalExportLoan);
-//         setExportList(prev => prev.map(item => item.id === exportListId ? { ...item, SerialNumber: newSerialArray.join(","), SerialNumberLoan: newLoanArray.join(","), totalexport: newTotalExport, totalexportLoan: newTotalExportLoan } : item));
-//       }
-//       message.success("Trả thiết bị thành công!");
-//       handleDeleteSavedRow(record.id, "exportloan");
-//     } catch (error) {
-//       message.error("Lỗi trả thiết bị.");
-//     }
-//   };
-
-//   const handleSaveBasedOnType = async () => {
-//     try {
-//       const isSupplies = newExportLoans.some(d => d.Type === "Vật tư");
-//       if (isSupplies) await handleSaveAndUpdateExportlistsForSupplies();
-//       else await handleSaveAndUpdateExportlists();
-//     } catch (error) {
-//       message.error("Có lỗi xảy ra khi lưu.");
-//     }
-//   };
-
-//   // --- Render Columns ---
-//   const columns = [
-//     {
-//       title: "Tên Thiết Bị",
-//       dataIndex: "ProductName",
-//       key: "ProductName",
-//       width: 250,
-//       render: (_, record) => record.isNew ? (
-//         <Select
-//           showSearch
-//           value={record.ProductName || undefined}
-//           style={{ width: "100%" }}
-//           placeholder="Chọn thiết bị"
-//           onChange={(value) => handleProductChange(record.id, value)}
-//           options={Array.from(new Set(exportList.filter(item => item.Status === "Đang mượn").map(item => item.ProductName)))
-//             .sort().map(name => ({ value: name, label: name }))}
-//           filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
-//         />
-//       ) : <span style={{ fontWeight: 500 }}>{record.ProductName}</span>,
-//     },
-//     {
-//       title: "Model",
-//       dataIndex: "Model",
-//       key: "Model",
-//       width: 180,
-//       render: (_, record) => record.isNew ? (
-//         <Select
-//           showSearch
-//           value={record.Model || undefined}
-//           style={{ width: "100%" }}
-//           placeholder="Model"
-//           onChange={(value) => handleModelChange(record.id, value)}
-//           options={(record.availableModels || []).map(model => ({ value: model, label: model }))}
-//         />
-//       ) : <span>{record.Model}</span>,
-//     },
-//     {
-//       title: "Thông tin khác",
-//       key: "info",
-//       width: 250,
-//       render: (_, record) => (
-//         <div style={{ fontSize: 12, color: '#666' }}>
-//           <div>Thương hiệu: <span style={{ color: '#000' }}>{record.BrandName || "-"}</span></div>
-//           <div>Loại: <span style={{ color: '#000' }}>{record.Type || "-"}</span></div>
-//           <div>ĐVT: <span style={{ color: '#000' }}>{record.DVT || "-"}</span></div>
-//         </div>
-//       )
-//     },
-//     {
-//       title: "Kho",
-//       dataIndex: "TypeKho",
-//       key: "TypeKho",
-//       width: 120,
-//       align: 'center',
-//       render: (_, record) => record.isNew ? (
-//         <Select
-//           value={record.TypeKho || undefined}
-//           style={{ width: "100%" }}
-//           onChange={(value) => handleWarehouseChange(record.id, value)}
-//           options={record.ProductName && record.Model ? getAvailableWarehouses(record.ProductName, record.Model) : []}
-//           placeholder="Chọn kho"
-//         />
-//       ) : <Tag color="geekblue">{record.TypeKho}</Tag>,
-//     },
-//     {
-//       title: "Số lượng",
-//       dataIndex: "totalexport",
-//       key: "totalexport",
-//       width: 100,
-//       align: 'center',
-//       render: (_, record) => {
-//         if (!record.isNew) return <b>{record.totalexport}</b>;
-
-//         const matchedItems = exportList.filter(item => item.ProductName === record.ProductName && item.Model === record.Model && item.TypeKho === record.TypeKho && item.Status === "Đang mượn");
-//         const maxQuantityFromData = matchedItems.reduce((total, item) => total + (item.totalexport || 0), 0);
-//         const usedQuantityInTable = combinedExportLoanData
-//           .filter(r => r.id !== record.id && r.ProductName === record.ProductName && r.Model === record.Model && r.TypeKho === record.TypeKho)
-//           .reduce((sum, r) => sum + (Number(r.totalexport) || 0), 0);
-//         const remaining = maxQuantityFromData - usedQuantityInTable;
-
-//         return (
-//           <div style={{ textAlign: 'center' }}>
-//             <InputNumber
-//               min={1}
-//               max={remaining}
-//               value={record.totalexport}
-//               onChange={(value) => {
-//                 const currentSNCount = Array.isArray(record.SerialNumber) ? record.SerialNumber.length : (record.SerialNumber || "").split(",").filter(Boolean).length;
-//                 if (record.Type !== "Vật tư" && value < currentSNCount) {
-//                   message.error(`Đã chọn ${currentSNCount} serial, không thể giảm.`); return;
-//                 }
-//                 handleTotalExportChange(record.id, value);
-//               }}
-//               style={{ width: "100%" }}
-//             />
-//             {remaining > 0 && <div style={{ fontSize: 10, color: 'gray', marginTop: 2 }}>Max: {remaining}</div>}
-//           </div>
-//         );
-//       },
-//     },
-//     {
-//       title: "Serial Number",
-//       dataIndex: "SerialNumber",
-//       key: "SerialNumber",
-//       width: 250,
-//       render: (_, record) => {
-//         if (!record.isNew) {
-//           const serials = Array.isArray(record.SerialNumber) ? record.SerialNumber : (record.SerialNumber || "").split(",");
-//           return (
-//             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-//               {serials.map((s, i) => s && <Tag key={i} style={{ marginRight: 0 }}>{s}</Tag>)}
-//             </div>
-//           );
-//         }
-
-//         // Logic for Select Serial
-//         const productName = record.ProductName;
-//         const model = record.Model;
-//         const warehouse = record.TypeKho;
-//         const sources = exportList.filter(item => item.ProductName === productName && item.Model === model && item.TypeKho === warehouse && item.Status === "Đang mượn");
-//         const allSerialString = sources.reduce((acc, curr) => {
-//           const serial = curr.SerialNumber || "";
-//           return acc ? `${acc},${serial}` : serial;
-//         }, "");
-//         let serialList = allSerialString ? allSerialString.split(",").map(sn => sn.trim()).filter(sn => sn.length > 0) : [];
-//         const selectedSerialsInTable = combinedExportLoanData.filter(r => r.id !== record.id).flatMap(r => Array.isArray(r.SerialNumber) ? r.SerialNumber : (r.SerialNumber || "").split(",").map(sn => sn.trim()).filter(sn => sn));
-//         const currentSerials = Array.isArray(record.SerialNumber) ? record.SerialNumber : (record.SerialNumber || "").split(",").map(sn => sn.trim()).filter(Boolean);
-//         const availableSerials = serialList.filter(sn => !selectedSerialsInTable.includes(sn) || currentSerials.includes(sn));
-
-//         let currentValue = record.SerialNumber;
-//         if (Array.isArray(currentValue) && currentValue.length === 0) currentValue = undefined;
-//         else if (typeof currentValue === "string" && !currentValue.trim()) currentValue = undefined;
-
-//         return (
-//           <Select
-//             mode="multiple"
-//             placeholder="Chọn Serial"
-//             style={{ width: "100%", minWidth: 200 }}
-//             status={record.Type !== "Vật tư" && Array.isArray(currentValue) && currentValue.length !== Number(record.totalexport) ? "error" : ""}
-//             value={currentValue}
-//             onChange={(value) => {
-//               if (record.Type !== "Vật tư" && value.length > (Number(record.totalexport) || 0)) {
-//                 message.error(`Chỉ được chọn tối đa ${record.totalexport} serial.`); return;
-//               }
-//               handleSerialChange(record.id, value);
-//             }}
-//             options={availableSerials.map(sn => ({ value: sn, label: sn }))}
-//           />
-//         );
-//       }
-//     },
-//     {
-//       title: "Trạng Thái",
-//       dataIndex: "Status",
-//       key: "Status",
-//       width: 140,
-//       align: 'center',
-//       render: (status) => <Tag color={getStatusColor(status || "Mới")}>{status || "Mới"}</Tag>
-//     },
-//     {
-//       title: "",
-//       key: "action",
-//       width: 100,
-//       fixed: 'right',
-//       align: 'center',
-//       render: (_, record) => {
-//         const isCreator = ticket?.Person === account?.Name;
-//         const isPending = ticket?.Status === "Đang tạo phiếu";
-//         const canDelete = isCreator && isPending;
-
-//         return (
-//           <Space>
-//             {record.isNew && canDelete ? (
-//               <Popconfirm title="Xóa dòng này?" onConfirm={() => handleDeleteRow(record.id, "exportloan")}>
-//                 <Button type="text" danger icon={<DeleteOutlined />} />
-//               </Popconfirm>
-//             ) : (
-//               <>
-//                 {canDelete && (
-//                   <Popconfirm title="Xóa thiết bị đã lưu?" onConfirm={() => handleDeleteSavedRow(record.id, "exportloan")}>
-//                     <Tooltip title="Xóa"><Button type="text" danger icon={<DeleteOutlined />} /></Tooltip>
-//                   </Popconfirm>
-//                 )}
-//                 {ticket?.Status === "Đang tạo phiếu" && record.id && !record.isNew && (
-//                   <Popconfirm title="Trả thiết bị về kho?" onConfirm={() => handleReturnDevice(record)}>
-//                     <Tooltip title="Trả thiết bị"><Button type="text" style={{ color: '#faad14' }} icon={<RollbackOutlined />} /></Tooltip>
-//                   </Popconfirm>
-//                 )}
-//               </>
-//             )}
-//           </Space>
-//         );
-//       },
-//     },
-//   ];
-
-//   // --- Buttons Logic ---
-//   const renderFooterButtons = () => {
-//     const btns = [
-//       <Button key="cancel" icon={<CloseOutlined />} onClick={onClose}>Đóng</Button>
-//     ];
-
-//     // Left Side (Destructive/Back)
-//     const leftBtns = [];
-//     if (account.Leader && ticket?.Status === "Đang chờ duyệt") {
-//       leftBtns.push(<Button key="return" danger icon={<UndoOutlined />} onClick={handleReturnTicket}>Trả Phiếu</Button>);
-//     }
-//     if (account.Leader && (ticket?.Status === "Duyệt" || ticket?.Status === "Đã giao")) {
-//       leftBtns.push(<Button key="cancelApprove" danger type="dashed" icon={<MinusCircleOutlined />} onClick={handleReturnLeaderTicket}>Hủy duyệt</Button>);
-//     }
-
-//     // Right Side (Action)
-//     const rightBtns = [];
-
-//     // Save/Send logic for Creator
-//     if (ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name) {
-//       rightBtns.push(<Button key="save" icon={<SaveOutlined />} onClick={handleSaveBasedOnType}>Lưu nháp</Button>);
-//       rightBtns.push(<Button key="send" type="primary" icon={<FileAddOutlined />} onClick={handleConfirmTicket}>Gửi phiếu</Button>);
-//     }
-
-//     // Leader Approve
-//     if (account.Exportlist && ticket?.Status === "Đang chờ duyệt") {
-//       rightBtns.push(<Button key="approve" type="primary" style={{ background: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} loading={loading} onClick={handleApproveTicketAndUpdateDevices}>Duyệt Phiếu</Button>);
-//     }
-
-//     // Export/Print logic
-//     if ((ticket?.Status === "Duyệt" || ticket?.Status === "Đã giao") && ticket?.Person === account?.Name) {
-//       rightBtns.push(<Button key="print" icon={<PrinterOutlined />} onClick={() => setPrintVisible(true)}>In Phiếu</Button>);
-//     }
-//     if (ticket?.Status === "Duyệt" && ticket?.Person === account?.Name) {
-//       rightBtns.push(<Button key="export" type="primary" danger icon={<ExportOutlined />} onClick={handleImportDeviceServicesTicket}>Xuất Phiếu</Button>);
-//     }
-
-//     // Admin/Inventory logic
-//     if (account.Receivelistkho && ticket?.Status === "Đã giao") {
-//       rightBtns.push(<Button key="confirmAdmin" type="primary" icon={<CheckSquareOutlined />} onClick={handleConfirmAdminTicket}>Xác nhận</Button>);
-//     }
-//     if (account.Leader && ticket?.Status === "Xác nhận") {
-//       rightBtns.push(<Button key="warranty" style={{ background: '#faad14', borderColor: '#faad14', color: '#fff' }} icon={<ToolOutlined />} onClick={handleConfirmWarranty}>Bảo hành</Button>);
-//     }
-
-//     // Invoice Logic
-//     if (ticket?.Status === "Xác nhận" && account.Invoiceer) {
-//       rightBtns.push(<Button key="complete" type="primary" style={{ background: '#52c41a', borderColor: '#52c41a' }} icon={<SafetyCertificateOutlined />} onClick={handleHandoverTicket}>Hoàn thành</Button>);
-//     }
-//     if (ticket?.Status === "Chờ xuất hóa đơn" && account.Invoiceer) {
-//       rightBtns.push(<Button key="issueInvoice" type="primary" style={{ background: '#f5222d', borderColor: '#f5222d' }} icon={<CalculatorOutlined />} onClick={() => setIsModalVisible(true)}>Xuất hóa đơn</Button>);
-//     }
-
-//     return (
-//       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-//         <Space>{leftBtns}</Space>
-//         <Space>{btns}{rightBtns}</Space>
-//       </div>
-//     );
-//   };
-
-//   return (
-//     <>
-//       <Modal
-//         title={
-//           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-//             <span>Chi Tiết Phiếu Mượn Thiết Bị</span>
-//             {ticket?.Status && <Tag color={getStatusColor(ticket.Status)}>{ticket.Status}</Tag>}
-//           </div>
-//         }
-//         open={isOpen}
-//         onCancel={onClose}
-//         width={1300} // Wider modal for better table view
-//         footer={renderFooterButtons()}
-//         style={{ top: 20 }}
-//       >
-//         <Spin spinning={loading} tip="Đang xử lý dữ liệu...">
-//           {ticket && (
-//             <Card size="small" style={{ marginBottom: 16, background: '#f5f5f5' }} bordered={false}>
-//               <Descriptions column={{ xxl: 4, xl: 4, lg: 2, md: 2, sm: 1, xs: 1 }} size="small">
-//                 <Descriptions.Item label="Mã phiếu"><b>{ticket.Votes}</b></Descriptions.Item>
-//                 <Descriptions.Item label="Người tạo">{ticket.Person}</Descriptions.Item>
-//                 <Descriptions.Item label="Ngày tạo">{ticket.Date || "N/A"}</Descriptions.Item>
-//                 <Descriptions.Item label="Trạng thái"><Tag color={getStatusColor(ticket.Status)}>{ticket.Status}</Tag></Descriptions.Item>
-//                 <Descriptions.Item label="Ghi chú" span={2}>{ticket.Note || "Không có"}</Descriptions.Item>
-//               </Descriptions>
-//             </Card>
-//           )}
-
-//           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-//             <h4 style={{ margin: 0 }}>Danh sách thiết bị</h4>
-//             {ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name && (
-//               <Button type="primary" icon={<PlusOutlined />} onClick={() => handleAddRow("exportloan")}>
-//                 Thêm thiết bị
-//               </Button>
-//             )}
-//           </div>
-
-//           <Table
-//             bordered
-//             dataSource={combinedExportLoanData}
-//             rowKey="id"
-//             columns={columns}
-//             pagination={false}
-//             scroll={{ x: 1200, y: 500 }}
-//             size="middle"
-//           />
-
-//           <PrintTicketExportLoan
-//             isOpen={printVisible}
-//             onClose={() => setPrintVisible(false)}
-//             ticket={ticket || {}}
-//             handoverDevices={exportLoanData || []}
-//             autoPrint={true}
-//           />
-//           <ExportInvoiceModal
-//             visible={isModalVisible}
-//             onClose={() => setIsModalVisible(false)}
-//             onConfirm={handleExportTicket}
-//             ticketId={ticket?.id}
-//             invoiceNumber={invoiceNumber}
-//             setInvoiceNumber={setInvoiceNumber}
-//           />
-//         </Spin>
-//       </Modal>
-//     </>
-//   );
-// };
-
-// export default TicketExportLoanModal;
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Modal,
   Button,
@@ -4932,7 +14,6 @@ import {
   Space,
   Card,
   Tooltip,
-  Divider,
   Typography
 } from "antd";
 import {
@@ -4952,6 +33,7 @@ import {
 } from "../../../services/dhgServices";
 import PrintTicketExportLoan from "./PrintTicketExportLoan";
 import ExportInvoiceModal from "./ExportInvoiceModal";
+import dayjs from "dayjs";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -4969,11 +51,10 @@ import {
   PlusOutlined,
   RollbackOutlined,
   ToolOutlined,
-  InfoCircleOutlined,
-  BarcodeOutlined
+  CopyOutlined
 } from "@ant-design/icons";
 
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
 const TicketExportLoanModal = ({
   isOpen,
@@ -4984,6 +65,7 @@ const TicketExportLoanModal = ({
   reloadTickets,
   serialNumberOptions = [],
 }) => {
+  // --- STATE MANAGEMENT ---
   const [loading, setLoading] = useState(false);
   const [exportLoanData, setExportLoanData] = useState([]);
   const [newExportLoans, setNewExportLoans] = useState([]);
@@ -4996,52 +78,64 @@ const TicketExportLoanModal = ({
   const userData = JSON.parse(localStorage.getItem("user")) || {};
   const account = userData?.account || {};
 
-  // --- Helper: Màu sắc trạng thái ---
+  // --- LOGIC 1: CHUẨN HÓA DỮ LIỆU TICKET ---
+  // Tự động xử lý dù ticket có nằm trong attributes hay không
+  const ticketData = useMemo(() => {
+    if (!ticket) return {};
+    return ticket.attributes ? { id: ticket.id, ...ticket.attributes } : ticket;
+  }, [ticket]);
+
+  // --- HELPERS ---
   const getStatusColor = (status) => {
     switch (status) {
-      case "Duyệt": return "success";        // Xanh lá
-      case "Đã giao": return "cyan";         // Xanh lơ
-      case "Đang chờ duyệt": return "warning"; // Cam
-      case "Trả kho": return "purple";       // Tím
-      case "Đang tạo phiếu": return "blue";  // Xanh dương
-      case "Hủy": return "error";            // Đỏ
-      case "Hoàn thành": return "geekblue";
+      case "Duyệt": return "success";
+      case "Đã giao": return "cyan";
+      case "Đang chờ duyệt": return "processing";
+      case "Trả kho": return "purple";
+      case "Đang tạo phiếu": return "warning";
+      case "Hủy": return "error";
+      case "Xác nhận": return "geekblue";
       default: return "default";
     }
   };
 
-  const getKhoColor = (kho) => {
-    if (kho === 'POS') return 'volcano';
-    if (kho === 'POSHN') return 'gold';
-    return 'default';
-  }
+  // --- EFFECTS ---
 
-  // --- Effects ---
+  // 1. Load danh sách kho và làm phẳng dữ liệu (Flatten)
   useEffect(() => {
     fetchExportlists().then((response) => {
-      const data = Array.isArray(response) ? response : (response.data || []);
-      setExportList(data);
+      const rawData = Array.isArray(response) ? response : (response.data || []);
+      // Flatten dữ liệu để dễ truy xuất
+      const flattenedData = rawData.map(item => ({
+        id: item.id,
+        documentId: item.documentId, // Quan trọng cho Strapi v5
+        ...(item.attributes || item)
+      }));
+      setExportList(flattenedData);
     });
   }, []);
 
+  // 2. Load chi tiết phiếu (Danh sách thiết bị đã thêm)
   useEffect(() => {
-    if (isOpen && ticket?.Votes) {
-      fetchExportLoanPOS(ticket.Votes)
+    if (isOpen && ticketData?.Votes) {
+      fetchExportLoanPOS(ticketData.Votes)
         .then((responseData) => {
           const rawData = Array.isArray(responseData) ? responseData : (responseData.data || []);
           const devices = rawData.map((item) => ({
-            id: item.id || item.documentId,
-            ...item
+            id: item.id,
+            documentId: item.documentId,
+            ...(item.attributes || item)
           }));
           setExportLoanData(devices);
         })
         .catch((error) => {
-          console.error("Lỗi tải thiết bị:", error);
+          console.error("Lỗi tải thiết bị bàn giao:", error);
           message.error("Lỗi tải thiết bị bàn giao.");
         });
     }
-  }, [isOpen, ticket?.Votes]);
+  }, [isOpen, ticketData?.Votes]);
 
+  // 3. Reset form khi đóng modal
   useEffect(() => {
     if (!isOpen) {
       setExportLoanData([]);
@@ -5052,29 +146,32 @@ const TicketExportLoanModal = ({
 
   const combinedExportLoanData = [...exportLoanData, ...newExportLoans];
 
-  // --- Logic Handlers (Giữ nguyên logic của bạn) ---
+  // --- HANDLERS (XỬ LÝ SỰ KIỆN) ---
+
   const handleAddRow = (type) => {
-    if (!ticket) {
-      message.error("Vui lòng chọn phiếu trước khi thêm thiết bị!");
+    if (!ticketData?.Votes) {
+      message.error("Phiếu không hợp lệ hoặc thiếu mã phiếu (Votes)!");
       return;
     }
+
     const newDevice = {
       id: Date.now(),
-      ProductName: ticket.ProductName || "",
+      ProductName: ticketData.ProductName || "",
       Model: "",
       BrandName: "",
       DVT: "",
       TypeKho: "",
       totalexport: 1,
       SerialNumber: "",
-      Ticket: ticket.Ticket,
-      Votes: ticket.Votes,
+      Ticket: ticketData.Ticket,
+      Votes: ticketData.Votes,
       NameExportLoan: account?.Name || "",
       Status: "Mới",
       Note: "",
       Type: "",
       isNew: true,
     };
+
     if (type === "exportloan") {
       setNewExportLoans((prev) => [...prev, newDevice]);
     }
@@ -5086,160 +183,993 @@ const TicketExportLoanModal = ({
     }
   };
 
-  const handleUpdateRow = async (id, type) => {
-    // Logic cập nhật (mock)
-    message.success("Cập nhật thiết bị thành công!");
-    setEditingRowId(null);
-    fetchDevices();
-    fetchTickets();
-  };
-
-  // ... (Giữ nguyên các hàm xử lý logic phức tạp: handleSaveAndUpdateExportlists, handleApprove..., handleReturn...) 
-  // Để gọn code hiển thị, tôi rút gọn phần khai báo logic lặp lại. 
-  // Bạn hãy đảm bảo giữ nguyên logic gốc của mình ở đây.
-
+  // --- LOGIC 2: LƯU VÀ TRỪ KHO (QUAN TRỌNG) ---
   const handleSaveAndUpdateExportlists = async () => {
-    // (Copy logic cũ của bạn vào đây)
-    // Tạm thời gọi hàm handleSaveNewDevices để demo UI
-    await handleSaveNewDevices();
+    try {
+      const newDevices = [...newExportLoans];
+
+      // Validate dữ liệu
+      const invalidDevices = newDevices.filter(
+        (device) =>
+          device.Type !== "Vật tư" &&
+          (!device.SerialNumber ||
+            (Array.isArray(device.SerialNumber) && device.SerialNumber.length === 0) ||
+            (typeof device.SerialNumber === "string" && device.SerialNumber.trim() === ""))
+      );
+
+      if (invalidDevices.length > 0) {
+        const names = invalidDevices.map((d) => `${d.ProductName} - ${d.Model}`).join(", ");
+        message.error(`Các thiết bị sau chưa nhập SerialNumber: ${names}`);
+        throw new Error("Thiếu SerialNumber");
+      }
+
+      // Bước 1: Lưu thiết bị vào bảng ExportLoanPOS
+      await handleSaveNewDevices();
+
+      // Bước 2: Trừ kho (Cập nhật ExportList)
+      for (const device of newDevices) {
+        // Tìm thiết bị trong kho khớp thông tin
+        const matchingExportItems = exportList.filter(
+          (item) =>
+            item.ProductName === device.ProductName &&
+            item.Model === device.Model &&
+            item.TypeKho === device.TypeKho &&
+            item.Status === "Đang mượn"
+        );
+
+        if (matchingExportItems.length === 0) {
+          console.warn("Không tìm thấy thiết bị trong kho để trừ:", device);
+          continue;
+        }
+
+        for (const exportListItem of matchingExportItems) {
+          // Ưu tiên dùng documentId
+          const exportListId = exportListItem.documentId || exportListItem.id;
+
+          const oldSerialArray = (exportListItem.SerialNumber || "").split(",").map((sn) => sn.trim()).filter(Boolean);
+
+          // Lấy serial từ dòng mới thêm
+          const deviceSerials = Array.isArray(device.SerialNumber)
+            ? device.SerialNumber
+            : (device.SerialNumber || "").split(",").map((sn) => sn.trim()).filter(Boolean);
+
+          // Tìm giao điểm (serial cần xuất nằm trong lô này)
+          const usedSerials = deviceSerials.filter((sn) => oldSerialArray.includes(sn));
+
+          if (usedSerials.length === 0) continue;
+
+          // Tính toán lại Serial
+          const newSerialArray = oldSerialArray.filter((sn) => !usedSerials.includes(sn));
+          const newSerialString = newSerialArray.join(",");
+
+          const oldSerialLoanArray = (exportListItem.SerialNumberLoan || "").split(",").map((sn) => sn.trim()).filter(Boolean);
+          const newSerialLoanArray = Array.from(new Set([...oldSerialLoanArray, ...usedSerials]));
+          const newSerialLoanString = newSerialLoanArray.join(",");
+
+          // Tính toán lại Số lượng
+          const oldQuantity = Number(exportListItem.totalexport) || 0;
+          const newTotalExport = Math.max(0, oldQuantity - usedSerials.length);
+
+          const oldLoanQuantity = Number(exportListItem.totalexportLoan) || 0;
+          const newTotalExportLoan = oldLoanQuantity + usedSerials.length;
+
+          // Gọi API cập nhật
+          await updateExportlistsSerial(
+            exportListId,
+            newSerialString,
+            newSerialLoanString,
+            newTotalExport,
+            newTotalExportLoan
+          );
+
+          // Cập nhật state local để UI phản hồi ngay
+          setExportList((prev) =>
+            prev.map((item) =>
+              (item.documentId === exportListId || item.id === exportListId)
+                ? {
+                  ...item,
+                  SerialNumber: newSerialString,
+                  SerialNumberLoan: newSerialLoanString,
+                  totalexport: newTotalExport,
+                  totalexportLoan: newTotalExportLoan
+                }
+                : item
+            )
+          );
+        }
+      }
+      message.success("Lưu thiết bị thành công và đã cập nhật trừ kho!");
+    } catch (error) {
+      console.error("Lỗi khi lưu và cập nhật:", error);
+      message.error("Đã có lỗi xảy ra khi lưu và cập nhật.");
+      throw error;
+    }
   };
+
+
+  const handleSaveAndUpdateExportlistsv4 = async () => {
+    try {
+      const newDevices = [...newExportLoans];
+
+      // ✅ Bước 1: Kiểm tra toàn bộ trước khi xử lý
+      const invalidDevices = newDevices.filter(
+        (device) =>
+          device.Type !== "Vật tư" && // Chỉ check thiết bị
+          (!device.SerialNumber ||
+            (Array.isArray(device.SerialNumber) &&
+              device.SerialNumber.length === 0) ||
+            (typeof device.SerialNumber === "string" &&
+              device.SerialNumber.trim() === ""))
+      );
+
+      if (invalidDevices.length > 0) {
+        const names = invalidDevices
+          .map((d) => `${d.ProductName} - ${d.Model}`)
+          .join(", ");
+        message.error(`Các thiết bị sau chưa nhập SerialNumber: ${names}`);
+        throw new Error("Thiếu SerialNumber"); // ❌ Dừng toàn bộ
+      }
+
+      // ✅ Bước 2: Nếu tất cả ok thì mới lưu
+      await handleSaveNewDevices();
+
+      // ✅ Bước 3: Bắt đầu cập nhật exportlists
+      for (const device of newDevices) {
+        const matchingExportItems = exportList.filter(
+          (item) =>
+            item.attributes.ProductName === device.ProductName &&
+            item.attributes.Model === device.Model &&
+            item.attributes.TypeKho === device.TypeKho &&
+            item.attributes.Status === "Đang mượn"
+        );
+
+        for (const exportListItem of matchingExportItems) {
+          const exportListId = exportListItem.id;
+
+          // --- Lấy Serial cũ ---
+          const oldSerialArray = (exportListItem.attributes.SerialNumber || "")
+            .split(",")
+            .map((sn) => sn.trim())
+            .filter(Boolean);
+
+          // --- Serial từ phiếu xuất ---
+          const deviceSerials = Array.isArray(device.SerialNumber)
+            ? device.SerialNumber
+            : (device.SerialNumber || "")
+              .split(",")
+              .map((sn) => sn.trim())
+              .filter(Boolean);
+
+          // --- Xác định Serial nào được xuất ---
+          const usedSerials = deviceSerials.filter((sn) =>
+            oldSerialArray.includes(sn)
+          );
+          if (usedSerials.length === 0) continue;
+
+          // --- Serial còn lại ---
+          const newSerialArray = oldSerialArray.filter(
+            (sn) => !usedSerials.includes(sn)
+          );
+          const newSerialString = newSerialArray.join(",");
+
+          // --- SerialLoan ---
+          const oldSerialLoanArray = (
+            exportListItem.attributes.SerialNumberLoan || ""
+          )
+            .split(",")
+            .map((sn) => sn.trim())
+            .filter(Boolean);
+          const newSerialLoanArray = Array.from(
+            new Set([...oldSerialLoanArray, ...usedSerials])
+          );
+          const newSerialLoanString = newSerialLoanArray.join(",");
+
+          // --- Số lượng ---
+          const oldQuantity = exportListItem.attributes.totalexport ?? 0;
+          const newTotalExport = Math.max(0, oldQuantity - usedSerials.length);
+
+          const oldLoanQuantity =
+            exportListItem.attributes.totalexportLoan ?? 0;
+          const newTotalExportLoan = oldLoanQuantity + usedSerials.length;
+
+          // --- Update API ---
+          await updateExportlistsSerial(
+            exportListId,
+            newSerialString,
+            newSerialLoanString,
+            newTotalExport,
+            newTotalExportLoan
+          );
+
+          // --- Update state ---
+          setExportList((prev) =>
+            prev.map((item) =>
+              item.id === exportListId
+                ? {
+                  ...item,
+                  attributes: {
+                    ...item.attributes,
+                    SerialNumber: newSerialString,
+                    SerialNumberLoan: newSerialLoanString,
+                    totalexport: newTotalExport,
+                    totalexportLoan: newTotalExportLoan,
+                  },
+                }
+                : item
+            )
+          );
+        }
+      }
+
+      message.success(
+        "Lưu thiết bị thành công và đã cập nhật exportlists (Serial + Số lượng)!"
+      );
+    } catch (error) {
+      console.error("Lỗi khi lưu thiết bị và cập nhật exportlists:", error);
+      message.error("Đã có lỗi xảy ra khi lưu và cập nhật.");
+      throw error; // ❗ Quan trọng: để nút 'Gửi phiếu' biết dừng
+    }
+  };
+
 
   const handleSaveNewDevices = async () => {
     setLoading(true);
     try {
       const newDevices = [...newExportLoans];
-      // Validate
-      const requiredFields = ["ProductName", "Model", "BrandName", "TypeKho", "totalexport"];
+      // Danh sách các trường bắt buộc (SerialNumber chỉ bắt buộc nếu không phải Vật tư)
+      const requiredFields = [
+        "ProductName",
+        "Model",
+        "BrandName",
+        "TypeKho",
+        "totalexport",
+      ];
+
+      // Kiểm tra từng thiết bị mới
       for (const device of newDevices) {
         for (const field of requiredFields) {
           if (!device[field] || device[field].toString().trim() === "") {
-            message.warning(`Vui lòng điền đầy đủ thông tin.`);
-            setLoading(false); return;
+            message.warning(`Vui lòng điền đầy đủ trường cho tất cả các hàng.`);
+            setLoading(false);
+            return;
           }
         }
-        if (device.Type !== "Vật tư" && (!device.SerialNumber || device.SerialNumber.toString().trim() === "")) {
-          message.warning(`Thiếu Serial Number.`);
-          setLoading(false); return;
+
+        // Nếu không phải vật tư thì SerialNumber bắt buộc
+        if (
+          device.Type !== "Vật tư" &&
+          (!device.SerialNumber || device.SerialNumber.toString().trim() === "")
+        ) {
+          message.warning(
+            `SerialNumber là bắt buộc cho các thiết bị không phải vật tư.`
+          );
+          setLoading(false);
+          return;
         }
       }
 
-      // Create API calls
+      // Nếu validation thành công, tiếp tục gọi API lưu cho từng nhóm
       const exportloanPromises = newExportLoans
-        .filter((device) => device.Type === "Vật tư" || device.SerialNumber)
+        .filter((device) => device.Type === "Vật tư" || device.SerialNumber) // Vật tư không cần SerialNumber
         .map((device) => {
           const deviceData = {
             ...device,
-            SerialNumber: device.Type === "Vật tư" ? "" : (Array.isArray(device.SerialNumber) ? device.SerialNumber.join(",").trim() : device.SerialNumber),
-            Votes: ticket?.Votes || "",
-            Ticket: ticket?.Ticket || "",
+            SerialNumber:
+              device.Type === "Vật tư"
+                ? ""
+                : Array.isArray(device.SerialNumber)
+                  ? device.SerialNumber.join(",").trim()
+                  : device.SerialNumber,
+
+            // [FIX STRAPI V5]: Truy cập trực tiếp field, bỏ .attributes
+            // (Thêm fallback check attributes phòng trường hợp dữ liệu cũ còn cache)
+            Votes: ticket.Votes || ticket.attributes?.Votes || "",
+            Ticket: ticket.Ticket || ticket.attributes?.Ticket || "",
+
             Status: device.Status || "Đang chờ duyệt",
           };
+
+          console.log("Payload exportloan deviceData:", deviceData);
+          // Hàm createExportLoanPOS trong service đã bao bọc { data: ... } nên ở đây truyền flat object là đúng
           return createExportLoanPOS(deviceData);
         });
 
-      await Promise.all([...exportloanPromises]);
-      message.success("Lưu thành công!");
+      await Promise.all(exportloanPromises);
+
+      message.success("Lưu thiết bị thành công!");
       onClose();
       fetchDevices();
       fetchTickets();
     } catch (error) {
-      console.error(error);
-      message.error("Lỗi khi lưu.");
+      console.error("Lỗi khi lưu thiết bị:", error);
+      message.error("Lỗi khi lưu thiết bị.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteSavedRow = async (id, type) => {
-    setLoading(true);
+  const handleDeleteSavedRow = async (documentId, type) => {
     try {
+      setLoading(true);
       if (type === "exportloan") {
-        await deleteExportLoanPOS(id);
-        setExportLoanData((prev) => prev.filter((d) => d.id !== id));
+        // [FIX STRAPI V5]: Gọi API xóa với documentId
+        await deleteExportLoanPOS(documentId);
+
+        // [FIX STRAPI V5]: Cập nhật state UI
+        // Lọc bỏ phần tử có documentId (hoặc id) trùng với documentId vừa xóa
+        setExportLoanData((prev) =>
+          prev.filter((device) => {
+            const currentId = device.documentId || device.id;
+            return currentId !== documentId;
+          })
+        );
       }
-      message.success("Đã xóa!");
-    } catch (e) { message.error("Lỗi xóa"); }
-    finally { setLoading(false); }
+      message.success("Đã xóa thiết bị thành công!");
+    } catch (error) {
+      console.error("Lỗi khi xóa thiết bị đã lưu:", error);
+      message.error("Lỗi khi xóa thiết bị đã lưu.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+
+
+  // --- LOGIC XỬ LÝ PHIẾU ---
+
+  const handleApproveTicketAndUpdateDevices = async () => {
+    try {
+      await handleApproveTicket();
+      const savedDevices = [...exportLoanData];
+      if (savedDevices.length === 0) return;
+      await Promise.all(savedDevices.map((device) => updateExportLoanPOS(device.documentId || device.id, "Duyệt")));
+      await updateWarehouseFromDevices(savedDevices);
+      message.success("✅ Thiết bị và kho đã được cập nhật!");
+    } catch (error) {
+      message.error("Đã có lỗi xảy ra khi cập nhật.");
+    }
+  };
+
+
+  const updateWarehouseFromDevices = async (devices) => {
+    try {
+      const warehouseResponse = await fetchWarehouseDetails();
+      const warehouseList = Array.isArray(warehouseResponse) ? warehouseResponse : (warehouseResponse.data || []);
+
+      const flatWarehouse = warehouseList.map(item => ({
+        id: item.id,
+        documentId: item.documentId,
+        ...(item.attributes || item)
+      }));
+
+      for (const device of devices) {
+        if (!device || !device.Model) continue;
+        const kho = flatWarehouse.find((k) => k.Model === device.Model);
+        if (!kho) continue;
+
+        const id = kho.documentId || kho.id;
+
+        let updatedPOS = Number(kho.POS) || 0;
+        let updatedPOSHN = Number(kho.POSHN) || 0;
+        let totalXTK = Number(kho.totalXTK) || 0;
+
+        if (device.TypeKho === "POS") updatedPOS -= device.totalexport || 0;
+        else if (device.TypeKho === "POSHN") updatedPOSHN -= device.totalexport || 0;
+
+        totalXTK += device.totalexport || 0;
+        const inventoryCK = (Number(kho.inventoryDK) || 0) + (Number(kho.totalNTK) || 0) - totalXTK;
+
+        await updateWarehouseDetails(id, { POS: updatedPOS, POSHN: updatedPOSHN, totalXTK, inventoryCK });
+      }
+    } catch (error) {
+      console.error("Lỗi cập nhật kho:", error);
+    }
+  };
+
+  const handleImportDeviceServicesTicket = async () => {
+    try {
+      if (!exportLoanData || exportLoanData.length === 0) {
+        message.warning("Không có thiết bị để xuất!");
+        return;
+      }
+
+      // 1. Tạo lịch sử thiết bị trước
+      for (const device of exportLoanData) {
+        if (device.TypeDevice === "QLTB") continue;
+
+        const serialNumbers = device.SerialNumber.includes(",")
+          ? device.SerialNumber.split(",").map(s => s.trim())
+          : [device.SerialNumber];
+
+        for (const serial of serialNumbers) {
+          await createImportDeviceServices({
+            Model: device.Model,
+            BrandName: device.BrandName,
+            SerialNumber: serial,
+            Store: "DHG",
+          });
+        }
+      }
+
+      // 2. Sau khi thành công → cập nhật trạng thái phiếu
+      const ticketId = ticketData?.documentId || ticketData?.id;
+      await updateExportLoanTicket(ticketId, "Đã giao");
+
+      message.success("✅ Xuất thiết bị & cập nhật phiếu thành công!");
+
+      if (reloadTickets) await reloadTickets();
+      onClose();
+    } catch (error) {
+      console.error("Lỗi xuất thiết bị:", error);
+      message.error("Lỗi khi xuất thiết bị. Phiếu CHƯA được chuyển trạng thái.");
+    }
+  };
+
+
+  const handleApproveTicket = async () => {
+    try {
+      setLoading(true);
+
+      if (!exportLoanData || exportLoanData.length === 0) {
+        message.warning("Không có thiết bị đã lưu để duyệt.");
+        return;
+      }
+
+      const ticketId = ticketData?.documentId || ticketData?.id;
+
+      await updateExportLoanTicketv1(ticketId, {
+        Status: "Duyệt",
+        PersonApprove: account.Name,
+      });
+
+      message.success(`✅ Phiếu được duyệt bởi: ${account.Name}`);
+
+      if (reloadTickets) await reloadTickets();
+      fetchDevices();
+      onClose();
+    } catch (error) {
+      console.error("Lỗi duyệt phiếu:", error);
+      message.error("Lỗi duyệt phiếu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  const handleConfirmTicket = async () => {
+    try {
+      setLoading(true);
+      const isSupplies = newExportLoans.some((device) => device.Type === "Vật tư");
+
+      if (isSupplies) await handleSaveAndUpdateExportlistsForSupplies();
+      else await handleSaveAndUpdateExportlists();
+
+      await updateExportLoanTicket(ticketData.documentId || ticketData.id, "Đang chờ duyệt");
+      message.success("Phiếu đã lưu và chuyển sang trạng thái 'Đang chờ duyệt'!");
+
+      if (reloadTickets) await reloadTickets();
+      onClose();
+    } catch (error) {
+      // Error handled in sub-functions
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleSaveAndUpdateExportlistsForSupplies = async () => {
+    try {
+      await handleSaveNewDevices(); // Bước 1: Lưu thiết bị cũ
+
+      const newSupplies = [...newExportLoans];
+      for (const supply of newSupplies) {
+        if (supply.Type !== "Vật tư") continue;
+
+        let remainingQuantity = supply.totalexport;
+
+        // [FIX for V5]: Truy cập trực tiếp các trường, không qua .attributes
+        let sortedExportItems = exportList
+          .filter(
+            (item) =>
+              item.ProductName === supply.ProductName &&
+              item.Model === supply.Model &&
+              item.TypeKho === supply.TypeKho &&
+              item.Status === "Đang mượn"
+          )
+          .sort(
+            (a, b) =>
+              new Date(a.createdAt) - new Date(b.createdAt)
+          );
+
+        for (const exportListItem of sortedExportItems) {
+          if (remainingQuantity <= 0) break;
+
+          // [FIX for V5]: Sử dụng documentId để gọi API update thay vì id
+          // Lưu ý: Đảm bảo API lấy danh sách (fetchExportlists) đã populate field 'documentId'
+          const exportListId = exportListItem.documentId || exportListItem.id;
+
+          // [FIX for V5]: Lấy dữ liệu trực tiếp
+          let oldQuantity = exportListItem.totalexport ?? 0;
+          let oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
+
+          let usedQuantity = Math.min(remainingQuantity, oldQuantity);
+          let newTotalExport = oldQuantity - usedQuantity;
+          let newTotalExportLoan = oldLoanQuantity + usedQuantity;
+          remainingQuantity -= usedQuantity;
+
+          // Gọi API update (Payload service của bạn đã đúng chuẩn { data: ... })
+          await updateExportlistsSerial(
+            exportListId,
+            "", // Không cần serial number
+            "", // Không cần serial number loan
+            newTotalExport,
+            newTotalExportLoan
+          );
+
+          // [FIX for V5]: Cập nhật state theo cấu trúc phẳng
+          setExportList((prev) =>
+            prev.map((item) => {
+              // So sánh documentId (hoặc id nếu chưa có documentId)
+              const itemId = item.documentId || item.id;
+              return itemId === exportListId
+                ? {
+                  ...item,
+                  totalexport: newTotalExport,
+                  totalexportLoan: newTotalExportLoan,
+                  // Không cần lồng vào attributes nữa
+                }
+                : item;
+            })
+          );
+        }
+      }
+
+      message.success("Lưu vật tư thành công và đã cập nhật exportlists!");
+    } catch (error) {
+      console.error("Lỗi khi lưu vật tư và cập nhật exportlists:", error);
+      message.error("Đã có lỗi xảy ra khi lưu vật tư.");
+    }
+  };
+
+
+  const handleExportTicket = async () => {
+    await updateExportLoanTicketInvoice(ticketData.documentId || ticketData.id, "Đã xuất hóa đơn", invoiceNumber);
+    message.success("Cập nhật hóa đơn thành công");
+    if (reloadTickets) await reloadTickets();
+    onClose();
+  }
+
+  const handleHandoverTicket = async () => {
+    try {
+      setLoading(true);
+      console.log("📌 Account:", account); // Kiểm tra giá trị account
+      if (!account?.Name) {
+        throw new Error("Không tìm thấy thông tin tài khoản.");
+      }
+
+      // [FIX CHO STRAPI V5]: Ưu tiên sử dụng documentId
+      // Nếu API get ticket của bạn chưa trả về documentId phẳng, hãy kiểm tra lại service fetch.
+      const ticketId = ticket.documentId || ticket.id;
+
+      // Cập nhật trạng thái phiếu
+      await updateExportLoanTicket(ticketId, "Chờ xuất hóa đơn");
+      message.success("Phiếu đã chuyển sang trạng thái 'Chờ xuất hóa đơn'!");
+
+      // Cập nhật người xuất hóa đơn
+      console.log(`🔄 Gửi API cập nhật người xuất hóa đơn: ${account.Name}`);
+      await updateExportLoanTicketPersonInvoice(ticketId, account.Name);
+      message.success(`Người xuất hóa đơn: ${account.Name}`);
+
+      // Cập nhật danh sách phiếu ngay sau khi xác nhận
+      if (reloadTickets) {
+        console.log("🔄 Gọi reloadTickets()...");
+        await reloadTickets();
+      }
+
+      // Đóng modal sau khi cập nhật
+      onClose();
+    } catch (error) {
+      console.error("⛔ Lỗi khi cập nhật trạng thái phiếu:", error);
+      message.error("Có lỗi xảy ra khi xác nhận phiếu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleReturnTicket = async () => {
+    try {
+      setLoading(true);
+
+      // [FIX STRAPI V5]: Sử dụng documentId để cập nhật trạng thái
+      // Fallback về ticket.id nếu chưa có documentId
+      const ticketId = ticket.documentId || ticket.id;
+
+      await updateExportLoanTicket(ticketId, "Đang tạo phiếu");
+
+      message.success("Phiếu đã được trả về trạng thái 'Đang tạo phiếu'!");
+
+      if (reloadTickets) {
+        console.log("🔄 Gọi reloadTickets()...");
+        await reloadTickets(); // Load lại danh sách phiếu
+      }
+
+      onClose(); // Đóng modal sau khi cập nhật
+    } catch (error) {
+      console.error("Lỗi trả phiếu:", error);
+      message.error("Lỗi khi trả phiếu!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveTicketcallback = async () => {
+    try {
+      setLoading(true);
+
+      const savedDevices = [...exportLoanData];
+
+      if (savedDevices.length === 0) {
+        message.warning("Không có thiết bị đã lưu để trả.");
+        setLoading(false);
+        return;
+      }
+
+      // [FIX STRAPI V5]: Sử dụng documentId để cập nhật
+      // Fallback về id nếu chưa có documentId (đề phòng)
+      const ticketId = ticket.documentId || ticket.id;
+
+      await updateExportLoanTicket(ticketId, "Đang chờ duyệt");
+
+      message.success("Trả phiếu thành công!");
+
+      // Cập nhật danh sách phiếu ngay sau khi duyệt
+      if (reloadTickets) {
+        console.log("🔄 Gọi reloadTickets()...");
+        await reloadTickets();
+      }
+
+      fetchDevices(); // Cập nhật danh sách thiết bị
+      onClose();
+    } catch (error) {
+      console.error("Lỗi trả phiếu:", error);
+      message.error("Lỗi trả phiếu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const updateWarehouseFromDevicescallback = async (devices) => {
+    try {
+      const warehouseResponse = await fetchWarehouseDetails();
+      const warehouseList = warehouseResponse.data; // Dữ liệu Strapi v5 thường nằm trong .data và đã được làm phẳng
+
+      for (const device of devices) {
+        if (!device) {
+          console.warn("Thiết bị không hợp lệ:", device);
+          continue;
+        }
+
+        const { Model, TypeKho, totalexport } = device;
+
+        if (!Model) {
+          console.warn("Thiết bị thiếu Model:", device);
+          continue;
+        }
+
+        // [FIX STRAPI V5]: Tìm kiếm trực tiếp, bỏ .attributes
+        const kho = warehouseList.find((k) => k.Model === Model);
+
+        if (!kho) {
+          console.warn(`❌ Không tìm thấy kho cho Model: ${Model}`);
+          continue;
+        }
+
+        // [FIX STRAPI V5]: Lấy documentId để update
+        const id = kho.documentId || kho.id;
+
+        // [FIX STRAPI V5]: Lấy giá trị trực tiếp từ object kho
+        let updatedPOS = kho.POS || 0;
+        let updatedPOSHN = kho.POSHN || 0;
+        let totalXTK = kho.totalXTK || 0;
+        let inventoryDK = kho.inventoryDK || 0;
+        let totalNTK = kho.totalNTK || 0;
+
+        // Xử lý logic cộng/trừ số lượng
+        // (Giả định logic: Hoàn kho nghĩa là trả lại vào POS, và giảm tổng số đã Xuất Trong Kỳ)
+        if (TypeKho === "POS") {
+          updatedPOS += totalexport || 0;
+        } else if (TypeKho === "POSHN") {
+          updatedPOSHN += totalexport || 0;
+        }
+
+        totalXTK -= totalexport || 0;
+
+        // Tính tồn cuối kỳ
+        const inventoryCK = inventoryDK + totalNTK - totalXTK;
+
+        // Gọi API cập nhật
+        await updateWarehouseDetails(id, {
+          POS: updatedPOS,
+          POSHN: updatedPOSHN,
+          totalXTK,
+          inventoryCK,
+        });
+
+        console.log(`↩️ Đã hoàn kho Model ${Model}: +${totalexport}`);
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi hoàn kho:", error);
+    }
+  };
+
+  const handleReturnLeaderTicket = async () => {
+    try {
+      await handleApproveTicketcallback(); // 1. Duyệt phiếu
+
+      const savedDevices = [...exportLoanData]; // 2. Dữ liệu từ phiếu
+      if (savedDevices.length === 0) return;
+
+      // 3. Cập nhật trạng thái thiết bị
+      await Promise.all(
+        savedDevices.map((device) => {
+          // [FIX STRAPI V5]: Ưu tiên sử dụng documentId để gọi API update
+          const deviceId = device.documentId || device.id;
+          return updateExportLoanPOS(deviceId, "Đang chờ duyệt");
+        })
+      );
+
+      // 4. Cập nhật kho theo danh sách thiết bị
+      // Lưu ý: Đảm bảo hàm này xử lý được dữ liệu dạng phẳng (flat structure) của v5
+      await updateWarehouseFromDevicescallback(savedDevices);
+
+      message.success("↩️ Đã hoàn thiết bị và cập nhật kho!");
+    } catch (error) {
+      console.error("❌ Lỗi khi trả phiếu và hoàn kho:", error);
+      message.error("Có lỗi xảy ra khi hoàn kho.");
+    }
+  };
+
+
+  const handleSaveBasedOnType = async () => {
+    const isSupplies = newExportLoans.some(d => d.Type === "Vật tư");
+    if (isSupplies) await handleSaveAndUpdateExportlistsForSupplies();
+    else await handleSaveAndUpdateExportlists();
+  }
 
   const handleReturnDevice = async (record) => {
-    // Logic trả từng thiết bị (giữ nguyên logic gốc của bạn)
-    message.success("Đã trả thiết bị (Demo logic)");
-    handleDeleteSavedRow(record.id, "exportloan");
+    try {
+      // 1. [FIX STRAPI V5] Lọc ra tất cả exportListItem (Dữ liệu phẳng, không còn .attributes)
+      const matchingExportItems = exportList.filter(
+        (item) =>
+          item.ProductName === record.ProductName &&
+          item.Model === record.Model &&
+          item.TypeKho === record.TypeKho &&
+          item.Status === "Đang mượn"
+      );
+
+      if (matchingExportItems.length === 0) {
+        message.warning(
+          "Không tìm thấy bản ghi kho tương ứng để trả thiết bị!"
+        );
+        return;
+      }
+
+      // 2. Lấy danh sách serial mà người dùng muốn trả (từ record)
+      let deviceSerials = [];
+      if (Array.isArray(record.SerialNumber)) {
+        deviceSerials = record.SerialNumber;
+      } else if (typeof record.SerialNumber === "string") {
+        deviceSerials = record.SerialNumber.split(",")
+          .map((sn) => sn.trim())
+          .filter(Boolean);
+      }
+
+      // 3. Với mỗi exportListItem khớp, chuyển serial từ SerialNumberLoan -> SerialNumber
+      for (const exportListItem of matchingExportItems) {
+        // [FIX STRAPI V5]: Sử dụng documentId để update, fallback về id nếu cần
+        const exportListId = exportListItem.documentId || exportListItem.id;
+
+        // [FIX STRAPI V5]: Lấy dữ liệu trực tiếp từ object phẳng
+        const oldSerialString = exportListItem.SerialNumber || "";
+        const oldSerialArray = oldSerialString
+          .split(",")
+          .map((sn) => sn.trim())
+          .filter(Boolean);
+
+        // Lấy SerialNumberLoan (đã mượn)
+        const oldLoanString = exportListItem.SerialNumberLoan || "";
+        const oldLoanArray = oldLoanString
+          .split(",")
+          .map((sn) => sn.trim())
+          .filter(Boolean);
+
+        // Xác định serial nào thực sự thuộc exportListItem này và đang nằm trong Loan
+        const usedSerials = deviceSerials.filter((sn) =>
+          oldLoanArray.includes(sn)
+        );
+        if (usedSerials.length === 0) {
+          // Không có serial nào của exportListItem này cần trả => bỏ qua
+          continue;
+        }
+
+        // 4. Bỏ các serial trả khỏi Loan
+        const newLoanArray = oldLoanArray.filter(
+          (sn) => !usedSerials.includes(sn)
+        );
+        const newLoanString = newLoanArray.join(",");
+
+        // 5. Thêm serial trả về SerialNumber gốc
+        const newSerialArray = Array.from(
+          new Set([...oldSerialArray, ...usedSerials])
+        );
+        const newSerialString = newSerialArray.join(",");
+
+        // 6. Cập nhật số lượng ([FIX STRAPI V5]: Lấy trực tiếp)
+        const oldQuantity = exportListItem.totalexport ?? 0;
+        const oldLoanQuantity = exportListItem.totalexportLoan ?? 0;
+        const returnedCount = usedSerials.length;
+
+        // Tăng lại totalexport theo số serial trả
+        const newTotalExport = oldQuantity + returnedCount;
+
+        // Giảm totalexportLoan
+        let newTotalExportLoan = oldLoanQuantity - returnedCount;
+        if (newTotalExportLoan < 0) {
+          newTotalExportLoan = 0; // tránh âm
+        }
+
+        // 7. Gọi API updateExportlistsSerial
+        // Lưu ý: Đảm bảo service này gọi endpoint /api/exportlists/:documentId
+        await updateExportlistsSerial(
+          exportListId,
+          newSerialString, // SerialNumber
+          newLoanString, // SerialNumberLoan
+          newTotalExport, // totalexport
+          newTotalExportLoan // totalexportLoan
+        );
+
+        // 8. [FIX STRAPI V5] Cập nhật state exportList (Cấu trúc phẳng)
+        setExportList((prev) =>
+          prev.map((item) => {
+            const itemId = item.documentId || item.id;
+            if (itemId === exportListId) {
+              return {
+                ...item,
+                SerialNumber: newSerialString,
+                SerialNumberLoan: newLoanString,
+                totalexport: newTotalExport,
+                totalexportLoan: newTotalExportLoan,
+                // Không lồng vào attributes nữa
+              };
+            }
+            return item;
+          })
+        );
+      }
+
+      // 9. Thông báo trả thành công
+      message.success("Trả thiết bị thành công!");
+
+      // 10. Xóa dòng record vừa trả
+      // [FIX STRAPI V5]: Sử dụng documentId cho hàm xóa (nếu hàm xóa hỗ trợ v5)
+      const recordIdToDelete = record.documentId || record.id;
+      handleDeleteSavedRow(recordIdToDelete, "exportloan");
+
+    } catch (error) {
+      console.error("Lỗi khi trả thiết bị:", error);
+      message.error("Đã có lỗi xảy ra khi trả thiết bị.");
+    }
   };
 
-  // --- Handlers cho Select/Input trong bảng ---
+
+  const handleConfirmWarranty = async () => {
+    try {
+      setLoading(true);
+      await updateExportLoanTicket(ticket.id, "Bảo hành");
+      message.success("Phiếu đã được trả về trạng thái 'Bảo hành'!");
+
+      if (reloadTickets) {
+        console.log("🔄 Gọi reloadTickets()...");
+        await reloadTickets(); // Load lại danh sách phiếu
+      }
+
+      onClose(); // Đóng modal sau khi cập nhật
+    } catch (error) {
+      message.error("Lỗi khi trả phiếu!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  // --- LOGIC CHANGE INPUT ---
   const handleProductChange = (id, value) => {
     const matchedProducts = exportList.filter((item) => item.ProductName === value);
     const availableModels = [...new Set(matchedProducts.map((item) => item.Model))];
-    setNewExportLoans((prev) => prev.map((d) => d.id === id ? { ...d, ProductName: value, availableModels, Model: availableModels.includes(d.Model) ? d.Model : undefined } : d));
+    setNewExportLoans((prev) => prev.map((device) =>
+      device.id === id ? { ...device, ProductName: value, availableModels, Model: undefined, TypeKho: undefined } : device
+    ));
   };
 
   const handleModelChange = (id, model) => {
     const selectedItem = exportList.find((item) => item.Model === model);
-    if (selectedItem) {
-      setNewExportLoans((prev) => prev.map((d) => d.id === id ? { ...d, Model: model, DVT: selectedItem.DVT, BrandName: selectedItem.BrandName, Type: selectedItem.Type } : d));
-    }
+    setNewExportLoans((prev) => prev.map((item) =>
+      item.id === id ? {
+        ...item,
+        Model: model,
+        DVT: selectedItem?.DVT,
+        BrandName: selectedItem?.BrandName,
+        Type: selectedItem?.Type
+      } : item
+    ));
   };
 
-  const handleWarehouseChange = (id, val) => {
-    setNewExportLoans((prev) => prev.map((d) => d.id === id ? { ...d, TypeKho: val } : d));
+  const getAvailableWarehouses = (productName, model) => {
+    const matchingRecords = exportList.filter((item) => item.ProductName === productName && item.Model === model && item.totalexport > 0);
+    return [...new Set(matchingRecords.map((item) => item.TypeKho))].map((typeKho) => ({ value: typeKho, label: typeKho }));
   };
 
-  const handleSerialChange = (id, val) => {
-    setNewExportLoans((prev) => prev.map((d) => d.id === id ? { ...d, SerialNumber: val } : d));
+  const handleWarehouseChange = (id, selectedWarehouse) => {
+    setNewExportLoans((prev) => prev.map((item) => item.id === id ? { ...item, TypeKho: selectedWarehouse } : item));
   };
 
-  const handleTotalExportChange = (id, val) => {
-    setNewExportLoans((prev) => prev.map((d) => d.id === id ? { ...d, totalexport: val } : d));
+  const handleSerialChange = (id, value) => {
+    setNewExportLoans((prev) => prev.map((item) => item.id === id ? { ...item, SerialNumber: value } : item));
   };
 
-  // --- Cấu hình Cột Bảng (Table Columns) ---
+  const handleTotalExportChange = (id, value) => {
+    setNewExportLoans((prev) => prev.map((device) => device.id === id ? { ...device, totalexport: value } : device));
+  };
+
+  // --- COLUMNS CONFIGURATION ---
   const columns = [
     {
-      title: "Thiết Bị",
-      key: "ProductInfo",
-      width: 280,
-      render: (_, record) => {
-        if (record.isNew) {
-          return (
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Select
-                showSearch
-                placeholder="Chọn Tên Thiết Bị"
-                style={{ width: "100%" }}
-                value={record.ProductName || undefined}
-                onChange={(val) => handleProductChange(record.id, val)}
-                options={Array.from(new Set(exportList.filter(i => i.Status === "Đang mượn").map(i => i.ProductName))).sort().map(n => ({ value: n, label: n }))}
-              />
-              <Select
-                placeholder="Chọn Model"
-                style={{ width: "100%" }}
-                value={record.Model || undefined}
-                onChange={(val) => handleModelChange(record.id, val)}
-                options={(record.availableModels || []).map(m => ({ value: m, label: m }))}
-                disabled={!record.ProductName}
-              />
-            </Space>
-          )
-        }
-        return (
-          <div>
-            <div style={{ fontWeight: 'bold', fontSize: '15px', color: '#1890ff' }}>{record.ProductName}</div>
-            <div style={{ color: '#555' }}>Model: <b>{record.Model}</b></div>
-          </div>
-        )
-      }
+      title: "Tên Thiết Bị",
+      dataIndex: "ProductName",
+      key: "ProductName",
+      width: 250,
+      render: (_, record) => record.isNew ? (
+        <Select
+          showSearch
+          value={record.ProductName || undefined}
+          style={{ width: "100%" }}
+          placeholder="Chọn thiết bị"
+          onChange={(value) => handleProductChange(record.id, value)}
+          options={Array.from(new Set(exportList.filter(item => item.Status === "Đang mượn").map(item => item.ProductName)))
+            .sort().map(name => ({ value: name, label: name }))}
+          filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+        />
+      ) : <span style={{ fontWeight: 600, color: '#1890ff' }}>{record.ProductName}</span>,
     },
     {
-      title: "Chi Tiết",
-      key: "Details",
+      title: "Model",
+      dataIndex: "Model",
+      key: "Model",
       width: 200,
+      render: (_, record) => record.isNew ? (
+        <Select
+          showSearch
+          value={record.Model || undefined}
+          style={{ width: "100%" }}
+          placeholder="Model"
+          onChange={(value) => handleModelChange(record.id, value)}
+          options={(record.availableModels || []).map(model => ({ value: model, label: model }))}
+        />
+      ) : <span>{record.Model}</span>,
+    },
+    {
+      title: "Thông tin khác",
+      key: "info",
+      width: 170,
       render: (_, record) => (
-        <div style={{ fontSize: '13px', color: '#666' }}>
-          <div>Hãng: <span style={{ color: '#333' }}>{record.BrandName || "-"}</span></div>
-          <div>Loại: <span style={{ color: '#333' }}>{record.Type || "-"}</span></div>
-          <div>ĐVT: <span style={{ color: '#333' }}>{record.DVT || "-"}</span></div>
+        <div style={{ fontSize: 14, color: '#666' }}>
+          <div>Thương hiệu: <span style={{ color: '#000' }}>{record.BrandName || "-"}</span></div>
+          <div>Loại: <span style={{ color: '#000' }}>{record.Type || "-"}</span></div>
+          <div>ĐVT: <span style={{ color: '#000' }}>{record.DVT || "-"}</span></div>
         </div>
       )
     },
@@ -5251,19 +1181,13 @@ const TicketExportLoanModal = ({
       align: 'center',
       render: (_, record) => record.isNew ? (
         <Select
-          placeholder="Kho"
           value={record.TypeKho || undefined}
-          onChange={(val) => handleWarehouseChange(record.id, val)}
           style={{ width: "100%" }}
-          options={record.ProductName && record.Model ?
-            Array.from(new Set(exportList.filter(i => i.ProductName === record.ProductName && i.Model === record.Model && i.totalexport > 0).map(i => i.TypeKho))).map(k => ({ value: k, label: k }))
-            : []}
+          onChange={(value) => handleWarehouseChange(record.id, value)}
+          options={record.ProductName && record.Model ? getAvailableWarehouses(record.ProductName, record.Model) : []}
+          placeholder="Chọn kho"
         />
-      ) : (
-        <Tag color={getKhoColor(record.TypeKho)} style={{ minWidth: 60, textAlign: 'center' }}>
-          {record.TypeKho}
-        </Tag>
-      )
+      ) : <Tag color="geekblue">{record.TypeKho}</Tag>,
     },
     {
       title: "Số lượng",
@@ -5272,237 +1196,290 @@ const TicketExportLoanModal = ({
       width: 100,
       align: 'center',
       render: (_, record) => {
-        if (!record.isNew) return <b style={{ fontSize: 16 }}>{record.totalexport}</b>;
+        if (!record.isNew) return <b>{record.totalexport}</b>;
 
-        // Tính số lượng tối đa (Logic rút gọn từ code gốc của bạn)
-        const maxQty = 100; // Demo value, bạn thay bằng logic reduce thật
+        const matchedItems = exportList.filter(item => item.ProductName === record.ProductName && item.Model === record.Model && item.TypeKho === record.TypeKho && item.Status === "Đang mượn");
+        const maxQuantityFromData = matchedItems.reduce((total, item) => total + (item.totalexport || 0), 0);
+        const usedQuantityInTable = combinedExportLoanData
+          .filter(r => r.id !== record.id && r.ProductName === record.ProductName && r.Model === record.Model && r.TypeKho === record.TypeKho)
+          .reduce((sum, r) => sum + (Number(r.totalexport) || 0), 0);
+        const remaining = maxQuantityFromData - usedQuantityInTable;
+
         return (
-          <InputNumber
-            min={1} max={maxQty}
-            value={record.totalexport}
-            onChange={(val) => handleTotalExportChange(record.id, val)}
-            style={{ width: '100%' }}
-          />
-        )
-      }
+          <Tooltip title={`Tồn kho khả dụng: ${remaining}`} placement="top">
+            <InputNumber
+              min={1}
+              max={remaining}
+              value={record.totalexport}
+              onChange={(value) => {
+                const currentSNCount = Array.isArray(record.SerialNumber) ? record.SerialNumber.length : (record.SerialNumber || "").split(",").filter(Boolean).length;
+                if (record.Type !== "Vật tư" && value < currentSNCount) {
+                  message.error(`Đã chọn ${currentSNCount} serial, không thể giảm.`); return;
+                }
+                handleTotalExportChange(record.id, value);
+              }}
+              style={{ width: "100%" }}
+              status={remaining === 0 ? "error" : ""}
+            />
+          </Tooltip>
+        );
+      },
     },
     {
-      title: <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><BarcodeOutlined /> Serial Number</span>,
+      title: "Serial Number",
       dataIndex: "SerialNumber",
       key: "SerialNumber",
-      width: 250,
+      width: 230,
       render: (_, record) => {
-        const currentSerials = Array.isArray(record.SerialNumber) ? record.SerialNumber : (record.SerialNumber || "").split(",").filter(Boolean);
-
-        if (record.isNew) {
-          // Demo logic list serial
-          const availableSerials = ["SN001", "SN002", "SN003"]; // Thay bằng logic filter thật
+        if (!record.isNew) {
+          const serials = Array.isArray(record.SerialNumber) ? record.SerialNumber : (record.SerialNumber || "").split(",");
           return (
-            <Select
-              mode="multiple"
-              placeholder="Chọn Serial"
-              style={{ width: "100%" }}
-              value={currentSerials}
-              onChange={(val) => handleSerialChange(record.id, val)}
-              options={availableSerials.map(s => ({ label: s, value: s }))}
-              disabled={record.Type === "Vật tư"}
-            />
-          )
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {serials.map((s, i) => s && <Tag key={i} style={{ marginRight: 0 }}>{s}</Tag>)}
+            </div>
+          );
         }
+
+        const productName = record.ProductName;
+        const model = record.Model;
+        const warehouse = record.TypeKho;
+        // Sử dụng exportList đã được Flatten
+        const sources = exportList.filter(item => item.ProductName === productName && item.Model === model && item.TypeKho === warehouse && item.Status === "Đang mượn");
+
+        const allSerialString = sources.reduce((acc, curr) => {
+          const serial = curr.SerialNumber || "";
+          return acc ? `${acc},${serial}` : serial;
+        }, "");
+
+        let serialList = allSerialString ? allSerialString.split(",").map(sn => sn.trim()).filter(sn => sn.length > 0) : [];
+        const selectedSerialsInTable = combinedExportLoanData.filter(r => r.id !== record.id).flatMap(r => Array.isArray(r.SerialNumber) ? r.SerialNumber : (r.SerialNumber || "").split(",").map(sn => sn.trim()).filter(sn => sn));
+        const currentSerials = Array.isArray(record.SerialNumber) ? record.SerialNumber : (record.SerialNumber || "").split(",").map(sn => sn.trim()).filter(Boolean);
+        const availableSerials = serialList.filter(sn => !selectedSerialsInTable.includes(sn) || currentSerials.includes(sn));
+
+        let currentValue = record.SerialNumber;
+        if (Array.isArray(currentValue) && currentValue.length === 0) currentValue = undefined;
+        else if (typeof currentValue === "string" && !currentValue.trim()) currentValue = undefined;
+
         return (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-            {currentSerials.map((sn, idx) => (
-              <Tag key={idx} color="blue">{sn.trim()}</Tag>
-            ))}
-          </div>
-        )
+          <Select
+            mode="multiple"
+            placeholder="Chọn Serial"
+            style={{ width: "100%", minWidth: 200 }}
+            status={record.Type !== "Vật tư" && Array.isArray(currentValue) && currentValue.length !== Number(record.totalexport) ? "error" : ""}
+            value={currentValue}
+            onChange={(value) => {
+              if (record.Type !== "Vật tư" && value.length > (Number(record.totalexport) || 0)) {
+                message.error(`Chỉ được chọn tối đa ${record.totalexport} serial.`); return;
+              }
+              handleSerialChange(record.id, value);
+            }}
+            options={availableSerials.map(sn => ({ value: sn, label: sn }))}
+          />
+        );
       }
     },
     {
-      title: "Trạng thái",
+      title: "Trạng Thái",
       dataIndex: "Status",
       key: "Status",
       width: 140,
       align: 'center',
-      render: (text) => <Tag color={getStatusColor(text)}>{text || "Mới"}</Tag>
+      render: (status) => <Tag color={getStatusColor(status || "Mới")}>{status || "Mới"}</Tag>
     },
     {
       title: "Hành động",
       key: "action",
       width: 100,
-      fixed: "right",
-      align: "center",
+      align: 'center',
+      fixed: 'right',
       render: (_, record) => {
-        const isCreator = ticket?.Person === account?.Name;
-        const isPending = ticket?.Status === "Đang tạo phiếu";
+        // Dùng ticketData
+        const isCreator = ticketData?.Person === account?.Name;
+        const isPending = ticketData?.Status === "Đang tạo phiếu";
+        const canDelete = isCreator && isPending;
 
         return (
-          <Space size="small">
-            {record.isNew ? (
+          <Space>
+            {record.isNew && canDelete ? (
               <Popconfirm title="Xóa dòng này?" onConfirm={() => handleDeleteRow(record.id, "exportloan")}>
                 <Button type="text" danger icon={<DeleteOutlined />} />
               </Popconfirm>
             ) : (
               <>
-                {isCreator && isPending && (
-                  <Popconfirm title="Xóa thiết bị?" onConfirm={() => handleDeleteSavedRow(record.id, "exportloan")}>
+                {canDelete && !record.id && (
+                  <Popconfirm title="Xóa thiết bị đã lưu?" onConfirm={() => handleDeleteSavedRow(record, "exportloan")}>
                     <Tooltip title="Xóa"><Button type="text" danger icon={<DeleteOutlined />} /></Tooltip>
                   </Popconfirm>
                 )}
-                {isPending && !record.isNew && (
-                  <Popconfirm title="Trả lại kho?" onConfirm={() => handleReturnDevice(record)}>
+                {ticketData?.Status === "Đang tạo phiếu" && record.id && !record.isNew && (
+                  <Popconfirm title="Trả thiết bị về kho?" onConfirm={() => handleReturnDevice(record)}>
                     <Tooltip title="Trả thiết bị"><Button type="text" style={{ color: '#faad14' }} icon={<RollbackOutlined />} /></Tooltip>
                   </Popconfirm>
                 )}
               </>
             )}
           </Space>
-        )
-      }
+        );
+      },
     },
   ];
 
-  // --- Footer Buttons Section ---
-  const renderFooter = () => {
-    // Left side buttons (Danger zone / Back)
-    const leftButtons = [];
-    if (account.Leader && ticket?.Status === "Đang chờ duyệt") {
-      leftButtons.push(
-        <Button key="return" danger icon={<UndoOutlined />} onClick={() => {/* handleReturnTicket */ }}>Trả Phiếu</Button>
-      );
-    }
-
-    // Right side buttons (Actions)
-    const rightButtons = [
-      <Button key="close" icon={<CloseOutlined />} onClick={onClose}>Đóng</Button>
+  // --- RENDER FOOTER ---
+  const renderFooterButtons = () => {
+    const btns = [
+      <Button key="cancel" icon={<CloseOutlined />} onClick={onClose}>Đóng</Button>
     ];
 
-    if (ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name) {
-      rightButtons.push(<Button key="save" icon={<SaveOutlined />} onClick={handleSaveNewDevices}>Lưu nháp</Button>);
-      rightButtons.push(<Button key="send" type="primary" icon={<FileAddOutlined />} onClick={() => {/* handleConfirmTicket */ }}>Gửi phiếu</Button>);
+    const status = ticketData?.Status;
+    const person = ticketData?.Person;
+
+    const leftBtns = [];
+    if (account.Leader && status === "Đang chờ duyệt") {
+      leftBtns.push(<Button key="return" danger icon={<UndoOutlined />} onClick={handleReturnTicket}>Trả Phiếu</Button>);
+    }
+    if (account.Leader && (status === "Duyệt" || status === "Đã giao")) {
+      leftBtns.push(<Button key="cancelApprove" danger type="dashed" icon={<MinusCircleOutlined />} onClick={handleReturnLeaderTicket}>Hủy duyệt</Button>);
     }
 
-    if (account.Exportlist && ticket?.Status === "Đang chờ duyệt") {
-      rightButtons.push(<Button key="approve" type="primary" style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} onClick={() => {/* handleApprove */ }}>Duyệt Phiếu</Button>);
+    const rightBtns = [];
+
+    if (status === "Đang tạo phiếu" && person === account?.Name) {
+      rightBtns.push(<Button key="save" icon={<SaveOutlined />} onClick={handleSaveBasedOnType}>Lưu nháp</Button>);
+      rightBtns.push(<Button key="send" type="primary" icon={<FileAddOutlined />} onClick={handleConfirmTicket}>Gửi phiếu</Button>);
     }
 
-    if ((ticket?.Status === "Duyệt" || ticket?.Status === "Đã giao")) {
-      rightButtons.push(<Button key="print" icon={<PrinterOutlined />} onClick={() => setPrintVisible(true)}>In Phiếu</Button>);
+    if (account.Exportlist && status === "Đang chờ duyệt") {
+      rightBtns.push(<Button key="approve" type="primary" style={{ background: '#52c41a', borderColor: '#52c41a' }} icon={<CheckCircleOutlined />} loading={loading} onClick={handleApproveTicketAndUpdateDevices}>Duyệt Phiếu</Button>);
     }
 
-    if (ticket?.Status === "Duyệt" && ticket?.Person === account?.Name) {
-      rightButtons.push(<Button key="export" type="primary" danger icon={<ExportOutlined />} onClick={() => {/* handleImportDevice */ }}>Xuất Phiếu</Button>);
+    if ((status === "Duyệt" || status === "Đã giao") && person === account?.Name) {
+      rightBtns.push(<Button key="print" icon={<PrinterOutlined />} onClick={() => setPrintVisible(true)}>In Phiếu</Button>);
+    }
+    if (status === "Duyệt" && person === account?.Name) {
+      rightBtns.push(<Button key="export" type="primary" danger icon={<ExportOutlined />} onClick={handleImportDeviceServicesTicket}>Xuất Phiếu</Button>);
+    }
+
+    if (account.Receivelistkho && status === "Đã giao") {
+      rightBtns.push(<Button key="confirmAdmin" type="primary" icon={<CheckSquareOutlined />} onClick={() => updateExportLoanTicket(ticketData.documentId || ticketData.id, "Xác nhận").then(() => { reloadTickets(); onClose(); })}>Xác nhận</Button>);
+    }
+    if (account.Leader && status === "Xác nhận") {
+      rightBtns.push(<Button key="warranty" style={{ background: '#faad14', borderColor: '#faad14', color: '#fff' }} icon={<ToolOutlined />} onClick={handleConfirmWarranty}>Bảo hành</Button>);
+    }
+
+    if (status === "Xác nhận" && account.Invoiceer) {
+      rightBtns.push(<Button key="complete" type="primary" style={{ background: '#52c41a', borderColor: '#52c41a' }} icon={<SafetyCertificateOutlined />} onClick={handleHandoverTicket}>Hoàn thành</Button>);
+    }
+    if (status === "Chờ xuất hóa đơn" && account.Invoiceer) {
+      rightBtns.push(<Button key="issueInvoice" type="primary" style={{ background: '#f5222d', borderColor: '#f5222d' }} icon={<CalculatorOutlined />} onClick={() => setIsModalVisible(true)}>Xuất hóa đơn</Button>);
     }
 
     return (
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <Space>{leftButtons}</Space>
-        <Space>{rightButtons}</Space>
+        <Space>{leftBtns}</Space>
+        <Space>{btns}{rightBtns}</Space>
       </div>
-    )
-  }
+    );
+  };
 
   return (
-    <Modal
-      title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <InfoCircleOutlined style={{ color: '#1890ff' }} />
-          <span style={{ fontSize: '18px' }}>Chi Tiết Phiếu Mượn Thiết Bị</span>
-          {ticket?.Status && <Tag color={getStatusColor(ticket.Status)} style={{ marginLeft: 10 }}>{ticket.Status}</Tag>}
-        </div>
-      }
-      open={isOpen}
-      onCancel={onClose}
-      width={1300} // Kích thước lớn hơn
-      footer={renderFooter()}
-      style={{ top: 20 }}
-      maskClosable={false}
-    >
-      <Spin spinning={loading} tip="Đang xử lý...">
-        {/* Header Info Area */}
-        {ticket && (
-          <Card
-            size="small"
-            bordered={false}
-            style={{ marginBottom: 16, backgroundColor: '#f9f9f9', border: '1px solid #f0f0f0' }}
-          >
-            <Descriptions
-              size="small"
-              column={{ xxl: 4, xl: 4, lg: 2, md: 2, sm: 1, xs: 1 }}
-            >
-              <Descriptions.Item label="Mã phiếu">
-                <Text copyable strong>{ticket.Votes}</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Người tạo">
-                <Space><Tag color="blue">{ticket.Person}</Tag></Space>
-              </Descriptions.Item>
-              <Descriptions.Item label="Ngày tạo">{ticket.Date || "N/A"}</Descriptions.Item>
-              <Descriptions.Item label="Ticket Liên quan">
-                {ticket.Ticket ? <Tag color="geekblue">{ticket.Ticket}</Tag> : "Không có"}
-              </Descriptions.Item>
-              <Descriptions.Item label="Ghi chú" span={2}>
-                {ticket.Note || <span style={{ color: '#ccc', fontStyle: 'italic' }}>Không có ghi chú</span>}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-        )}
-
-        {/* Table Toolbar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <Space>
-            <div style={{ fontSize: 16, fontWeight: 600, color: '#444' }}>
-              Danh sách thiết bị ({combinedExportLoanData.length})
+    <>
+      <Modal
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <FileAddOutlined style={{ color: '#1890ff', fontSize: 20 }} />
+              <span style={{ fontSize: 18, fontWeight: 600, color: '#001529' }}>Chi Tiết Phiếu Mượn Thiết Bị</span>
             </div>
-          </Space>
-          {ticket?.Status === "Đang tạo phiếu" && ticket?.Person === account?.Name && (
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => handleAddRow("exportloan")}
-              style={{ borderRadius: 4 }}
-            >
-              Thêm thiết bị
-            </Button>
-          )}
-        </div>
-
-        {/* Main Table */}
-        <Table
-          bordered
-          dataSource={combinedExportLoanData}
-          rowKey="id"
-          columns={columns}
-          pagination={false}
-          scroll={{ x: 1200, y: 500 }} // Scroll ngang và dọc
-          size="middle"
-          rowClassName={(record) => record.isNew ? "bg-new-row" : ""}
-        />
-
-        {/* Sub Modals */}
-        <PrintTicketExportLoan
-          isOpen={printVisible}
-          onClose={() => setPrintVisible(false)}
-          ticket={ticket || {}}
-          handoverDevices={exportLoanData || []}
-          autoPrint={true}
-        />
-        <ExportInvoiceModal
-          visible={isModalVisible}
-          onClose={() => setIsModalVisible(false)}
-          onConfirm={() => {/* Confirm logic */ }}
-          ticketId={ticket?.id}
-          invoiceNumber={invoiceNumber}
-          setInvoiceNumber={setInvoiceNumber}
-        />
-      </Spin>
-
-      {/* CSS phụ để làm đẹp thêm (nếu cần) */}
-      <style jsx>{`
-        .bg-new-row {
-            background-color: #f0f9ff;
+            {ticketData?.Status && <Tag color={getStatusColor(ticketData.Status)} style={{ fontSize: 14, padding: '4px 10px' }}>{ticketData.Status}</Tag>}
+          </div>
         }
-      `}</style>
-    </Modal>
+        open={isOpen}
+        onCancel={onClose}
+        width={1300}
+        footer={renderFooterButtons()}
+        style={{ top: 20 }}
+      >
+        <Spin spinning={loading} tip="Đang xử lý dữ liệu...">
+          {ticketData?.Votes && (
+            <Card
+              size="small"
+              style={{ marginBottom: 16, background: '#f0f5ff', borderColor: '#d6e4ff' }}
+              bordered={true}
+            >
+              <Descriptions column={{ xxl: 4, xl: 4, lg: 2, md: 2, sm: 1, xs: 1 }} size="small" labelStyle={{ fontWeight: 'bold' }}>
+                <Descriptions.Item label="Mã phiếu">
+                  <Space>
+                    <Tag color="blue" style={{ fontSize: '14px', fontWeight: 'bold' }}>{ticketData.Votes}</Tag>
+                    <Tooltip title="Sao chép mã phiếu">
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<CopyOutlined style={{ color: '#1890ff' }} />}
+                        onClick={() => {
+                          navigator.clipboard.writeText(ticketData.Votes);
+                          message.success("Đã sao chép mã phiếu!");
+                        }}
+                      />
+                    </Tooltip>
+                  </Space>
+                </Descriptions.Item>
+                <Descriptions.Item label="Người tạo">{ticketData.Person}</Descriptions.Item>
+                <Descriptions.Item label="Ngày tạo">
+                  {ticketData.createdAt ? dayjs(ticketData.createdAt).format("DD/MM/YYYY HH:mm") : "N/A"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Trạng thái"><Tag color={getStatusColor(ticketData.Status)}>{ticketData.Status}</Tag></Descriptions.Item>
+                <Descriptions.Item label="Ghi chú" span={2}>{ticketData.Note || "Không có"}</Descriptions.Item>
+              </Descriptions>
+            </Card>
+          )}
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <div style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: '#1890ff',
+              borderLeft: '4px solid #1890ff',
+              paddingLeft: 10
+            }}>
+              Danh sách thiết bị
+            </div>
+
+            {ticketData?.Status === "Đang tạo phiếu" && ticketData?.Person === account?.Name && (
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleAddRow("exportloan")}>
+                Thêm thiết bị
+              </Button>
+            )}
+          </div>
+
+          <Table
+            bordered
+            dataSource={combinedExportLoanData}
+            rowKey="id"
+            columns={columns}
+            pagination={false}
+            scroll={{ x: 1200, y: 500 }}
+            size="middle"
+            rowClassName={(record) => record.isNew ? 'bg-new-row' : ''}
+          />
+
+          <PrintTicketExportLoan
+            isOpen={printVisible}
+            onClose={() => setPrintVisible(false)}
+            ticket={ticketData || {}}
+            handoverDevices={exportLoanData || []}
+            autoPrint={true}
+          />
+          <ExportInvoiceModal
+            visible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            onConfirm={handleExportTicket}
+            ticketId={ticketData?.id}
+            invoiceNumber={invoiceNumber}
+            setInvoiceNumber={setInvoiceNumber}
+          />
+        </Spin>
+      </Modal>
+    </>
   );
 };
 
