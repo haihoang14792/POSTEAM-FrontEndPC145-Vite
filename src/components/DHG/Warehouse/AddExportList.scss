@@ -1,183 +1,447 @@
-// // /* AddSupplierModal.css */
-// // .add-exportlist-modal .ant-modal-content {
-// //     border-radius: 15px;
-// //     overflow: hidden;
-// //     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-// //     border: none;
+// .add-export-list-modal {
+//   .ant-modal-content {
+//     border-radius: 16px;
+//     overflow: hidden;
+//     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+//   }
+
+//   .ant-modal-header {
+//     background: #fff;
+//     padding: 16px 24px;
+//     border-bottom: 1px solid #f0f0f0;
+
+//     .modal-title-wrapper {
+//       display: flex;
+//       align-items: center;
+//       gap: 12px;
+
+//       .icon-box {
+//         width: 36px;
+//         height: 36px;
+//         background: #e6f7ff;
+//         border-radius: 8px;
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
+        
+//         .anticon {
+//           font-size: 18px;
+//           color: #1890ff;
+//         }
+//       }
+//     }
+//   }
+
+//   .ant-modal-body {
+//     padding: 20px 24px;
+//     background-color: #f8f9fa; /* Màu nền nhẹ cho toàn bộ body */
+//   }
+
+//   /* Card Style tinh chỉnh */
+//   .section-card {
+//     border-radius: 8px;
+//     border: 1px solid #e8e8e8;
+//     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+//     background: #fff;
+//     margin-bottom: 0;
+
+//     &.mt-3 {
+//       margin-top: 16px;
+//     }
+
+//     .ant-card-head {
+//       min-height: 40px;
+//       padding: 0 16px;
+//       border-bottom: 1px solid #f0f0f0;
+      
+//       .ant-card-head-title {
+//         font-size: 14px;
+//         font-weight: 600;
+//         color: #595959;
+//         padding: 10px 0;
+//       }
+//     }
+
+//     .ant-card-body {
+//       padding: 16px;
+//     }
+//   }
+
+//   /* Info Box khi chọn Model */
+//   .info-box {
+//     background: #f9f9f9;
+//     border-radius: 6px;
+//     padding: 12px 16px;
+//     margin-top: 8px;
+//     border: 1px dashed #d9d9d9;
+
+//     .ant-descriptions-item-label {
+//       color: #8c8c8c;
+//       font-size: 12px;
+//     }
+    
+//     .ant-descriptions-item-content {
+//       font-weight: 500;
+//     }
+//   }
+
+//   /* Form inputs */
+//   .ant-form-item-label > label {
+//     font-size: 13px;
+//     color: #595959;
+//   }
+
+//   .ant-input,
+//   .ant-input-number,
+//   .ant-select-selector {
+//     border-radius: 6px !important;
+//     &:hover {
+//       border-color: #40a9ff;
+//     }
+//   }
+
+//   .ant-input-textarea {
+//     textarea {
+//         border-radius: 6px;
+//         background-color: #fafafa;
+//         &:focus {
+//             background-color: #fff;
+//         }
+//     }
+//   }
+
+//   /* Footer Actions */
+//   .form-actions {
+//     margin-top: 24px;
+//     text-align: right;
+    
+//     button {
+//         height: 36px;
+//         border-radius: 6px;
+//         padding: 0 20px;
+//         font-weight: 500;
+//     }
+//   }
+// }
+
+// /* Responsive cho mobile */
+// @media (max-width: 768px) {
+//     .add-export-list-modal {
+//         .ant-modal-body {
+//             padding: 16px;
+//         }
+//         .ant-col-12, .ant-col-8 {
+//             flex: 0 0 100%;
+//             max-width: 100%;
+//         }
+//     }
+// }
+
+
+// // .add-export-list-modal {
+// //   /* Đẩy modal lên cao hơn để tận dụng khoảng trống phía trên */
+// //   .ant-modal {
+// //     top: 10px; 
+// //     max-width: 95vw;
+// //     padding-bottom: 0;
 // //   }
-  
-// //   .modal-header {
-// //     background: linear-gradient(90deg, #007bff, #00c6ff);
-// //     padding: 20px 24px;
-// //     display: flex;
-// //     align-items: center;
-// //     color: #fff;
-// //     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-// //   }
-  
-// //   .modal-header .icon {
-// //     font-size: 26px;
-// //     margin-right: 10px;
-// //   }
-  
-// //   .modal-header .title {
-// //     font-size: 22px;
-// //     font-weight: 500;
-// //   }
-  
-// //   .modal-body {
-// //     padding: 30px;
-// //     background: #ffffff;
-// //   }
-  
-// //   .add-exportlist-modal .ant-modal-footer {
-// //     background: #f9f9f9;
-// //     border-top: 1px solid #eee;
-// //     padding: 16px 24px;
-// //     text-align: right;
-// //   }
-  
-// //   .form-item {
-// //     margin-bottom: 20px;
-// //   }
-  
-// //   .input {
+
+// //   .ant-modal-content {
 // //     border-radius: 8px;
-// //     border: 1px solid #ccc;
-// //     padding: 10px;
-// //     transition: border-color 0.3s ease;
+// //     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+// //     display: flex;
+// //     flex-direction: column;
+// //     /* Giới hạn chiều cao tối đa là 85% màn hình */
+// //     max-height: 90vh; 
+// //   }
+
+// //   /* Header nhỏ gọn */
+// //   .ant-modal-header {
+// //     padding: 8px 16px; /* Giảm padding */
+// //     border-bottom: 1px solid #f0f0f0;
+// //     flex-shrink: 0;
+
+// //     .modal-title-wrapper {
+// //       display: flex;
+// //       align-items: center;
+// //       gap: 8px;
+
+// //       .icon-box {
+// //         width: 28px; /* Nhỏ lại */
+// //         height: 28px;
+// //         font-size: 14px;
+// //         background: #f6ffed;
+// //         border-radius: 6px;
+// //         display: flex;
+// //         align-items: center;
+// //         justify-content: center;
+// //       }
+      
+// //       h5.ant-typography {
+// //         font-size: 14px; /* Giảm font title */
+// //       }
+// //     }
+// //   }
+
+// //   /* Body: Cho phép cuộn nếu màn hình quá bé */
+// //   .ant-modal-body {
+// //     padding: 12px; /* Padding body nhỏ lại */
+// //     overflow-y: auto;
+// //     background-color: #f5f7fa;
+// //     scrollbar-width: thin; /* Thanh cuộn mảnh cho đẹp */
+// //   }
+
+// //   /* Card bên trong */
+// //   .section-card {
+// //     border-radius: 6px;
+// //     margin-bottom: 0;
+
+// //     &.mt-3 {
+// //       margin-top: 10px; /* Giảm khoảng cách giữa 2 card */
+// //     }
+
+// //     .ant-card-head {
+// //       min-height: 32px; /* Header card thấp hơn */
+// //       padding: 0 12px;
+      
+// //       .ant-card-head-title {
+// //         padding: 6px 0;
+// //         font-size: 13px;
+// //         font-weight: 600;
+// //       }
+// //     }
+
+// //     .ant-card-body {
+// //       padding: 12px;
+// //     }
+// //   }
+
+// //   /* Form Item: Đây là phần chiếm diện tích nhiều nhất, cần ép nhỏ lại */
+// //   .ant-form-item {
+// //     margin-bottom: 8px; /* Giảm margin bottom cực mạnh (mặc định 24px) */
+    
+// //     .ant-form-item-label {
+// //       padding-bottom: 2px;
+// //       > label {
+// //         font-size: 12px; /* Font label nhỏ */
+// //         height: auto;
+// //       }
+// //     }
+// //   }
+
+// //   /* Các input/select */
+// //   .ant-input,
+// //   .ant-input-number,
+// //   .ant-select-selector,
+// //   .ant-btn {
+// //     font-size: 13px;
+// //     border-radius: 4px !important;
 // //   }
   
-// //   .input:focus,
-// //   .input:hover {
-// //     border-color: #007bff;
+// //   /* Info box hiển thị thông tin */
+// //   .info-box {
+// //     padding: 8px 12px;
+// //     margin-top: 8px;
+    
+// //     .ant-descriptions-row > td {
+// //       padding-bottom: 4px; /* Giảm khoảng cách các dòng info */
+// //     }
+// //     .ant-descriptions-item-label {
+// //       font-size: 11px;
+// //     }
+// //     .ant-descriptions-item-content {
+// //       font-size: 12px;
+// //     }
 // //   }
-// //   .serial-list {
-// //     display: flex;
-// //     flex-wrap: wrap;
-// //     gap: 6px;
-// //     padding: 8px;
-// //     background: #f9f9f9;
-// //     border-radius: 4px;
-// //     border: 1px solid #ccc;
-// //     max-height: 120px;
-// //     overflow-y: auto;
+
+// //   /* Footer nút bấm */
+// //   .form-actions {
+// //     margin-top: 12px;
+// //     padding-top: 12px;
+// //     border-top: 1px solid #e8e8e8;
+// //     text-align: right;
+    
+// //     button {
+// //       height: 30px; /* Nút bấm thấp hơn */
+// //       font-size: 13px;
+// //     }
+// //   }
 // // }
 
-// // .serial-item {
-// //     background: #e6f4ff;
-// //     padding: 4px 8px;
-// //     border-radius: 4px;
-// //     font-size: 12px;
-// // }
 
-//   /* Modal tổng thể */
-// .add-exportlist-modal .ant-modal-content {
-//   border-radius: 12px;
-//   padding: 0;
-//   overflow: hidden;
-//   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-// }
 
-// /* Header modal */
-// .add-exportlist-modal .modal-header {
-//   display: flex;
-//   align-items: center;
-//   gap: 8px;
-//   background: linear-gradient(135deg, #1890ff, #40a9ff);
-//   padding: 16px 20px;
-//   color: white;
-//   font-size: 18px;
-//   font-weight: 600;
-// }
 
-// .add-exportlist-modal .modal-header .icon {
-//   font-size: 22px;
-// }
+.add-export-list-modal {
+  /* ===== Modal container ===== */
+  .ant-modal {
+    top: 16px;
+    max-width: 95vw;
+    padding-bottom: 0;
+  }
 
-// /* Nội dung bên trong */
-// .add-exportlist-modal .ant-modal-body {
-//   padding: 20px 24px;
-//   background: #fafafa;
-// }
+  .ant-modal-content {
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
 
-// /* Form label */
-// .add-exportlist-modal .ant-form-item-label > label {
-//   font-weight: 600;
-//   color: #444;
-// }
+  /* ===== Header ===== */
+  .ant-modal-header {
+    background: #fff;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
 
-// /* Input, Select, Number */
-// .add-exportlist-modal .ant-input,
-// .add-exportlist-modal .ant-select-selector,
-// .add-exportlist-modal .ant-input-number {
-//   border-radius: 6px !important;
-//   border-color: #d9d9d9;
-//   transition: all 0.3s ease;
-// }
+    .modal-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-// .add-exportlist-modal .ant-input:focus,
-// .add-exportlist-modal .ant-select-focused .ant-select-selector,
-// .add-exportlist-modal .ant-input-number-focused {
-//   border-color: #1890ff !important;
-//   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
-// }
+      .icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #e6f7ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-// /* Tồn kho */
-// .add-exportlist-modal .stock-info {
-//   font-size: 12px;
-//   font-weight: 500;
-//   margin-top: -6px;
-// }
+        .anticon {
+          font-size: 16px;
+          color: #1890ff;
+        }
+      }
 
-// .add-exportlist-modal .stock-info.green {
-//   color: #3f8600;
-// }
+      h5.ant-typography {
+        font-size: 15px;
+        margin: 0;
+      }
+    }
+  }
 
-// .add-exportlist-modal .stock-info.red {
-//   color: #cf1322;
-// }
+  /* ===== Body ===== */
+  .ant-modal-body {
+    padding: 16px;
+    background: #f8f9fa;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
 
-// /* Footer buttons */
-// .add-exportlist-modal .ant-modal-footer {
-//   padding: 12px 24px;
-//   border-top: 1px solid #f0f0f0;
-// }
+  /* ===== Card ===== */
+  .section-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 
-// .add-exportlist-modal .ant-btn-primary {
-//   background: #1890ff;
-//   border-radius: 6px;
-//   font-weight: 500;
-// }
+    &.mt-3 {
+      margin-top: 12px;
+    }
 
-// .add-exportlist-modal .ant-btn-default {
-//   border-radius: 6px;
-// }
+    .ant-card-head {
+      min-height: 36px;
+      padding: 0 14px;
+      border-bottom: 1px solid #f0f0f0;
 
-// /* Giảm khoảng cách giữa input và tồn kho */
-// .add-exportlist-modal .stock-info {
-//   margin-top: 4px; /* trước là -6px hoặc mặc định, giờ sát hơn */
-//   font-size: 12px;
-//   font-weight: 500;
-//   line-height: 1.4;
-// }
+      .ant-card-head-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #595959;
+        padding: 8px 0;
+      }
+    }
 
-// /* Màu tồn kho */
-// .add-exportlist-modal .stock-info.green {
-//   color: #3f8600;
-// }
+    .ant-card-body {
+      padding: 14px;
+    }
+  }
 
-// .add-exportlist-modal .stock-info.red {
-//   color: #cf1322;
-// }
+  /* ===== Form ===== */
+  .ant-form-item {
+    margin-bottom: 10px;
 
-// /* Loại bỏ margin-bottom mặc định của Form.Item để tồn kho sát hơn */
-// .add-exportlist-modal .ant-form-item {
-//   margin-bottom: 12px; /* giảm từ 24px mặc định xuống 12px */
-// }
-// .add-exportlist-modal .serial-input {
-//   resize: none !important;
-//   overflow-y: auto !important;
-//   white-space: pre-wrap !important;
-//   word-break: break-word !important;
-// }
+    .ant-form-item-label {
+      padding-bottom: 2px;
+
+      > label {
+        font-size: 12px;
+        color: #595959;
+      }
+    }
+  }
+
+  .ant-input,
+  .ant-input-number,
+  .ant-select-selector {
+    border-radius: 6px !important;
+    font-size: 13px;
+
+    &:hover {
+      border-color: #40a9ff;
+    }
+  }
+
+  .ant-input-textarea textarea {
+    border-radius: 6px;
+    background: #fafafa;
+
+    &:focus {
+      background: #fff;
+    }
+  }
+
+  /* ===== Info box ===== */
+  .info-box {
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border: 1px dashed #d9d9d9;
+
+    .ant-descriptions-item-label {
+      font-size: 11px;
+      color: #8c8c8c;
+    }
+
+    .ant-descriptions-item-content {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .ant-descriptions-row > td {
+      padding-bottom: 4px;
+    }
+  }
+
+  /* ===== Footer actions ===== */
+  .form-actions {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e8e8e8;
+    text-align: right;
+
+    button {
+      height: 32px;
+      padding: 0 16px;
+      font-size: 13px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .ant-modal-body {
+      padding: 12px;
+    }
+
+    .ant-col-12,
+    .ant-col-8 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}

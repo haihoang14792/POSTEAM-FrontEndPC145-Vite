@@ -53,12 +53,12 @@ const DeviceKohnan = () => {
                     {devices.length > 0 ? devices.map((device, index) => (
                         <tr key={device.id}>
                             <td>{index + 1}</td>
-                            <td>{device.attributes.DeviceName}</td>
-                            <td>{device.attributes.BrandName}</td>
-                            <td>{device.attributes.Model}</td>
-                            <td>{device.attributes.SerialNumber}</td>
-                            <td>{device.attributes.DeviceLocation}</td>
-                            <td>{device.attributes.Status ? "Hoạt động" : "Ngừng hoạt động"}</td>
+                            <td>{device.DeviceName}</td>
+                            <td>{device.BrandName}</td>
+                            <td>{device.Model}</td>
+                            <td>{device.SerialNumber}</td>
+                            <td>{device.DeviceLocation}</td>
+                            <td>{device.Status ? "Hoạt động" : "Ngừng hoạt động"}</td>
                         </tr>
                     )) : (
                         <tr>

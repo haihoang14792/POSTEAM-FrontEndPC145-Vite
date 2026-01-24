@@ -1,93 +1,359 @@
-.exportlist-container-elt {
-    background: #f4f4f4;
-    border-radius: 10px;
-    padding: 20px;
-    //color: #fff;
-}
+// .export-list-page {
+//   padding: 24px;
+//   background-color: #f0f2f5;
+//   min-height: 100vh;
+//   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-.header-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+//   // --- Common Utilities ---
+//   .shadow-sm {
+//       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
+//   }
 
-.search-bar {
-    display: flex;
-    align-items: center;
-    background: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
+//   // --- Header Card ---
+//   .header-card {
+//       margin-bottom: 16px;
+//       border-radius: 8px;
+      
+//       .ant-card-body {
+//           padding: 16px 24px; // Compact padding
+//       }
 
-.search-bar input {
+//       .header-title-box {
+//           display: flex;
+//           flex-direction: column;
+//       }
+
+//       .header-stats-actions {
+//           display: flex;
+//           align-items: center;
+//           justify-content: flex-end;
+//           gap: 24px;
+//           flex-wrap: wrap;
+
+//           .ant-statistic-title {
+//               font-size: 12px;
+//               color: #8c8c8c;
+//               margin-bottom: 0;
+//           }
+          
+//           .ant-statistic-content {
+//               line-height: 1.2;
+//           }
+
+//           .action-buttons-group {
+//               margin-left: 12px;
+//               padding-left: 12px;
+//               border-left: 1px solid #f0f0f0;
+
+//               .btn-warranty {
+//                   border-color: #722ed1;
+//                   color: #722ed1;
+//                   &:hover {
+//                       background-color: #f9f0ff;
+//                   }
+//               }
+//           }
+//       }
+
+//       // Responsive cho mobile
+//       @media (max-width: 768px) {
+//           .header-stats-actions {
+//               justify-content: flex-start;
+//               margin-top: 12px;
+//               gap: 16px;
+              
+//               .action-buttons-group {
+//                   margin-left: 0;
+//                   padding-left: 0;
+//                   border-left: none;
+//                   margin-top: 8px;
+//                   width: 100%;
+//                   button { width: 100%; }
+//               }
+//           }
+//       }
+//   }
+
+//   // --- Main Content Card ---
+//   .main-content-card {
+//       border-radius: 8px;
+
+//       .filter-form {
+//           margin-bottom: 16px;
+//           display: flex;
+//           flex-wrap: wrap;
+//           gap: 10px;
+//           align-items: center;
+
+//           // Căn chỉnh các input
+//           .ant-form-item { margin-bottom: 0; margin-right: 0; }
+
+//           .filter-actions-right {
+//               margin-left: auto;
+              
+//               .btn-excel {
+//                   color: #217346;
+//                   border-color: #217346;
+//                   &:hover { background: #f6ffed; }
+//               }
+//           }
+          
+//           @media (max-width: 992px) {
+//               .filter-actions-right {
+//                   margin-left: 0;
+//                   width: 100%;
+//                   margin-top: 10px;
+//                   justify-content: space-between;
+//               }
+//           }
+//       }
+
+//       // Tùy chỉnh bảng
+//       .export-table {
+//           .product-cell {
+//               .product-name { font-weight: 600; color: #262626; margin-bottom: 2px; }
+//               .product-model { font-size: 12px; color: #8c8c8c; display: flex; gap: 6px; align-items: center; }
+//           }
+//           .ticket-cell { font-family: 'Consolas', monospace; font-size: 13px; }
+//       }
+//   }
+// }
+
+.export-list-page {
+  padding: 0; // Padding thường được xử lý bởi layout cha, hoặc thêm 16px nếu cần
+  background-color: transparent;
+
+  // --- 1. Header Card (Thống kê & Title) ---
+  .header-card {
+    border-radius: 8px;
+    margin-bottom: 16px;
     border: none;
-    outline: none;
-    padding: 5px;
-}
+    transition: all 0.3s ease;
 
-.split-container-elt {
-    gap: 20px;
-    display: flex;
-    border: 1px solid #444;
-    border-radius: 10px;
-    overflow: hidden;
-}
+    // Hiệu ứng shadow nhẹ
+    &.shadow-sm {
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 
+                  0 1px 6px -1px rgba(0, 0, 0, 0.02), 
+                  0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    }
 
-.panel-list-elt {
-    width: 50%;
-    background: #fff;
-    padding: 10px;
-    border-radius: 10px 0 0 10px;
-}
+    .header-title-box {
+      h4 {
+        font-weight: 700;
+        color: #262626;
+      }
+      span {
+        color: #8c8c8c;
+      }
+    }
 
-.panel-title-elt {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
+    .header-stats-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
 
-ul {
-    list-style: none;
-    padding: 0;
-}
+      // Style cho các số liệu thống kê
+      .ant-statistic {
+        .ant-statistic-title {
+          font-size: 12px;
+          margin-bottom: 0;
+          color: #8c8c8c;
+        }
+        .ant-statistic-content-value {
+          font-size: 18px;
+          font-weight: 600;
+        }
+      }
 
-.exportlist-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background: #52c41a;
-    color: #fff;
-    margin: 5px 0;
-    border-radius: 5px;
-    cursor: pointer;
-}
+      // Group nút bấm
+      .action-buttons-group {
+        margin-left: 16px;
+        
+        .btn-warranty {
+          background-color: #722ed1; // Màu tím cho bảo hành
+          border-color: #722ed1;
+          color: white;
+          
+          &:hover {
+            background-color: #9254de;
+            border-color: #9254de;
+          }
+        }
+      }
+    }
+  }
 
-.exportlist-item.active {
-    background: #1890ff;
-}
+  // --- 2. Main Content Card (Bộ lọc & Bảng) ---
+  .main-content-card {
+    border-radius: 8px;
+    border: none;
+    min-height: 600px;
+    
+    &.shadow-sm {
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 
+                  0 1px 6px -1px rgba(0, 0, 0, 0.02), 
+                  0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    }
 
-.exportlist-icon {
-    margin-right: 10px;
-}
+    // Form lọc
+    .filter-form {
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
 
-.panel-details-elt {
-    width: 75%;
-    background: white;
-    padding: 20px;
-    border-radius: 0 10px 10px 0;
-    color: black;
-}
+      .ant-form-item {
+        margin-right: 0;
+        margin-bottom: 8px;
+      }
 
-.exportlist-details {
-    //background: #1e1e2a;
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-}
+      // Đẩy các nút hành động (Tìm, Reset, Excel) sang phải
+      .filter-actions-right {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
 
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+        .btn-excel {
+          color: #52c41a;
+          border-color: #b7eb8f;
+          background: #f6ffed;
+
+          &:hover {
+            color: #389e0d;
+            border-color: #52c41a;
+          }
+        }
+      }
+    }
+
+    // Bảng dữ liệu
+    .export-table {
+      .ant-table-thead > tr > th {
+        background-color: #fafafa;
+        font-weight: 600;
+        color: #595959;
+      }
+
+      // Style cột Sản phẩm
+      .product-cell {
+        display: flex;
+        flex-direction: column;
+        
+        .product-name {
+          font-weight: 600;
+          color: #262626;
+          margin-bottom: 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .product-model {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          color: #8c8c8c;
+          
+          span {
+            font-family: monospace; // Font code cho Model dễ đọc
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+          }
+        }
+      }
+
+      // Style cột Ticket
+      .ticket-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      
+      // Hover row hiệu ứng
+      .ant-table-tbody > tr {
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover > td {
+          background-color: #e6f7ff !important; // Màu xanh nhạt khi hover
+        }
+      }
+    }
+  }
+
+  // --- 3. Style Modal Details ---
+  .detail-modal-content {
+    .serial-box {
+      background: #f5f5f5;
+      padding: 8px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #595959;
+      white-space: normal;
+      word-break: break-all;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .modal-actions-footer {
+      margin-top: 24px;
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+  }
+
+  // --- 4. Responsive ---
+  @media (max-width: 768px) {
+    .header-card {
+      .header-stats-actions {
+        justify-content: flex-start;
+        width: 100%;
+        margin-top: 16px;
+        
+        .ant-divider {
+          display: none; 
+        }
+        
+        .action-buttons-group {
+          margin-left: 0;
+          margin-top: 12px;
+          width: 100%;
+          
+          .ant-btn {
+            width: 100%; 
+            margin-bottom: 8px;
+          }
+        }
+      }
+    }
+
+    .filter-form {
+      flex-direction: column;
+      
+      .ant-form-item, 
+      .ant-select, 
+      .ant-input-affix-wrapper {
+        width: 100% !important;
+      }
+
+      .filter-actions-right {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+        
+        .ant-btn {
+          flex: 1;
+        }
+      }
+    }
+  }
 }

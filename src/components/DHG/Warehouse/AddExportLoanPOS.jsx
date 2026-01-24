@@ -392,11 +392,15 @@ const AddExportLoanPOS = ({ open, onClose, reloadTickets }) => {
 
       // Nếu service của bạn chưa có thông báo, hãy bật dòng dưới:
       // message.success("🎉 Tạo phiếu thành công!");
+      message.success("🎉 Tạo phiếu thành công!");
 
       onClose();
       form.resetFields();
     } catch (error) {
       // Lỗi validation hoặc lỗi API đã được xử lý ở service/form
+      if (!error.errorFields) {
+        message.error("❌ Lỗi khi tạo phiếu!");
+      }
     } finally {
       setLoading(false);
     }
@@ -450,24 +454,49 @@ const AddExportLoanPOS = ({ open, onClose, reloadTickets }) => {
       onCancel={onClose}
       width={800}
       centered
+      style={{ top: 20, maxWidth: "100vw", paddingBottom: 0 }}
       // --- PHẦN QUAN TRỌNG ĐỂ FIX TRÀN MÀN HÌNH ---
-      style={{ maxWidth: "100vw", top: 10, paddingBottom: 0 }}
+      //style={{ maxWidth: "100vw", top: 10, paddingBottom: 0 }}
+      // bodyStyle={{
+      //   maxHeight: "calc(100vh - 160px)", // Giới hạn chiều cao body để hiện thanh cuộn
+      //   overflowY: "auto",
+      //   overflowX: "hidden", // Ẩn thanh cuộn ngang
+      //   padding: "16px",
+      // }}
       bodyStyle={{
-        maxHeight: "calc(100vh - 160px)", // Giới hạn chiều cao body để hiện thanh cuộn
-        overflowY: "auto",
-        overflowX: "hidden", // Ẩn thanh cuộn ngang
+        // Tăng số trừ đi (ví dụ 160px -> 200px hoặc 250px) để chừa chỗ cho Header + Footer + Thanh địa chỉ trình duyệt
+        maxHeight: "calc(100vh - 220px)",
+        overflowY: "auto", // Cho phép cuộn dọc
+        overflowX: "hidden",
         padding: "16px",
       }}
       // ---------------------------------------------
+      // footer={
+      //   <div
+      //     style={{
+      //       display: "flex",
+      //       justifyContent: "flex-end",
+      //       alignItems: "center",
+      //       gap: 8,
+      //     }}
+      //   >
+      //     <Button icon={<CloseOutlined />} onClick={onClose}>
+      //       Hủy
+      //     </Button>
+      //     <Button
+      //       type="primary"
+      //       icon={<SaveOutlined />}
+      //       onClick={handleCreate}
+      //       loading={loading}
+      //       style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
+      //     >
+      //       Tạo Phiếu
+      //     </Button>
+      //   </div>
+      // }
+
       footer={
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 8 }}>
           <Button icon={<CloseOutlined />} onClick={onClose}>
             Hủy
           </Button>
