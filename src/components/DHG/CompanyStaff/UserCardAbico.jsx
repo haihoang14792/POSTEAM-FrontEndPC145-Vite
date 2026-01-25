@@ -7,11 +7,13 @@ import logo from '../../../logo.jpg';
 const UserCard = () => {
     const { id } = useParams();
     const [user, setUser] = useState(null);
+    const STRAPI_URL = import.meta.env.VITE_STRAPI_URL;
+    const WEB_BASE = import.meta.env.VITE_WEB_BASE;
 
     useEffect(() => {
         const fetchUserById = async (id) => {
             try {
-                const response = await axios.get(`http://113.161.81.49:1338/api/users/${id}`);
+                const response = await axios.get(`${STRAPI_URL}/api/users/${id}`);
                 setUser(response.data);
             } catch (error) {
                 console.error('Lỗi khi fetch user:', error);
@@ -71,7 +73,7 @@ const UserCard = () => {
 
             <div className="card-back">
                 <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://113.161.81.49:3000/card/${user.id}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${WEB_BASE}/card/${user.id}`}
                     alt="QR Code"
                     className="qr-code"
                 />

@@ -134,65 +134,6 @@ const AddExportList = ({ isModalOpen, onCancel, onCreated = () => { } }) => {
     }
   };
 
-  // const handleOk = async () => {
-  //   try {
-  //     setLoadingSubmit(true);
-  //     await form.validateFields();
-
-  //     const values = {
-  //       ...form.getFieldsValue(),
-  //       NameCreate: userName,
-  //       Ticket: form.getFieldValue("Ticket") || generateInvoiceNumber(),
-  //       Status: "Chờ duyệt",
-  //     };
-
-  //     // 1. Tạo phiếu (ExportList nhưng bản chất là phiếu Trả)
-  //     const response = await createExportlists(values);
-  //     const exportItem = response.data || response;
-
-  //     // 2. Cập nhật kho (CỘNG THÊM SỐ LƯỢNG)
-  //     const warehouseList = await fetchWarehouseDetails();
-  //     const warehouseData = Array.isArray(warehouseList) ? warehouseList : (warehouseList.data || []);
-  //     const matched = warehouseData.find((w) => w.Model === values.Model);
-
-  //     if (matched) {
-  //       const {
-  //         POS = 0,
-  //         POSHN = 0,
-  //         totalNTK = 0,
-  //         inventoryCK = 0,
-  //       } = matched;
-
-  //       const soLuong = values.totalexport;
-
-  //       // Logic cộng dồn
-  //       const updatePayload = {
-  //         POS: values.TypeKho === "POS" ? POS + soLuong : POS,
-  //         POSHN: values.TypeKho === "POSHN" ? POSHN + soLuong : POSHN,
-  //         totalNTK: totalNTK + soLuong, // Nhập trong kỳ tăng
-  //         inventoryCK: inventoryCK + soLuong, // Tồn cuối kỳ tăng
-  //       };
-
-  //       await updateWarehouseDetails(matched.documentId, updatePayload);
-  //     } else {
-  //       message.warning("Không tìm thấy Model trong kho để cập nhật tồn.");
-  //     }
-
-  //     // 3. Đánh dấu đã xử lý
-  //     await updateExportlists(exportItem.documentId, { Check: true });
-
-  //     message.success("Trả kho POS/POSHN thành công!");
-  //     form.resetFields();
-  //     onCreated(exportItem);
-  //     onCancel();
-  //   } catch (error) {
-  //     console.error("Lỗi:", error);
-  //     message.error("Có lỗi xảy ra khi xử lý.");
-  //   } finally {
-  //     setLoadingSubmit(false);
-  //   }
-  // };
-
   const handleOk = async () => {
     try {
       setLoadingSubmit(true);
