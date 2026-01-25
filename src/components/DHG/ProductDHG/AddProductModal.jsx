@@ -1,6 +1,144 @@
+// import React from 'react';
+// import { Modal, Form, Input, message, Select, Descriptions } from 'antd';
+// import { PlusCircleOutlined } from '@ant-design/icons';
+// import { createWarehouseDetails } from '../../../services/dhgServices';
+// import './AddProductModal.scss';
+
+// const { Option } = Select;
+
+// const AddProductModal = ({ isModalOpen, onCancel, onCreated = () => { } }) => {
+//   const [form] = Form.useForm();
+
+//   const handleOk = async () => {
+//     try {
+//       const values = await form.validateFields();
+
+//       // Gán các trường tồn kho = 0
+//       const payload = {
+//         ...values,
+//         inventoryDK: 0,
+//         totalNTK: 0,
+//         totalXTK: 0,
+//         inventoryCK: 0,
+//         DHG: 0,
+//         POS: 0,
+//         POSHN: 0,
+//       };
+
+//       const response = await createWarehouseDetails(payload);
+//       message.success("Tạo sản phẩm thành công!");
+//       form.resetFields();
+//       onCreated(response.data);
+//     } catch (error) {
+//       console.error(error);
+//       message.error("Có lỗi xảy ra khi tạo sản phẩm!");
+//     }
+//   };
+
+//   return (
+//     <Modal
+//       title={
+//         <div className="modal-header">
+//           <PlusCircleOutlined className="icon" />
+//           <span className="title">Thêm Sản Phẩm</span>
+//         </div>
+//       }
+//       open={isModalOpen}
+//       onOk={handleOk}
+//       onCancel={onCancel}
+//       okText="Lưu"
+//       cancelText="Hủy"
+//       width={700}
+//       className="add-product-modal"
+//     >
+//       <Form form={form} layout="vertical">
+//         <Descriptions bordered column={2} size="small">
+
+//           <Descriptions.Item label="Tên sản phẩm">
+//             <Form.Item
+//               name="ProductName"
+//               rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm!' }]}
+//               noStyle
+//             >
+//               <Input placeholder="Nhập tên sản phẩm" />
+//             </Form.Item>
+//           </Descriptions.Item>
+
+//           <Descriptions.Item label="Model">
+//             <Form.Item
+//               name="Model"
+//               rules={[{ required: true, message: 'Vui lòng nhập model!' }]}
+//               noStyle
+//             >
+//               <Input placeholder="Nhập model" />
+//             </Form.Item>
+//           </Descriptions.Item>
+
+//           <Descriptions.Item label="Thương hiệu">
+//             <Form.Item
+//               name="BrandName"
+//               rules={[{ required: true, message: 'Vui lòng nhập thương hiệu!' }]}
+//               noStyle
+//             >
+//               <Input placeholder="Nhập thương hiệu" />
+//             </Form.Item>
+//           </Descriptions.Item>
+
+//           <Descriptions.Item label="Đơn vị tính">
+//             <Form.Item
+//               name="DVT"
+//               rules={[{ required: true, message: 'Chọn đơn vị tính!' }]}
+//               noStyle
+//             >
+//               <Select placeholder="Chọn đơn vị tính">
+//                 <Option value="Cái">Cái</Option>
+//                 <Option value="Bộ">Bộ</Option>
+//                 <Option value="Cuộn">Cuộn</Option>
+//                 <Option value="Chiếc">Chiếc</Option>
+//                 <Option value="Thùng">Thùng</Option>
+//               </Select>
+//             </Form.Item>
+//           </Descriptions.Item>
+
+//           <Descriptions.Item label="Loại sản phẩm">
+//             <Form.Item
+//               name="Type"
+//               rules={[{ required: true, message: 'Vui lòng chọn loại sản phẩm!' }]}
+//               noStyle
+//             >
+//               <Select
+//                 placeholder="Chọn loại sản phẩm"
+//                 style={{ width: 170 }}
+//               >
+//                 <Option value="Thiết bị">Thiết bị</Option>
+//                 <Option value="Phụ kiện">Phụ kiện</Option>
+//                 <Option value="Linh kiện">Linh kiện</Option>
+//                 <Option value="Vật tư">Vật tư</Option>
+//                 <Option value="Phần mềm">Phần mềm</Option>
+//               </Select>
+//             </Form.Item>
+//           </Descriptions.Item>
+
+//         </Descriptions>
+//       </Form>
+//     </Modal>
+//   );
+// };
+
+// export default AddProductModal;
+
+
+
 import React from 'react';
-import { Modal, Form, Input, message, Select, Descriptions } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, message, Select, Row, Col, Divider } from 'antd';
+import {
+  PlusCircleOutlined,
+  BarcodeOutlined,
+  TagOutlined,
+  AppstoreAddOutlined,
+  NumberOutlined,
+  ExperimentOutlined
+} from '@ant-design/icons';
 import { createWarehouseDetails } from '../../../services/dhgServices';
 import './AddProductModal.scss';
 
@@ -13,7 +151,7 @@ const AddProductModal = ({ isModalOpen, onCancel, onCreated = () => { } }) => {
     try {
       const values = await form.validateFields();
 
-      // Gán các trường tồn kho = 0
+      // Gán mặc định các trường tồn kho = 0 theo logic của bạn
       const payload = {
         ...values,
         inventoryDK: 0,
@@ -26,9 +164,13 @@ const AddProductModal = ({ isModalOpen, onCancel, onCreated = () => { } }) => {
       };
 
       const response = await createWarehouseDetails(payload);
-      message.success("Tạo sản phẩm thành công!");
-      form.resetFields();
-      onCreated(response.data);
+
+      // Kiểm tra phản hồi (tùy vào cấu trúc API thực tế trả về)
+      if (response) {
+        message.success("Tạo sản phẩm mới thành công!");
+        form.resetFields();
+        onCreated(response.data || response); // Fallback nếu data nằm trực tiếp hoặc trong .data
+      }
     } catch (error) {
       console.error(error);
       message.error("Có lỗi xảy ra khi tạo sản phẩm!");
@@ -39,76 +181,83 @@ const AddProductModal = ({ isModalOpen, onCancel, onCreated = () => { } }) => {
     <Modal
       title={
         <div className="modal-header">
-          <PlusCircleOutlined className="icon" />
-          <span className="title">Thêm Sản Phẩm</span>
+          <PlusCircleOutlined className="icon-header" />
+          <span className="title-text">Thêm Sản Phẩm Mới</span>
         </div>
       }
       open={isModalOpen}
       onOk={handleOk}
       onCancel={onCancel}
-      okText="Lưu"
-      cancelText="Hủy"
+      okText="Lưu sản phẩm"
+      cancelText="Hủy bỏ"
       width={700}
+      centered
       className="add-product-modal"
     >
-      <Form form={form} layout="vertical">
-        <Descriptions bordered column={2} size="small">
-          
-          <Descriptions.Item label="Tên sản phẩm">
+      <Form
+        form={form}
+        layout="vertical"
+        className="form-content"
+      >
+        <div className="form-section-title">Thông tin cơ bản</div>
+
+        <Row gutter={24}>
+          <Col span={24}>
             <Form.Item
+              label="Tên sản phẩm"
               name="ProductName"
               rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm!' }]}
-              noStyle
             >
-              <Input placeholder="Nhập tên sản phẩm" />
+              <Input
+                prefix={<ExperimentOutlined />}
+                placeholder="Ví dụ: Máy in nhiệt Epson TM-T82III"
+              />
             </Form.Item>
-          </Descriptions.Item>
+          </Col>
+        </Row>
 
-          <Descriptions.Item label="Model">
+        <Row gutter={24}>
+          <Col span={12}>
             <Form.Item
+              label="Model (Mã sản phẩm)"
               name="Model"
-              rules={[{ required: true, message: 'Vui lòng nhập model!' }]}
-              noStyle
+              rules={[{ required: true, message: 'Vui lòng nhập Model!' }]}
             >
-              <Input placeholder="Nhập model" />
+              <Input
+                prefix={<BarcodeOutlined />}
+                placeholder="Ví dụ: EPSON-T82III"
+              />
             </Form.Item>
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Thương hiệu">
+          </Col>
+          <Col span={12}>
             <Form.Item
+              label="Thương hiệu"
               name="BrandName"
               rules={[{ required: true, message: 'Vui lòng nhập thương hiệu!' }]}
-              noStyle
             >
-              <Input placeholder="Nhập thương hiệu" />
+              <Input
+                prefix={<TagOutlined />}
+                placeholder="Ví dụ: Epson, Dell, HP..."
+              />
             </Form.Item>
-          </Descriptions.Item>
+          </Col>
+        </Row>
 
-          <Descriptions.Item label="Đơn vị tính">
-            <Form.Item
-              name="DVT"
-              rules={[{ required: true, message: 'Chọn đơn vị tính!' }]}
-              noStyle
-            >
-              <Select placeholder="Chọn đơn vị tính">
-                <Option value="Cái">Cái</Option>
-                <Option value="Bộ">Bộ</Option>
-                <Option value="Cuộn">Cuộn</Option>
-                <Option value="Chiếc">Chiếc</Option>
-                <Option value="Thùng">Thùng</Option>
-              </Select>
-            </Form.Item>
-          </Descriptions.Item>
+        <Divider style={{ margin: '10px 0 24px' }} />
 
-          <Descriptions.Item label="Loại sản phẩm">
+        <div className="form-section-title">Phân loại & Đơn vị</div>
+
+        <Row gutter={24}>
+          <Col span={12}>
             <Form.Item
+              label="Loại thiết bị"
               name="Type"
               rules={[{ required: true, message: 'Vui lòng chọn loại sản phẩm!' }]}
-              noStyle
             >
               <Select
-                placeholder="Chọn loại sản phẩm"
-                style={{ width: 170 }}
+                placeholder="Chọn loại"
+                suffixIcon={<AppstoreAddOutlined />}
+                allowClear
               >
                 <Option value="Thiết bị">Thiết bị</Option>
                 <Option value="Phụ kiện">Phụ kiện</Option>
@@ -117,13 +266,30 @@ const AddProductModal = ({ isModalOpen, onCancel, onCreated = () => { } }) => {
                 <Option value="Phần mềm">Phần mềm</Option>
               </Select>
             </Form.Item>
-          </Descriptions.Item>
-          
-        </Descriptions>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Đơn vị tính"
+              name="DVT"
+              rules={[{ required: true, message: 'Vui lòng chọn đơn vị tính!' }]}
+            >
+              <Select
+                placeholder="Chọn đơn vị"
+                suffixIcon={<NumberOutlined />}
+              >
+                <Option value="Cái">Cái</Option>
+                <Option value="Bộ">Bộ</Option>
+                <Option value="Chiếc">Chiếc</Option>
+                <Option value="Thùng">Thùng</Option>
+                <Option value="Cuộn">Cuộn</Option>
+                <Option value="Hộp">Hộp</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
 };
 
 export default AddProductModal;
-

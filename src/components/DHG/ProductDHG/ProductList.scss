@@ -1,87 +1,157 @@
-.product-container-prod {
-    background: #f4f4f4;
-    border-radius: 10px;
-    padding: 20px;
-    //color: #fff;
-}
+.product-list-container {
+  padding: 24px;
+  background-color: #f0f2f5; // Màu nền xám nhẹ dịu mắt
+  min-height: 100vh;
 
-.header-actions {
+  // 1. Header Trang
+  .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-}
-
-.search-bar {
-    display: flex;
-    align-items: center;
+    margin-bottom: 24px;
     background: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.search-bar input {
-    border: none;
-    outline: none;
-    padding: 5px;
-}
-
-.split-container-prod {
-    gap: 20px;
-    display: flex;
-    border: 1px solid #444;
+    padding: 20px 24px;
     border-radius: 10px;
-    overflow: hidden;
-}
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
-.panel-list-prod {
-    width: 50%;
+    .page-title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: #001529;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+
+      .btn-action {
+        height: 40px;
+        border-radius: 6px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+      }
+
+      .btn-export {
+        border-color: #217346;
+        color: #217346;
+        background: #f6ffed;
+        &:hover {
+          background-color: #217346;
+          color: white;
+        }
+      }
+      
+      .btn-add {
+        background-color: #1890ff;
+        &:hover {
+          background-color: #40a9ff;
+          box-shadow: 0 4px 10px rgba(24, 144, 255, 0.3);
+        }
+      }
+    }
+  }
+
+  // 2. Card chứa Bảng và Filter
+  .table-card {
     background: #fff;
-    padding: 10px;
-    border-radius: 10px 0 0 10px;
-}
-
-.panel-title {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-.product-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    background: #52c41a;
-    color: #fff;
-    margin: 5px 0;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.product-item.active {
-    background: #1890ff;
-}
-
-.product-icon {
-    margin-right: 10px;
-}
-
-.panel-details-prod {
-    width: 75%;
-    background: white;
-    padding: 20px;
-    border-radius: 0 10px 10px 0;
-    color: black;
-}
-
-.product-details {
-    //background: #1e1e2a;
-    background: #fff;
-    padding: 15px;
     border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    // Form tìm kiếm
+    .search-form {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      
+      .ant-form-item {
+        margin-bottom: 0;
+      }
+      
+      .search-input {
+        width: 320px;
+        .ant-input-prefix {
+            color: #bfbfbf;
+        }
+      }
+    }
+
+    // Tùy chỉnh Table
+    .ant-table-wrapper {
+      .ant-table-thead > tr > th {
+        background-color: #fafafa;
+        color: #595959;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 13px;
+        padding: 16px;
+      }
+
+      .ant-table-tbody > tr > td {
+        padding: 16px;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background-color: #e6f7ff;
+      }
+      
+      // Style cho cột Model
+      .cell-model {
+        font-weight: 600;
+        color: #2f54eb;
+        background: #f0f5ff;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      
+      // Style cho cột Tồn kho
+      .cell-inventory {
+        font-weight: 600;
+        &.low-stock {
+            color: #ff4d4f;
+        }
+        &.in-stock {
+            color: #52c41a;
+        }
+      }
+    }
+  }
+
+  // Nút hành động trong bảng
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    
+    .btn-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &.btn-detail {
+            color: #722ed1;
+            background: #f9f0ff;
+            border-color: #efdbff;
+            &:hover { border-color: #722ed1; }
+        }
+        
+        &.btn-edit {
+            color: #1890ff;
+            background: #e6f7ff;
+            border-color: #bae7ff;
+            &:hover { border-color: #1890ff; }
+        }
+    }
+  }
 }

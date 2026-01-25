@@ -1,55 +1,102 @@
-// .supplier-list-container {
-//   padding: 16px;
-//   background: #fff;
-//   border-radius: 8px;
-//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.supplier-list-container {
+  padding: 20px;
+  background-color: #f5f7fa; // Màu nền tổng thể nhạt
+  min-height: 100vh;
 
-//   .ant-form {
-//     display: flex;
-//     flex-wrap: wrap;
-//     gap: 8px;
-//     margin-bottom: 16px;
+  // 1. Phần Header chứa tiêu đề và nút hành động
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 
-//     .ant-form-item {
-//       margin-bottom: 8px;
-//     }
+    .page-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1f1f1f;
+    }
 
-//     button {
-//       display: flex;
-//       align-items: center;
-//       gap: 6px;
-//     }
-//   }
+    .header-actions {
+      display: flex;
+      gap: 10px;
 
-//   .ant-table {
-//     border: 1px solid #f0f0f0;
-//     border-radius: 6px;
-//   }
+      .btn-add {
+        background-color: #1890ff;
+        border-color: #1890ff;
+        &:hover {
+          background-color: #40a9ff;
+        }
+      }
+      
+      .btn-export {
+        background-color: #217346; // Màu xanh Excel
+        border-color: #217346;
+        color: white;
+        &:hover {
+          background-color: #2f8c5a;
+          border-color: #2f8c5a;
+        }
+      }
+    }
+  }
 
-//   .ant-table-thead > tr > th {
-//     background-color: #fafafa;
-//     font-weight: 600;
-//     text-align: center;
-//   }
+  // 2. Phần chứa Bảng và Bộ lọc
+  .table-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 
-//   .ant-table-tbody > tr > td {
-//     text-align: center;
-//     vertical-align: middle;
-//   }
+    // Form tìm kiếm
+    .search-form {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #f0f0f0;
+      
+      .ant-form-item {
+        margin-bottom: 10px; // Responsive spacing
+      }
+    }
 
-//   .ant-table-tbody > tr:hover > td {
-//     background: #f5faff;
-//   }
+    // Tùy chỉnh Ant Design Table
+    .ant-table-wrapper {
+      .ant-table-thead > tr > th {
+        background-color: #fafafa;
+        font-weight: 600;
+        color: #595959;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
 
-//   .ant-btn {
-//     border-radius: 6px;
-//   }
+      .ant-table-tbody > tr {
+        &:hover > td {
+          background-color: #f0f7ff; // Hover row màu xanh nhạt
+        }
+      }
 
-//   .ant-btn-primary {
-//     background: #1677ff;
-//   }
+      .ant-pagination {
+        margin-top: 20px;
+      }
+    }
+  }
 
-//   .ant-btn-dangerous {
-//     background: #ff4d4f;
-//   }
-// }
+  // Nút hành động trong bảng
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    
+    .btn-detail {
+        color: #1890ff;
+        border-color: #d6e4ff;
+        background: #f0f5ff;
+        &:hover {
+            border-color: #1890ff;
+        }
+    }
+  }
+}

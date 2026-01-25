@@ -36,8 +36,11 @@
 //   const loadSuppliers = async () => {
 //     try {
 //       const data = await fetchListSupplier();
-//       setSuppliers(data.data);
-//       setFilteredSuppliers(data.data);
+//       // Strapi v5: response có thể là mảng trực tiếp hoặc { data: [...] }
+//       const suppliersData = Array.isArray(data) ? data : (data.data || []);
+
+//       setSuppliers(suppliersData);
+//       setFilteredSuppliers(suppliersData);
 //       setLoading(false);
 //     } catch (err) {
 //       setError(err);
@@ -56,11 +59,12 @@
 //     }
 //     const ws = XLSX.utils.json_to_sheet(
 //       filteredSuppliers.map((s) => ({
-//         "Tên NCC": s.attributes.NameNCC,
-//         "Số điện thoại": s.attributes.Phone,
-//         Email: s.attributes.Email,
-//         "Sản phẩm": s.attributes.Product,
-//         "Người liên hệ": s.attributes.NameContact,
+//         // Sửa: bỏ .attributes
+//         "Tên NCC": s.NameNCC,
+//         "Số điện thoại": s.Phone,
+//         Email: s.Email,
+//         "Sản phẩm": s.Product,
+//         "Người liên hệ": s.NameContact,
 //       }))
 //     );
 //     const wb = XLSX.utils.book_new();
@@ -71,7 +75,8 @@
 //   const onSearch = (values) => {
 //     const searchText = values.searchText?.toLowerCase().trim() || "";
 //     const filtered = suppliers.filter((s) =>
-//       s.attributes.NameNCC?.toLowerCase().includes(searchText)
+//       // Sửa: bỏ .attributes
+//       s.NameNCC?.toLowerCase().includes(searchText)
 //     );
 //     setFilteredSuppliers(filtered);
 //   };
@@ -97,21 +102,21 @@
 //     },
 //     {
 //       title: "Tên NCC",
-//       dataIndex: ["attributes", "NameNCC"],
+//       dataIndex: "NameNCC", // Sửa: bỏ ["attributes", ...]
 //       key: "name",
 //       width: 350,
 //       ellipsis: true,
 //     },
 //     {
 //       title: "Sản phẩm",
-//       dataIndex: ["attributes", "Product"],
+//       dataIndex: "Product", // Sửa: bỏ ["attributes", ...]
 //       key: "product",
 //       width: 200,
 //       ellipsis: true,
 //     },
 //     {
 //       title: "Người liên hệ",
-//       dataIndex: ["attributes", "NameContact"],
+//       dataIndex: "NameContact", // Sửa: bỏ ["attributes", ...]
 //       key: "contact",
 //       width: 150,
 //       ellipsis: true,
@@ -205,19 +210,19 @@
 //         {selectedSupplier && (
 //           <Descriptions bordered column={2} size="small">
 //             <Descriptions.Item label="Tên NCC">
-//               {selectedSupplier.attributes.NameNCC}
+//               {selectedSupplier.NameNCC} {/* Sửa: bỏ .attributes */}
 //             </Descriptions.Item>
 //             <Descriptions.Item label="Số điện thoại">
-//               {selectedSupplier.attributes.Phone}
+//               {selectedSupplier.Phone} {/* Sửa: bỏ .attributes */}
 //             </Descriptions.Item>
 //             <Descriptions.Item label="Email">
-//               {selectedSupplier.attributes.Email}
+//               {selectedSupplier.Email} {/* Sửa: bỏ .attributes */}
 //             </Descriptions.Item>
 //             <Descriptions.Item label="Sản phẩm">
-//               {selectedSupplier.attributes.Product}
+//               {selectedSupplier.Product} {/* Sửa: bỏ .attributes */}
 //             </Descriptions.Item>
 //             <Descriptions.Item label="Người liên hệ">
-//               {selectedSupplier.attributes.NameContact}
+//               {selectedSupplier.NameContact} {/* Sửa: bỏ .attributes */}
 //             </Descriptions.Item>
 //           </Descriptions>
 //         )}
@@ -275,8 +280,12 @@ import {
   Descriptions,
   notification,
   Space,
+  Card,
+  Row,
+  Col,
+  Tooltip
 } from "antd";
-import { FaFileExcel, FaSearch, FaEdit, FaPlus } from "react-icons/fa";
+import { FaFileExcel, FaSearch, FaEdit, FaPlus, FaEye, FaSyncAlt } from "react-icons/fa";
 import * as XLSX from "xlsx";
 import { fetchListSupplier } from "../../../services/dhgServices";
 import AddSupplierModal from "./AddSupplierModal";
@@ -301,9 +310,9 @@ const SupplierList = () => {
   }, []);
 
   const loadSuppliers = async () => {
+    setLoading(true);
     try {
       const data = await fetchListSupplier();
-      // Strapi v5: response có thể là mảng trực tiếp hoặc { data: [...] }
       const suppliersData = Array.isArray(data) ? data : (data.data || []);
 
       setSuppliers(suppliersData);
@@ -326,7 +335,6 @@ const SupplierList = () => {
     }
     const ws = XLSX.utils.json_to_sheet(
       filteredSuppliers.map((s) => ({
-        // Sửa: bỏ .attributes
         "Tên NCC": s.NameNCC,
         "Số điện thoại": s.Phone,
         Email: s.Email,
@@ -336,14 +344,14 @@ const SupplierList = () => {
     );
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Suppliers");
-    XLSX.writeFile(wb, "Suppliers_List.xlsx");
+    XLSX.writeFile(wb, "Danh_Sach_Nha_Cung_Cap.xlsx");
   };
 
   const onSearch = (values) => {
     const searchText = values.searchText?.toLowerCase().trim() || "";
     const filtered = suppliers.filter((s) =>
-      // Sửa: bỏ .attributes
-      s.NameNCC?.toLowerCase().includes(searchText)
+      s.NameNCC?.toLowerCase().includes(searchText) ||
+      s.NameContact?.toLowerCase().includes(searchText) // Tìm thêm theo tên người liên hệ
     );
     setFilteredSuppliers(filtered);
   };
@@ -356,6 +364,8 @@ const SupplierList = () => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
+    showSizeChanger: true,
+    pageSizeOptions: ['10', '20', '50']
   });
 
   const columns = [
@@ -365,131 +375,177 @@ const SupplierList = () => {
       align: "center",
       render: (_, __, index) =>
         (pagination.current - 1) * pagination.pageSize + index + 1,
-      width: 70,
+      width: 60,
     },
     {
-      title: "Tên NCC",
-      dataIndex: "NameNCC", // Sửa: bỏ ["attributes", ...]
+      title: "Tên Nhà Cung Cấp",
+      dataIndex: "NameNCC",
       key: "name",
-      width: 350,
-      ellipsis: true,
+      width: 300,
+      render: (text) => <span style={{ fontWeight: 500, color: '#1890ff' }}>{text}</span>,
     },
     {
-      title: "Sản phẩm",
-      dataIndex: "Product", // Sửa: bỏ ["attributes", ...]
+      title: "Sản phẩm cung cấp",
+      dataIndex: "Product",
       key: "product",
-      width: 200,
+      width: 250,
       ellipsis: true,
     },
     {
       title: "Người liên hệ",
-      dataIndex: "NameContact", // Sửa: bỏ ["attributes", ...]
+      dataIndex: "NameContact",
       key: "contact",
-      width: 150,
-      ellipsis: true,
+      width: 180,
+    },
+    {
+      title: "Liên hệ",
+      key: "contact_info",
+      width: 200,
+      render: (_, record) => (
+        <div style={{ fontSize: '12px' }}>
+          <div>Email: {record.Email || '--'}</div>
+          <div>SĐT: {record.Phone || '--'}</div>
+        </div>
+      )
     },
     {
       title: "Hành động",
       key: "action",
-      width: 160,
+      width: 140,
       fixed: "right",
+      align: "center",
       render: (_, record) => (
-        <Space>
-          <Button
-            size="small"
-            onClick={() => {
-              setSelectedSupplier(record);
-              setIsDetailModalOpen(true);
-            }}
-          >
-            Chi tiết
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => {
-              setSelectedSupplier(record);
-              setIsUpdateModalOpen(true);
-            }}
-          >
-            <FaEdit /> Cập nhật
-          </Button>
-        </Space>
+        <div className="action-buttons">
+          <Tooltip title="Xem chi tiết">
+            <Button
+              className="btn-detail"
+              size="small"
+              icon={<FaEye />}
+              onClick={() => {
+                setSelectedSupplier(record);
+                setIsDetailModalOpen(true);
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="Cập nhật">
+            <Button
+              type="primary"
+              size="small"
+              icon={<FaEdit />}
+              onClick={() => {
+                setSelectedSupplier(record);
+                setIsUpdateModalOpen(true);
+              }}
+            />
+          </Tooltip>
+        </div>
       ),
     },
   ];
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return <div style={{ padding: 20, color: 'red' }}>Error: {error.message}</div>;
 
   return (
     <div className="supplier-list-container">
-      <Form
-        form={form}
-        layout="inline"
-        onFinish={onSearch}
-        style={{ marginBottom: 16, flexWrap: "wrap" }}
-      >
-        <Form.Item name="searchText">
-          <Input placeholder="Tìm kiếm nhà cung cấp" allowClear />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" icon={<FaSearch />}>
-            Tìm kiếm
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button onClick={resetFilters}>Reset</Button>
-        </Form.Item>
-        <Form.Item>
-          <Button onClick={handleExport} icon={<FaFileExcel />}>
+      {/* HEADER PAGE */}
+      <div className="page-header">
+        <h2 className="page-title">Quản lý Nhà Cung Cấp</h2>
+        <div className="header-actions">
+          <Button
+            className="btn-export"
+            icon={<FaFileExcel />}
+            onClick={handleExport}
+          >
             Xuất Excel
           </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
-            <FaPlus /> Thêm NCC
+          <Button
+            type="primary"
+            className="btn-add"
+            icon={<FaPlus />}
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Thêm mới
           </Button>
-        </Form.Item>
-      </Form>
+        </div>
+      </div>
 
-      <Table
-        columns={columns}
-        dataSource={filteredSuppliers}
-        rowKey="id"
-        scroll={{ x: 1050 }}
-        pagination={{
-          ...pagination,
-          onChange: (page, pageSize) => {
-            setPagination({ current: page, pageSize });
-          },
-        }}
-      />
+      {/* CONTENT CARD */}
+      <div className="table-card">
+        {/* Search Form */}
+        <Form
+          form={form}
+          layout="inline"
+          onFinish={onSearch}
+          className="search-form"
+        >
+          <Form.Item name="searchText" style={{ width: 300 }}>
+            <Input
+              prefix={<FaSearch style={{ color: '#bfbfbf' }} />}
+              placeholder="Tìm theo tên NCC hoặc người liên hệ..."
+              allowClear
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Tìm kiếm
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button icon={<FaSyncAlt />} onClick={resetFilters}>
+              Làm mới
+            </Button>
+          </Form.Item>
+        </Form>
+
+        {/* Table */}
+        <Table
+          columns={columns}
+          dataSource={filteredSuppliers}
+          rowKey="id"
+          loading={loading}
+          scroll={{ x: 1200 }}
+          bordered
+          size="middle"
+          pagination={{
+            ...pagination,
+            total: filteredSuppliers.length,
+            showTotal: (total) => `Tổng số ${total} bản ghi`,
+            onChange: (page, pageSize) => {
+              setPagination({ ...pagination, current: page, pageSize });
+            },
+          }}
+        />
+      </div>
 
       {/* Modal chi tiết */}
       <Modal
-        title="Chi tiết nhà cung cấp"
+        title={<span style={{ fontSize: 18 }}>Thông tin nhà cung cấp</span>}
         open={isDetailModalOpen}
         onCancel={() => setIsDetailModalOpen(false)}
-        footer={null}
+        footer={[
+          <Button key="back" onClick={() => setIsDetailModalOpen(false)}>
+            Đóng
+          </Button>
+        ]}
         width={700}
+        centered
       >
         {selectedSupplier && (
-          <Descriptions bordered column={2} size="small">
+          <Descriptions bordered column={1} labelStyle={{ width: '180px', fontWeight: 'bold' }}>
             <Descriptions.Item label="Tên NCC">
-              {selectedSupplier.NameNCC} {/* Sửa: bỏ .attributes */}
+              {selectedSupplier.NameNCC}
             </Descriptions.Item>
             <Descriptions.Item label="Số điện thoại">
-              {selectedSupplier.Phone} {/* Sửa: bỏ .attributes */}
+              {selectedSupplier.Phone}
             </Descriptions.Item>
             <Descriptions.Item label="Email">
-              {selectedSupplier.Email} {/* Sửa: bỏ .attributes */}
+              {selectedSupplier.Email}
             </Descriptions.Item>
-            <Descriptions.Item label="Sản phẩm">
-              {selectedSupplier.Product} {/* Sửa: bỏ .attributes */}
+            <Descriptions.Item label="Sản phẩm cung cấp">
+              {selectedSupplier.Product}
             </Descriptions.Item>
             <Descriptions.Item label="Người liên hệ">
-              {selectedSupplier.NameContact} {/* Sửa: bỏ .attributes */}
+              {selectedSupplier.NameContact}
             </Descriptions.Item>
           </Descriptions>
         )}
