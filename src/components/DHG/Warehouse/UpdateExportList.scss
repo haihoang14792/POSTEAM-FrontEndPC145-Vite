@@ -1,41 +1,91 @@
-.update-exportlist-modal {
-  .ant-modal-body {
-    padding: 16px 24px;
+
+// UpdateExportList.scss
+
+$primary-color: #1890ff;
+$success-color: #52c41a;
+
+.modern-detail-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
   }
 
-  .ant-descriptions {
+  .ant-modal-header {
     background: #fff;
-    border-radius: 6px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
+  }
 
-    .ant-descriptions-item {
-      padding: 8px 12px;
+  .ant-modal-body {
+    padding: 24px;
+    background: #fafafa;
+  }
 
-      .ant-input,
-      .ant-input-number,
-      .ant-select,
-      textarea {
+  .detail-modal-content {
+    .info-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      height: 100%;
+      border: 1px solid #f0f0f0;
+
+      .ant-card-head {
+        min-height: 40px;
+        padding: 0 16px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: $primary-color;
+        background: #fbfbfb;
+      }
+      .ant-card-body { padding: 16px; }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
         font-size: 13px;
-        border-radius: 4px;
+        align-items: center;
+        .label { color: #8c8c8c; }
+        .value { 
+          color: #262626; text-align: right; 
+          &.code { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        }
       }
     }
-  }
 
-  .ant-descriptions-bordered .ant-descriptions-item-label {
-    background: #fafafa;
-    font-weight: 500;
-  }
+    .serial-box {
+      margin-top: 8px;
+      background: #fff;
+      border: 1px dashed #d9d9d9;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 13px;
+      &.return-serial { border-color: $success-color; background: #f6ffed; color: #135200; }
+    }
 
-  .ant-form-item {
-    margin-bottom: 0; // Để input khớp hàng với text
-  }
+    .code-font {
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+    }
 
-  .ant-input-number,
-  .ant-select,
-  textarea {
-    width: 100%;
-  }
+    .modal-actions-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
 
-  textarea {
-    resize: none;
+      .btn-transfer {
+        background: #f9f0ff;
+        border-color: #d3adf7;
+        color: #722ed1;
+        &:hover { color: #531dab; border-color: #722ed1; background: #fff; }
+      }
+    }
   }
 }

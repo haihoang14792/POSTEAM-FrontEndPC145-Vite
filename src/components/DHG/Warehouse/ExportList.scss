@@ -1,231 +1,393 @@
+
+
 // .export-list-page {
-//   padding: 24px;
-//   background-color: #f0f2f5;
-//   min-height: 100vh;
-//   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+//   padding: 0; // Padding thường được xử lý bởi layout cha, hoặc thêm 16px nếu cần
+//   background-color: transparent;
 
-//   // --- Common Utilities ---
-//   .shadow-sm {
-//       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
-//   }
-
-//   // --- Header Card ---
+//   // --- 1. Header Card (Thống kê & Title) ---
 //   .header-card {
-//       margin-bottom: 16px;
-//       border-radius: 8px;
-      
-//       .ant-card-body {
-//           padding: 16px 24px; // Compact padding
+//     border-radius: 8px;
+//     margin-bottom: 16px;
+//     border: none;
+//     transition: all 0.3s ease;
+
+//     // Hiệu ứng shadow nhẹ
+//     &.shadow-sm {
+//       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 
+//                   0 1px 6px -1px rgba(0, 0, 0, 0.02), 
+//                   0 2px 4px 0 rgba(0, 0, 0, 0.02);
+//     }
+
+//     .header-title-box {
+//       h4 {
+//         font-weight: 700;
+//         color: #262626;
+//       }
+//       span {
+//         color: #8c8c8c;
+//       }
+//     }
+
+//     .header-stats-actions {
+//       display: flex;
+//       justify-content: flex-end;
+//       align-items: center;
+//       flex-wrap: wrap;
+//       gap: 16px;
+
+//       // Style cho các số liệu thống kê
+//       .ant-statistic {
+//         .ant-statistic-title {
+//           font-size: 12px;
+//           margin-bottom: 0;
+//           color: #8c8c8c;
+//         }
+//         .ant-statistic-content-value {
+//           font-size: 18px;
+//           font-weight: 600;
+//         }
 //       }
 
-//       .header-title-box {
-//           display: flex;
-//           flex-direction: column;
-//       }
-
-//       .header-stats-actions {
-//           display: flex;
-//           align-items: center;
-//           justify-content: flex-end;
-//           gap: 24px;
-//           flex-wrap: wrap;
-
-//           .ant-statistic-title {
-//               font-size: 12px;
-//               color: #8c8c8c;
-//               margin-bottom: 0;
-//           }
+//       // Group nút bấm
+//       .action-buttons-group {
+//         margin-left: 16px;
+        
+//         .btn-warranty {
+//           background-color: #722ed1; // Màu tím cho bảo hành
+//           border-color: #722ed1;
+//           color: white;
           
-//           .ant-statistic-content {
-//               line-height: 1.2;
+//           &:hover {
+//             background-color: #9254de;
+//             border-color: #9254de;
 //           }
-
-//           .action-buttons-group {
-//               margin-left: 12px;
-//               padding-left: 12px;
-//               border-left: 1px solid #f0f0f0;
-
-//               .btn-warranty {
-//                   border-color: #722ed1;
-//                   color: #722ed1;
-//                   &:hover {
-//                       background-color: #f9f0ff;
-//                   }
-//               }
-//           }
+//         }
 //       }
-
-//       // Responsive cho mobile
-//       @media (max-width: 768px) {
-//           .header-stats-actions {
-//               justify-content: flex-start;
-//               margin-top: 12px;
-//               gap: 16px;
-              
-//               .action-buttons-group {
-//                   margin-left: 0;
-//                   padding-left: 0;
-//                   border-left: none;
-//                   margin-top: 8px;
-//                   width: 100%;
-//                   button { width: 100%; }
-//               }
-//           }
-//       }
+//     }
 //   }
 
-//   // --- Main Content Card ---
+//   // --- 2. Main Content Card (Bộ lọc & Bảng) ---
 //   .main-content-card {
-//       border-radius: 8px;
+//     border-radius: 8px;
+//     border: none;
+//     min-height: 600px;
+    
+//     &.shadow-sm {
+//       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 
+//                   0 1px 6px -1px rgba(0, 0, 0, 0.02), 
+//                   0 2px 4px 0 rgba(0, 0, 0, 0.02);
+//     }
 
-//       .filter-form {
-//           margin-bottom: 16px;
+//     // Form lọc
+//     .filter-form {
+//       margin-bottom: 24px;
+//       display: flex;
+//       flex-wrap: wrap;
+//       gap: 12px;
+//       padding-bottom: 16px;
+//       border-bottom: 1px solid #f0f0f0;
+
+//       .ant-form-item {
+//         margin-right: 0;
+//         margin-bottom: 8px;
+//       }
+
+//       // Đẩy các nút hành động (Tìm, Reset, Excel) sang phải
+//       .filter-actions-right {
+//         margin-left: auto;
+//         display: flex;
+//         gap: 8px;
+
+//         .btn-excel {
+//           color: #52c41a;
+//           border-color: #b7eb8f;
+//           background: #f6ffed;
+
+//           &:hover {
+//             color: #389e0d;
+//             border-color: #52c41a;
+//           }
+//         }
+//       }
+//     }
+
+//     // Bảng dữ liệu
+//     .export-table {
+//       .ant-table-thead > tr > th {
+//         background-color: #fafafa;
+//         font-weight: 600;
+//         color: #595959;
+//       }
+
+//       // Style cột Sản phẩm
+//       .product-cell {
+//         display: flex;
+//         flex-direction: column;
+        
+//         .product-name {
+//           font-weight: 600;
+//           color: #262626;
+//           margin-bottom: 4px;
+//           white-space: nowrap;
+//           overflow: hidden;
+//           text-overflow: ellipsis;
+//         }
+
+//         .product-model {
 //           display: flex;
-//           flex-wrap: wrap;
-//           gap: 10px;
 //           align-items: center;
-
-//           // Căn chỉnh các input
-//           .ant-form-item { margin-bottom: 0; margin-right: 0; }
-
-//           .filter-actions-right {
-//               margin-left: auto;
-              
-//               .btn-excel {
-//                   color: #217346;
-//                   border-color: #217346;
-//                   &:hover { background: #f6ffed; }
-//               }
-//           }
+//           gap: 6px;
+//           font-size: 12px;
+//           color: #8c8c8c;
           
-//           @media (max-width: 992px) {
-//               .filter-actions-right {
-//                   margin-left: 0;
-//                   width: 100%;
-//                   margin-top: 10px;
-//                   justify-content: space-between;
-//               }
+//           span {
+//             font-family: monospace; // Font code cho Model dễ đọc
+//             background-color: #f5f5f5;
+//             padding: 2px 6px;
+//             border-radius: 4px;
 //           }
+//         }
 //       }
 
-//       // Tùy chỉnh bảng
-//       .export-table {
-//           .product-cell {
-//               .product-name { font-weight: 600; color: #262626; margin-bottom: 2px; }
-//               .product-model { font-size: 12px; color: #8c8c8c; display: flex; gap: 6px; align-items: center; }
-//           }
-//           .ticket-cell { font-family: 'Consolas', monospace; font-size: 13px; }
+//       // Style cột Ticket
+//       .ticket-cell {
+//         display: flex;
+//         flex-direction: column;
+//         align-items: flex-start;
+//         gap: 4px;
 //       }
+      
+//       // Hover row hiệu ứng
+//       .ant-table-tbody > tr {
+//         cursor: pointer;
+//         transition: all 0.2s;
+        
+//         &:hover > td {
+//           background-color: #e6f7ff !important; // Màu xanh nhạt khi hover
+//         }
+//       }
+//     }
+//   }
+
+//   // --- 3. Style Modal Details ---
+//   // .detail-modal-content {
+//   //   .serial-box {
+//   //     background: #f5f5f5;
+//   //     padding: 8px;
+//   //     border-radius: 4px;
+//   //     font-family: monospace;
+//   //     color: #595959;
+//   //     white-space: normal;
+//   //     word-break: break-all;
+//   //     max-height: 100px;
+//   //     overflow-y: auto;
+//   //   }
+
+//   //   .modal-actions-footer {
+//   //     margin-top: 24px;
+//   //     display: flex;
+//   //     justify-content: flex-end;
+//   //     padding-top: 16px;
+//   //     border-top: 1px solid #f0f0f0;
+//   //   }
+//   // }
+
+//   // --- 3. Style Modal Details ---
+//   .detail-modal-content {
+//     .serial-box {
+//       background: #f5f5f5;
+//       padding: 8px;
+//       border-radius: 4px;
+//       font-family: monospace;
+//       color: #595959;
+//       white-space: normal;
+//       word-break: break-all;
+//       max-height: 100px;
+//       overflow-y: auto;
+//     }
+
+//     .modal-actions-footer {
+//       margin-top: 24px;
+//       padding-top: 16px;
+//       border-top: 1px solid #f0f0f0;
+      
+//       // Cấu hình Flexbox chuẩn
+//       display: flex;
+//       justify-content: flex-end;
+//       align-items: center;
+//       flex-wrap: wrap; // Cho phép xuống dòng nếu màn hình nhỏ
+//       gap: 12px; // 🔥 QUAN TRỌNG: Tạo khoảng cách giữa các phần tử con
+
+//       // Fix trường hợp thẻ <Space> của Antd không nhận gap hoặc bị đè style
+//       .ant-space {
+//         gap: 12px !important;
+//         flex-wrap: wrap;
+//         width: 100%;
+//         justify-content: flex-end;
+//       }
+
+//       // Fallback (Phòng hờ): Nếu thẻ Space bị lỗi, CSS này sẽ ép các nút cách nhau ra
+//       .ant-btn {
+//         margin-left: 0; // Reset margin mặc định nếu có
+        
+//         // Nếu không dùng gap (trình duyệt cũ) hoặc Space hỏng, dòng này sẽ cứu cánh
+//         + .ant-btn {
+//           margin-left: 12px; 
+//         }
+//       }
+//     }
+//   }
+
+//   // --- 4. Responsive ---
+//   @media (max-width: 768px) {
+//     .header-card {
+//       .header-stats-actions {
+//         justify-content: flex-start;
+//         width: 100%;
+//         margin-top: 16px;
+        
+//         .ant-divider {
+//           display: none; 
+//         }
+        
+//         .action-buttons-group {
+//           margin-left: 0;
+//           margin-top: 12px;
+//           width: 100%;
+          
+//           .ant-btn {
+//             width: 100%; 
+//             margin-bottom: 8px;
+//           }
+//         }
+//       }
+//     }
+
+//     .filter-form {
+//       flex-direction: column;
+      
+//       .ant-form-item, 
+//       .ant-select, 
+//       .ant-input-affix-wrapper {
+//         width: 100% !important;
+//       }
+
+//       .filter-actions-right {
+//         margin-left: 0;
+//         width: 100%;
+//         justify-content: space-between;
+        
+//         .ant-btn {
+//           flex: 1;
+//         }
+//       }
+//     }
 //   }
 // }
 
+
+
+// --- VARIABLES ---
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$bg-color: #f5f7fa;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$border-radius: 8px;
+
 .export-list-page {
-  padding: 0; // Padding thường được xử lý bởi layout cha, hoặc thêm 16px nếu cần
+  padding: 0;
   background-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-  // --- 1. Header Card (Thống kê & Title) ---
+  // --- 1. Header Card ---
   .header-card {
-    border-radius: 8px;
-    margin-bottom: 16px;
-    border: none;
-    transition: all 0.3s ease;
-
-    // Hiệu ứng shadow nhẹ
-    &.shadow-sm {
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 
-                  0 1px 6px -1px rgba(0, 0, 0, 0.02), 
-                  0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    border-radius: $border-radius;
+    margin-bottom: 20px;
+    border: 1px solid #f0f0f0;
+    box-shadow: $card-shadow;
+    background: #fff;
+    
+    // Gradient line trên đầu card cho đẹp
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, $primary-color, #69c0ff);
+      border-radius: $border-radius $border-radius 0 0;
     }
 
     .header-title-box {
-      h4 {
-        font-weight: 700;
-        color: #262626;
-      }
-      span {
-        color: #8c8c8c;
-      }
+      h4 { margin-bottom: 4px; }
     }
 
     .header-stats-actions {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
+      gap: 24px;
 
-      // Style cho các số liệu thống kê
-      .ant-statistic {
-        .ant-statistic-title {
-          font-size: 12px;
-          margin-bottom: 0;
-          color: #8c8c8c;
-        }
-        .ant-statistic-content-value {
-          font-size: 18px;
-          font-weight: 600;
-        }
+      // Stats style
+      .ant-statistic-title {
+        font-size: 13px;
+        color: #8c8c8c;
       }
-
-      // Group nút bấm
+      .ant-statistic-content {
+        font-size: 20px;
+      }
+      
       .action-buttons-group {
-        margin-left: 16px;
-        
+        .ant-btn {
+          border-radius: 6px;
+          box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04);
+          font-weight: 500;
+          height: 38px;
+        }
         .btn-warranty {
-          background-color: #722ed1; // Màu tím cho bảo hành
+          background-color: #722ed1;
           border-color: #722ed1;
           color: white;
-          
           &:hover {
-            background-color: #9254de;
-            border-color: #9254de;
+             background-color: #9254de;
+             border-color: #9254de;
           }
         }
       }
     }
   }
 
-  // --- 2. Main Content Card (Bộ lọc & Bảng) ---
+  // --- 2. Main Content Card ---
   .main-content-card {
-    border-radius: 8px;
+    border-radius: $border-radius;
     border: none;
-    min-height: 600px;
-    
-    &.shadow-sm {
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 
-                  0 1px 6px -1px rgba(0, 0, 0, 0.02), 
-                  0 2px 4px 0 rgba(0, 0, 0, 0.02);
-    }
+    box-shadow: $card-shadow;
+    min-height: 650px;
 
-    // Form lọc
     .filter-form {
-      margin-bottom: 24px;
+      background: #fbfbfb;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #f0f0f0;
+      margin-bottom: 20px;
       display: flex;
-      flex-wrap: wrap;
       gap: 12px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #f0f0f0;
+      flex-wrap: wrap;
 
-      .ant-form-item {
-        margin-right: 0;
-        margin-bottom: 8px;
-      }
-
-      // Đẩy các nút hành động (Tìm, Reset, Excel) sang phải
+      .ant-form-item { margin: 0; }
+      
       .filter-actions-right {
         margin-left: auto;
         display: flex;
-        gap: 8px;
-
+        gap: 10px;
+        
         .btn-excel {
-          color: #52c41a;
-          border-color: #b7eb8f;
+          color: #389e0d;
           background: #f6ffed;
-
-          &:hover {
-            color: #389e0d;
-            border-color: #52c41a;
-          }
+          border-color: #b7eb8f;
+          &:hover { border-color: #389e0d; background: #fff; }
         }
       }
     }
@@ -233,125 +395,180 @@
     // Bảng dữ liệu
     .export-table {
       .ant-table-thead > tr > th {
-        background-color: #fafafa;
+        background: #f0f5ff; // Màu header bảng xanh rất nhạt
+        color: #1f1f1f;
         font-weight: 600;
-        color: #595959;
+        border-bottom: 2px solid #e6f7ff;
       }
 
-      // Style cột Sản phẩm
+      .ant-table-tbody > tr > td {
+        padding: 12px 16px;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background-color: #fafafa !important;
+      }
+
       .product-cell {
-        display: flex;
-        flex-direction: column;
-        
         .product-name {
+          font-size: 14px;
           font-weight: 600;
           color: #262626;
           margin-bottom: 4px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
-
         .product-model {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 12px;
-          color: #8c8c8c;
-          
-          span {
-            font-family: monospace; // Font code cho Model dễ đọc
-            background-color: #f5f5f5;
-            padding: 2px 6px;
-            border-radius: 4px;
-          }
+           font-family: 'Consolas', monospace;
+           font-size: 12px;
+           color: #595959;
+           background: #f5f5f5;
+           padding: 2px 6px;
+           border-radius: 4px;
+           display: inline-block;
+           border: 1px solid #d9d9d9;
         }
-      }
-
-      // Style cột Ticket
-      .ticket-cell {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
       }
       
-      // Hover row hiệu ứng
-      .ant-table-tbody > tr {
-        cursor: pointer;
-        transition: all 0.2s;
-        
-        &:hover > td {
-          background-color: #e6f7ff !important; // Màu xanh nhạt khi hover
-        }
+      // Tag trạng thái tròn trịa hơn
+      .ant-tag {
+        border-radius: 12px;
+        padding: 0 10px;
+        font-weight: 500;
+        border: none;
       }
     }
   }
 
-  // --- 3. Style Modal Details ---
-  .detail-modal-content {
-    .serial-box {
-      background: #f5f5f5;
-      padding: 8px;
-      border-radius: 4px;
-      font-family: monospace;
-      color: #595959;
-      white-space: normal;
-      word-break: break-all;
-      max-height: 100px;
-      overflow-y: auto;
+  // --- 3. Responsive ---
+  @media (max-width: 992px) {
+    .header-card .header-stats-actions {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 16px;
+      gap: 16px;
+      
+      .action-buttons-group { width: 100%; margin-top: 10px; }
+      .ant-btn { width: 100%; margin-bottom: 8px; }
     }
-
-    .modal-actions-footer {
-      margin-top: 24px;
-      display: flex;
-      justify-content: flex-end;
-      padding-top: 16px;
-      border-top: 1px solid #f0f0f0;
-    }
-  }
-
-  // --- 4. Responsive ---
-  @media (max-width: 768px) {
-    .header-card {
-      .header-stats-actions {
-        justify-content: flex-start;
-        width: 100%;
-        margin-top: 16px;
-        
-        .ant-divider {
-          display: none; 
-        }
-        
-        .action-buttons-group {
-          margin-left: 0;
-          margin-top: 12px;
-          width: 100%;
-          
-          .ant-btn {
-            width: 100%; 
-            margin-bottom: 8px;
-          }
-        }
-      }
-    }
-
+    
     .filter-form {
       flex-direction: column;
+      .ant-form-item, .ant-select, .ant-input-affix-wrapper { width: 100% !important; }
+      .filter-actions-right { width: 100%; justify-content: space-between; margin-top: 10px; }
+    }
+  }
+}
+
+// --- STYLE CHO MODAL CHI TIẾT (Nằm ngoài class .export-list-page vì Modal render ở root) ---
+.modern-detail-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    padding: 0; // Reset padding để custom header đẹp hơn
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    background: #fff;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
+  }
+
+  .ant-modal-body {
+    padding: 24px;
+    background: #fafafa; // Nền body modal màu xám rất nhạt
+  }
+
+  .detail-modal-content {
+    // Info Cards
+    .info-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      height: 100%;
+      border: 1px solid #f0f0f0;
+
+      .ant-card-head {
+        min-height: 40px;
+        padding: 0 16px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: $primary-color;
+        background: #fbfbfb;
+      }
       
-      .ant-form-item, 
-      .ant-select, 
-      .ant-input-affix-wrapper {
-        width: 100% !important;
+      .ant-card-body {
+        padding: 16px;
       }
 
-      .filter-actions-right {
-        margin-left: 0;
-        width: 100%;
+      .info-row {
+        display: flex;
         justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 13px;
+        align-items: center;
+
+        &:last-child { margin-bottom: 0; }
+
+        .label {
+          color: #8c8c8c;
+          min-width: 100px;
+        }
+        .value {
+          color: #262626;
+          text-align: right;
+          word-break: break-word;
+          
+          &.highlight { font-weight: 600; color: $primary-color; font-size: 14px; }
+          &.code { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        }
+      }
+    }
+
+    // Serial Box
+    .serial-block {
+      margin-top: 10px;
+      
+      .serial-box {
+        margin-top: 8px;
+        background: #fff;
+        border: 1px dashed #d9d9d9;
+        padding: 12px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        color: #595959;
+        max-height: 120px;
+        overflow-y: auto;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        font-size: 13px;
+
+        &.main-serial { border-color: $primary-color; background: #f0f5ff; color: #003a8c; }
+        &.return-serial { border-color: $success-color; background: #f6ffed; color: #135200; }
+      }
+    }
+
+    // Footer Actions
+    .modal-actions-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .ant-btn {
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        box-shadow: 0 2px 0 rgba(0,0,0,0.02);
         
-        .ant-btn {
-          flex: 1;
+        &.btn-return {
+          background-color: #fff;
+          border-color: #faad14;
+          color: #faad14;
+          &:hover { color: #fff; background-color: #faad14; }
         }
       }
     }

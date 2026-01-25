@@ -1,357 +1,42 @@
-// import React, { useEffect, useState, useMemo } from "react";
-// import {
-//   Modal,
-//   Form,
-//   Input,
-//   message,
-//   Descriptions,
-//   Select,
-//   Tag,
-//   Button,
-// } from "antd";
-// import {
-//   updateExportlistsData,
-//   fetchWarehouseDetails,
-//   updateWarehouseDetails,
-//   fetchExportlists,
-// } from "../../../services/dhgServices";
-// import "./UpdateExportList.scss";
-
-// const { Option } = Select;
-
-// const UpdateExportList = ({
-//   isModalOpen,
-//   onCancel,
-//   updatedData,
-//   onUpdated = () => {},
-// }) => {
-//   const [form] = Form.useForm();
-//   // const record = updatedData?.attributes || {};
-//   const record = useMemo(() => updatedData?.attributes || {}, [updatedData]);
-
-//   const [returnModalOpen, setReturnModalOpen] = useState(false);
-
-//   // const serialBorrowedList = (record.SerialNumber || '').split('\n').filter(s => s.trim() !== '');
-//   const serialBorrowedList = (record.SerialNumber || "")
-//     .split(",")
-//     .map((s) => s.trim())
-//     .filter((s) => s !== "");
-
-//   const [selectedReturnSerials, setSelectedReturnSerials] = useState([]);
-
-//   const [typeDeviceModalOpen, setTypeDeviceModalOpen] = useState(false);
-//   const [selectedTypeDevice, setSelectedTypeDevice] = useState(null);
-
-//   useEffect(() => {
-//     if (record) {
-//       form.setFieldsValue({
-//         Ticket: record.Ticket || "",
-//         TypeKho: record.TypeKho || "",
-//         totalexport: record.totalexport || 0,
-//         totalexportLoan: record.totalexportLoan || 0,
-//         SerialNumber: record.SerialNumber || "",
-//         SerialNumberLoan: record.SerialNumberLoan || "",
-//       });
-//     }
-//   }, [record, form]);
-
-//   useEffect(() => {
-//     if (record) {
-//       const oldSerials = (record.SerialNumberDHG || "")
-//         .split("\n")
-//         .filter((s) => s.trim() !== "");
-//       setSelectedReturnSerials(oldSerials);
-//     }
-//   }, [record]);
-
-//   const openReturnModal = () => {
-//     setSelectedReturnSerials([]); // reset chọn serial khi mở modal
-//     setReturnModalOpen(true);
-//   };
-
-
-//   const handleReturnCancel = () => {
-//     setReturnModalOpen(false);
-//   };
-
-//   // Hàm xử lý chọn / bỏ chọn serial
-//   const onSelectReturnSerial = (serial, checked) => {
-//     if (checked) {
-//       setSelectedReturnSerials((prev) => [...prev, serial]);
-//     } else {
-//       setSelectedReturnSerials((prev) => prev.filter((s) => s !== serial));
-//     }
-//   };
-
-//   //Hàm xử lý điều chuyển kho
-//   const handleTransferStock = async (fromKho, toKho) => {
-//     try {
-//       const warehouseList = await fetchWarehouseDetails();
-//       const matched = warehouseList.data.find(
-//         (w) =>
-//           w.attributes.Model === record.Model &&
-//           w.attributes.BrandName === record.BrandName
-//       );
-
-//       if (!matched) {
-//         message.error("Không tìm thấy sản phẩm trong kho!");
-//         return;
-//       }
-
-//       const attrs = matched.attributes;
-//       const soLuong = record.totalexport;
-//       const model = record.Model;
-
-//       if (soLuong <= 0) {
-//         message.warning("Không có số lượng để điều chuyển!");
-//         return;
-//       }
-
-//       if ((attrs[fromKho] || 0) < soLuong) {
-//         message.error(`Kho ${fromKho} không đủ hàng để điều chuyển!`);
-//         return;
-//       }
-
-//       // Cập nhật tồn kho
-//       await updateWarehouseDetails(matched.id, {
-//         [fromKho]: (attrs[fromKho] || 0) - soLuong,
-//         [toKho]: (attrs[toKho] || 0) + soLuong,
-//       });
-
-//       // Cập nhật phiếu sang kho mới
-//       await updateExportlistsData(updatedData.id, { TypeKho: toKho });
-
-//       // Lấy lại toàn bộ danh sách và truyền cho onUpdated
-//       const refreshedList = await fetchExportlists();
-//       onUpdated(refreshedList.data);
-
-//       message.success(
-//         `Đã điều chuyển ${model} : ${soLuong} từ ${fromKho} sang ${toKho}!`
-//       );
-//       // onUpdated();
-//       onCancel();
-//     } catch (err) {
-//       console.error(err);
-//       message.error("Có lỗi xảy ra khi điều chuyển!");
-//     }
-//   };
-
-//   const handleOk = async () => {
-//     try {
-//       const values = await form.validateFields();
-//       if (!updatedData?.id) {
-//         message.error("Không tìm thấy ID để cập nhật!");
-//         return;
-//       }
-//       const res = await updateExportlistsData(updatedData.id, values);
-//       message.success("Cập nhật thành công!");
-//       onUpdated(res);
-//       onCancel();
-//     } catch (err) {
-//       message.error("Có lỗi xảy ra, vui lòng thử lại!");
-//     }
-//   };
-
-//   return (
-//     <Modal
-//       title="Cập nhật phiếu mượn kho"
-//       open={isModalOpen}
-//       onCancel={onCancel}
-//       width={800}
-//       className="update-exportlist-modal"
-//       footer={[
-//         record.totalexport > 0 && record.TypeKho === "POS" && (
-//           <Button
-//             key="posToPoshn"
-//             type="primary"
-//             onClick={() => handleTransferStock("POS", "POSHN")}
-//           >
-//             POS → POSHN
-//           </Button>
-//         ),
-//         record.totalexport > 0 && record.TypeKho === "POSHN" && (
-//           <Button
-//             key="poshnToPos"
-//             type="primary"
-//             onClick={() => handleTransferStock("POSHN", "POS")}
-//           >
-//             POSHN → POS
-//           </Button>
-//         ),
-//         record.totalexport > 0 && !record.TypeDevice && (
-//           <Button
-//             key="confirmTypeDevice"
-//             type="primary"
-//             onClick={() => setTypeDeviceModalOpen(true)}
-//           >
-//             Xác nhận
-//           </Button>
-//         ),
-//         <Button key="cancel" onClick={onCancel}>
-//           Hủy
-//         </Button>,
-//         <Button key="submit" type="primary" onClick={handleOk}>
-//           Cập nhật
-//         </Button>,
-//       ]}
-//     >
-//       <Form form={form} layout="vertical">
-//         <Descriptions bordered column={2} size="small">
-//           <Descriptions.Item label="Tên sản phẩm">
-//             {record.ProductName}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Model">{record.Model}</Descriptions.Item>
-
-//           <Descriptions.Item label="Thương hiệu">
-//             {record.BrandName}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="ĐVT">{record.DVT}</Descriptions.Item>
-
-//           <Descriptions.Item label="Kho">{record.TypeKho}</Descriptions.Item>
-
-//           <Descriptions.Item label="Số phiếu">
-//             {record.Ticket}
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Ticket">
-//             {record.TicketDHG ? (
-//               // Nếu có dữ liệu thì hiển thị text
-//               <span>{record.TicketDHG}</span>
-//             ) : (
-//               // Nếu chưa có dữ liệu thì cho nhập form
-//               <Form.Item
-//                 name="TicketDHG"
-//                 noStyle
-//                 rules={[
-//                   { required: true, message: "Vui lòng nhập số Ticket!" },
-//                 ]}
-//               >
-//                 <Input.TextArea autoSize={{ minRows: 1, maxRows: 1 }} />
-//               </Form.Item>
-//             )}
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Số lượng mượn">
-//             {record.totalexport}
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Số lượng xuất">
-//             {record.totalexportLoan}
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Số lượng trả DHG" span={2}>
-//             {record.totalexportDHG}
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Serial mượn" span={2}>
-//             <Form.Item name="SerialNumber" noStyle>
-//               <Input.TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
-//             </Form.Item>
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Serial xuất" span={2}>
-//             {record.SerialNumberLoan}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Serial trả DHG" span={2}>
-//             {record.SerialNumberDHG}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Người mượn hàng">
-//             {record.NameExport}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Ngày mượn hàng">
-//             {record.createdAt
-//               ? new Date(record.createdAt).toLocaleDateString("vi-VN")
-//               : ""}
-//           </Descriptions.Item>
-
-//           <Descriptions.Item label="Ghi chú" span={2}>
-//             <Form.Item name="Note" noStyle>
-//               <Input.TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
-//             </Form.Item>
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Người tạo phiếu">
-//             {record.NameCreate}
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Trạng thái">
-//             <Tag
-//               color={record.Status === "Hoàn thành phiếu" ? "green" : "orange"}
-//             >
-//               {record.Status}
-//             </Tag>
-//           </Descriptions.Item>
-//           <Descriptions.Item label="Thông tin">
-//             {record.TypeDevice}
-//           </Descriptions.Item>
-//         </Descriptions>
-//       </Form>
-//       <Modal
-//         title="Xác nhận loại xuất kho"
-//         open={typeDeviceModalOpen}
-//         onCancel={() => setTypeDeviceModalOpen(false)}
-//         onOk={async () => {
-//           if (!selectedTypeDevice) {
-//             message.warning("Vui lòng chọn loại xuất kho!");
-//             return;
-//           }
-//           try {
-//             await updateExportlistsData(updatedData.id, {
-//               TypeDevice: selectedTypeDevice,
-//             });
-
-//             // 🔥 Đóng modal
-//             setTypeDeviceModalOpen(false);
-
-//             message.success("Cập nhật loại xuất kho thành công!");
-
-//             //  ⏳ Chờ một chút rồi refresh trang
-//             setTimeout(() => {
-//               window.location.reload();
-//             }, 500);
-//           } catch (err) {
-//             console.error("Lỗi khi cập nhật TypeDevice:", err);
-//             message.error("Có lỗi xảy ra khi cập nhật TypeDevice!");
-//           }
-//         }}
-//         okText="Xác nhận"
-//         cancelText="Hủy"
-//       >
-//         <Select
-//           style={{ width: "100%" }}
-//           placeholder="Chọn loại xuất kho"
-//           onChange={(val) => setSelectedTypeDevice(val)}
-//         >
-//           <Option value="QLTB">QLTB</Option>
-//           <Option value="TB">TB</Option>
-//           <Option value="POS">POS</Option>
-//         </Select>
-//       </Modal>
-//     </Modal>
-//   );
-// };
-
-// export default UpdateExportList;
-
-
 import React, { useEffect, useState, useMemo } from "react";
 import {
   Modal,
   Form,
   Input,
   message,
-  Descriptions,
   Select,
   Tag,
   Button,
+  Row,
+  Col,
+  Card,
+  Divider,
+  Statistic,
+  Typography,
 } from "antd";
+import {
+  FileTextOutlined,
+  UserOutlined,
+  BarcodeOutlined,
+  ExportOutlined,
+  ImportOutlined,
+  SwapOutlined,
+  SaveOutlined,
+  CloseOutlined,
+  CheckCircleOutlined,
+  CalendarOutlined,
+  InfoCircleOutlined
+} from "@ant-design/icons";
 import {
   updateExportlistsData,
   fetchWarehouseDetails,
   updateWarehouseDetails,
   fetchExportlists,
 } from "../../../services/dhgServices";
-import "./UpdateExportList.scss";
+import "./UpdateExportList.scss"; // Đảm bảo file này có import style hoặc dùng chung style với ExportList
 
 const { Option } = Select;
+const { Text } = Typography;
 
 const UpdateExportList = ({
   isModalOpen,
@@ -361,314 +46,283 @@ const UpdateExportList = ({
 }) => {
   const [form] = Form.useForm();
 
-  // Sửa: Strapi v5 dữ liệu đã phẳng, không cần .attributes
-  // Tuy nhiên, giữ check an toàn nếu updatedData null
+  // Dữ liệu bản ghi
   const record = useMemo(() => updatedData || {}, [updatedData]);
-
-  const [returnModalOpen, setReturnModalOpen] = useState(false);
-
-  const serialBorrowedList = (record.SerialNumber || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => s !== "");
-
-  const [selectedReturnSerials, setSelectedReturnSerials] = useState([]);
+  // Lấy ID an toàn (Strapi v4/v5)
+  const recordId = useMemo(() => updatedData?.documentId || updatedData?.id, [updatedData]);
 
   const [typeDeviceModalOpen, setTypeDeviceModalOpen] = useState(false);
   const [selectedTypeDevice, setSelectedTypeDevice] = useState(null);
 
+  // Fill dữ liệu vào Form
   useEffect(() => {
     if (record) {
       form.setFieldsValue({
-        Ticket: record.Ticket || "",
-        TypeKho: record.TypeKho || "",
-        totalexport: record.totalexport || 0,
-        totalexportLoan: record.totalexportLoan || 0,
+        TicketDHG: record.TicketDHG || "",
         SerialNumber: record.SerialNumber || "",
-        SerialNumberLoan: record.SerialNumberLoan || "",
-        TicketDHG: record.TicketDHG || "", // Thêm field này để form fill dữ liệu
         Note: record.Note || "",
+        SerialNumberDHG: record.SerialNumberDHG || "",
+        // Các trường khác không cần set nếu không dùng input form để sửa
       });
     }
   }, [record, form]);
 
-  useEffect(() => {
-    if (record) {
-      const oldSerials = (record.SerialNumberDHG || "")
-        .split("\n")
-        .filter((s) => s.trim() !== "");
-      setSelectedReturnSerials(oldSerials);
-    }
-  }, [record]);
-
-  const openReturnModalHandler = () => {
-    setSelectedReturnSerials([]); // reset chọn serial khi mở modal
-    setReturnModalOpen(true);
-  };
-
-  const handleReturnCancel = () => {
-    setReturnModalOpen(false);
-  };
-
-  // Hàm xử lý chọn / bỏ chọn serial
-  const onSelectReturnSerial = (serial, checked) => {
-    if (checked) {
-      setSelectedReturnSerials((prev) => [...prev, serial]);
-    } else {
-      setSelectedReturnSerials((prev) => prev.filter((s) => s !== serial));
-    }
-  };
-
-  //Hàm xử lý điều chuyển kho
+  // --- LOGIC XỬ LÝ (GIỮ NGUYÊN) ---
   const handleTransferStock = async (fromKho, toKho) => {
     try {
+      if (!recordId) { message.error("Lỗi: Không tìm thấy ID phiếu!"); return; }
+
       const warehouseResponse = await fetchWarehouseDetails();
-      // Strapi v5: response phẳng
-      const warehouseData = Array.isArray(warehouseResponse)
-        ? warehouseResponse
-        : warehouseResponse.data || [];
+      const warehouseData = Array.isArray(warehouseResponse) ? warehouseResponse : warehouseResponse.data || [];
+      const matched = warehouseData.find(w => w.Model === record.Model && w.BrandName === record.BrandName);
 
-      // Sửa: bỏ .attributes
-      const matched = warehouseData.find(
-        (w) =>
-          w.Model === record.Model &&
-          w.BrandName === record.BrandName
-      );
+      if (!matched) { message.error("Không tìm thấy sản phẩm trong kho!"); return; }
 
-      if (!matched) {
-        message.error("Không tìm thấy sản phẩm trong kho!");
-        return;
-      }
-
-      // Sửa: bỏ .attributes, dùng trực tiếp object matched
-      const attrs = matched;
       const soLuong = record.totalexport;
-      const model = record.Model;
+      if (soLuong <= 0) { message.warning("Không có số lượng để điều chuyển!"); return; }
+      if ((matched[fromKho] || 0) < soLuong) { message.error(`Kho ${fromKho} không đủ hàng!`); return; }
 
-      if (soLuong <= 0) {
-        message.warning("Không có số lượng để điều chuyển!");
-        return;
-      }
-
-      if ((attrs[fromKho] || 0) < soLuong) {
-        message.error(`Kho ${fromKho} không đủ hàng để điều chuyển!`);
-        return;
-      }
-
-      // Cập nhật tồn kho
-      // Sửa: dùng id hoặc documentId
-      await updateWarehouseDetails(matched.id || matched.documentId, {
-        [fromKho]: (attrs[fromKho] || 0) - soLuong,
-        [toKho]: (attrs[toKho] || 0) + soLuong,
+      const warehouseId = matched.documentId || matched.id;
+      await updateWarehouseDetails(warehouseId, {
+        [fromKho]: (matched[fromKho] || 0) - soLuong,
+        [toKho]: (matched[toKho] || 0) + soLuong,
       });
 
-      // Cập nhật phiếu sang kho mới
-      await updateExportlistsData(updatedData.id, { TypeKho: toKho });
+      await updateExportlistsData(recordId, { TypeKho: toKho });
 
-      // Lấy lại toàn bộ danh sách và truyền cho onUpdated
       const refreshedList = await fetchExportlists();
-      // Strapi v5: response có thể là mảng trực tiếp
-      const refreshedData = Array.isArray(refreshedList)
-        ? refreshedList
-        : refreshedList.data || [];
-
-      onUpdated(refreshedData); // Truyền mảng mới về parent để update state
-
-      message.success(
-        `Đã điều chuyển ${model} : ${soLuong} từ ${fromKho} sang ${toKho}!`
-      );
-      // onUpdated();
+      const refreshedData = Array.isArray(refreshedList) ? refreshedList : refreshedList.data || [];
+      onUpdated(refreshedData);
+      message.success(`Đã điều chuyển ${soLuong} ${record.Model} từ ${fromKho} sang ${toKho}!`);
       onCancel();
     } catch (err) {
       console.error(err);
-      message.error("Có lỗi xảy ra khi điều chuyển!");
+      message.error("Lỗi điều chuyển kho!");
     }
   };
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      if (!updatedData?.id) {
-        message.error("Không tìm thấy ID để cập nhật!");
-        return;
-      }
-      const res = await updateExportlistsData(updatedData.id, values);
-      // Strapi v5: res thường là object đã update
+      if (!recordId) { message.error("Lỗi ID!"); return; }
+
+      const res = await updateExportlistsData(recordId, values);
       const updatedRecord = res.data || res;
 
       message.success("Cập nhật thành công!");
       onUpdated(updatedRecord);
       onCancel();
     } catch (err) {
-      console.error(err);
-      message.error("Có lỗi xảy ra, vui lòng thử lại!");
+      message.error("Lỗi cập nhật!");
     }
   };
 
   return (
     <Modal
-      title="Cập nhật phiếu mượn kho"
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ background: '#fff7e6', padding: 8, borderRadius: '50%', color: '#fa8c16' }}>
+            <FileTextOutlined style={{ fontSize: 18 }} />
+          </div>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#262626' }}>Cập Nhật Phiếu Mượn</div>
+            <div style={{ fontSize: 12, fontWeight: 400, color: '#8c8c8c' }}>{record.ProductName}</div>
+          </div>
+        </div>
+      }
       open={isModalOpen}
       onCancel={onCancel}
-      width={800}
-      className="update-exportlist-modal"
-      footer={[
-        record.totalexport > 0 && record.TypeKho === "POS" && (
-          <Button
-            key="posToPoshn"
-            type="primary"
-            onClick={() => handleTransferStock("POS", "POSHN")}
-          >
-            POS → POSHN
-          </Button>
-        ),
-        record.totalexport > 0 && record.TypeKho === "POSHN" && (
-          <Button
-            key="poshnToPos"
-            type="primary"
-            onClick={() => handleTransferStock("POSHN", "POS")}
-          >
-            POSHN → POS
-          </Button>
-        ),
-        record.totalexport > 0 && !record.TypeDevice && (
-          <Button
-            key="confirmTypeDevice"
-            type="primary"
-            onClick={() => setTypeDeviceModalOpen(true)}
-          >
-            Xác nhận
-          </Button>
-        ),
-        <Button key="cancel" onClick={onCancel}>
-          Hủy
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleOk}>
-          Cập nhật
-        </Button>,
-      ]}
+      width={850}
+      className="modern-detail-modal" // Sử dụng lại class CSS của ExportList
+      footer={null} // Tắt footer mặc định để dùng footer custom
+      centered
     >
       <Form form={form} layout="vertical">
-        <Descriptions bordered column={2} size="small">
-          <Descriptions.Item label="Tên sản phẩm">
-            {record.ProductName} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Model">
-            {record.Model} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
+        <div className="detail-modal-content">
 
-          <Descriptions.Item label="Thương hiệu">
-            {record.BrandName} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-          <Descriptions.Item label="ĐVT">
-            {record.DVT} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
+          {/* --- SECTION 1: INFO CARDS --- */}
+          <div className="info-section">
+            <Row gutter={[24, 24]}>
+              {/* Cột trái: Thông tin sản phẩm (Read-only) */}
+              <Col span={12}>
+                <Card title={<><InfoCircleOutlined /> Thông tin sản phẩm</>} size="small" bordered={false} className="info-card bg-gray">
+                  <div className="info-row">
+                    <span className="label">Model:</span>
+                    <span className="value code">{record.Model}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Thương hiệu:</span>
+                    <span className="value">{record.BrandName}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Đơn vị:</span>
+                    <span className="value">{record.DVT}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Kho hiện tại:</span>
+                    <Tag color="cyan">{record.TypeKho}</Tag>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Loại thiết bị:</span>
+                    <Tag color="red">{record.TypeDevice}</Tag>
+                  </div>
+                </Card>
+              </Col>
 
-          <Descriptions.Item label="Kho">
-            {record.TypeKho} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
+              {/* Cột phải: Thông tin phiếu (Có ô nhập TicketDHG) */}
+              <Col span={12}>
+                <Card title={<><FileTextOutlined /> Thông tin phiếu</>} size="small" bordered={false} className="info-card bg-gray">
+                  <div className="info-row">
+                    <span className="label">Trạng thái:</span>
+                    <Tag color={record.Status === 'Hoàn thành phiếu' ? 'green' : 'orange'}>{record.Status}</Tag>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Số phiếu nội bộ:</span>
+                    <Tag color="blue">{record.Ticket}</Tag>
+                  </div>
 
-          <Descriptions.Item label="Số phiếu">
-            {record.Ticket} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
+                  {/* Ô nhập Ticket Helpdesk - Logic: Nếu chưa có thì hiện Input, có rồi thì hiện text (hoặc vẫn cho sửa tùy logic bạn) */}
+                  <div style={{ marginTop: 12, marginBottom: 8 }}>
+                    {/* Ở đây mình để luôn là Input để có thể cập nhật lại nếu nhập sai */}
+                    <Form.Item label="Ticket ĐHG:" name="TicketDHG" style={{ marginBottom: 0 }}>
+                      <Input prefix={<BarcodeOutlined />} placeholder="Nhập số Ticket..." className="custom-input" />
+                    </Form.Item>
+                  </div>
 
-          <Descriptions.Item label="Ticket">
-            {record.TicketDHG ? (
-              // Nếu có dữ liệu thì hiển thị text
-              <span>{record.TicketDHG}</span>
-            ) : (
-              // Nếu chưa có dữ liệu thì cho nhập form
-              <Form.Item
-                name="TicketDHG"
-                noStyle
-                rules={[
-                  { required: true, message: "Vui lòng nhập số Ticket!" },
-                ]}
-              >
-                <Input.TextArea autoSize={{ minRows: 1, maxRows: 1 }} />
-              </Form.Item>
+                  <div className="info-row" style={{ marginTop: 4 }}>
+                    <span className="label">Người mượn:</span>
+                    <span className="value"><UserOutlined /> {record.NameExport}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="label">Ngày tạo:</span>
+                    <span className="value"><CalendarOutlined /> {record.createdAt ? new Date(record.createdAt).toLocaleDateString("vi-VN") : ""}</span>
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+
+          <Divider style={{ margin: '16px 0' }} />
+
+          {/* --- SECTION 2: STATS & SERIALS --- */}
+          <div className="serial-section">
+            <Row gutter={16} style={{ marginBottom: 12 }}>
+              <Col span={8}>
+                <Statistic
+                  title="Số lượng Mượn"
+                  value={record.totalexport}
+                  valueStyle={{ color: '#1890ff', fontWeight: 700 }}
+                  prefix={<ExportOutlined />}
+                />
+              </Col>
+              <Col span={8}>
+                <Statistic
+                  title="Đã Xuất"
+                  value={record.totalexportLoan}
+                  valueStyle={{ color: '#fa8c16' }}
+                />
+              </Col>
+              <Col span={8}>
+                <Statistic
+                  title="Đã Trả"
+                  value={record.totalexportDHG}
+                  valueStyle={{ color: '#52c41a' }}
+                  prefix={<ImportOutlined />}
+                />
+              </Col>
+            </Row>
+
+            <Row gutter={24}>
+              <Col span={12}>
+                {/* Form sửa Serial Mượn */}
+                <Form.Item
+                  label={<Text strong>Serial Mượn (Chỉnh sửa):</Text>}
+                  name="SerialNumber"
+                >
+                  <Input.TextArea
+                    rows={4}
+                    className="custom-textarea code-font"
+                    placeholder="Nhập danh sách serial..."
+                    style={{ background: '#f0f5ff', borderColor: '#d6e4ff' }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                {/* Hiển thị Serial Đã trả (Read-only) */}
+                <Form.Item
+                  label={<Text strong>Serial Đã Trả:</Text>}
+                  name="SerialNumberDHG"
+                >
+                  <Input.TextArea
+                    rows={4}
+                    className="custom-textarea code-font"
+                    placeholder="Chưa có serial trả"
+                    style={{ height: '98px', overflowY: 'auto' }}
+                  />
+                </Form.Item>
+                {/* <div className="serial-block">
+                  <Text strong style={{ display: 'block', marginBottom: 8 }}>Serial Đã Trả (Read-only):</Text>
+                  <div className="serial-box return-serial" style={{ height: '98px', overflowY: 'auto' }}>
+                    {record.SerialNumberDHG || "Chưa có serial trả"}
+                  </div>
+                </div> */}
+              </Col>
+            </Row>
+
+            <Form.Item label="Ghi chú:" name="Note" style={{ marginTop: 12 }}>
+              <Input.TextArea rows={2} placeholder="Ghi chú thêm..." />
+            </Form.Item>
+          </div>
+
+          {/* --- SECTION 3: FOOTER ACTIONS --- */}
+          <div className="modal-actions-footer">
+            {/* Nút Điều chuyển kho */}
+            {record.totalexport > 0 && record.TypeKho === "POS" && (
+              <Button icon={<SwapOutlined />} className="btn-transfer" onClick={() => handleTransferStock("POS", "POSHN")}>
+                POS → POSHN
+              </Button>
             )}
-          </Descriptions.Item>
+            {record.totalexport > 0 && record.TypeKho === "POSHN" && (
+              <Button icon={<SwapOutlined />} className="btn-transfer" onClick={() => handleTransferStock("POSHN", "POS")}>
+                POSHN → POS
+              </Button>
+            )}
 
-          <Descriptions.Item label="Số lượng mượn">
-            {record.totalexport} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
+            {/* Nút Xác nhận loại */}
+            {record.totalexport > 0 && !record.TypeDevice && (
+              <Button icon={<CheckCircleOutlined />} type="dashed" onClick={() => { setSelectedTypeDevice(null); setTypeDeviceModalOpen(true); }}>
+                Xác nhận loại
+              </Button>
+            )}
 
-          <Descriptions.Item label="Số lượng xuất">
-            {record.totalexportLoan} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
+            <div style={{ flex: 1 }}></div> {/* Spacer đẩy các nút sau sang phải */}
 
-          <Descriptions.Item label="Số lượng trả DHG" span={2}>
-            {record.totalexportDHG} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Serial mượn" span={2}>
-            <Form.Item name="SerialNumber" noStyle>
-              <Input.TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
-            </Form.Item>
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Serial xuất" span={2}>
-            {record.SerialNumberLoan} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Serial trả DHG" span={2}>
-            {record.SerialNumberDHG} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Người mượn hàng">
-            {record.NameExport} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Ngày mượn hàng">
-            {record.createdAt
-              ? new Date(record.createdAt).toLocaleDateString("vi-VN")
-              : ""}
-          </Descriptions.Item>
-
-          <Descriptions.Item label="Ghi chú" span={2}>
-            <Form.Item name="Note" noStyle>
-              <Input.TextArea autoSize={{ minRows: 2, maxRows: 4 }} />
-            </Form.Item>
-          </Descriptions.Item>
-          <Descriptions.Item label="Người tạo phiếu">
-            {record.NameCreate} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-          <Descriptions.Item label="Trạng thái">
-            <Tag
-              color={record.Status === "Hoàn thành phiếu" ? "green" : "orange"}
-            >
-              {record.Status} {/* Sửa: bỏ .attributes */}
-            </Tag>
-          </Descriptions.Item>
-          <Descriptions.Item label="Thông tin">
-            {record.TypeDevice} {/* Sửa: bỏ .attributes */}
-          </Descriptions.Item>
-        </Descriptions>
+            <Button icon={<CloseOutlined />} onClick={onCancel}>
+              Hủy
+            </Button>
+            <Button type="primary" icon={<SaveOutlined />} onClick={handleOk}>
+              Lưu thay đổi
+            </Button>
+          </div>
+        </div>
       </Form>
+
+      {/* --- MODAL CON: XÁC NHẬN LOẠI --- */}
       <Modal
         title="Xác nhận loại xuất kho"
         open={typeDeviceModalOpen}
         onCancel={() => setTypeDeviceModalOpen(false)}
+        zIndex={1001}
         onOk={async () => {
-          if (!selectedTypeDevice) {
-            message.warning("Vui lòng chọn loại xuất kho!");
-            return;
-          }
+          if (!selectedTypeDevice) { message.warning("Vui lòng chọn loại!"); return; }
+          if (!recordId) { message.error("Lỗi ID!"); return; }
           try {
-            await updateExportlistsData(updatedData.id, {
-              TypeDevice: selectedTypeDevice,
-            });
-
-            // 🔥 Đóng modal
+            await updateExportlistsData(recordId, { TypeDevice: selectedTypeDevice });
+            message.success("Cập nhật thành công!");
             setTypeDeviceModalOpen(false);
-
-            message.success("Cập nhật loại xuất kho thành công!");
-
-            //  ⏳ Chờ một chút rồi refresh trang
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
+            setTimeout(() => window.location.reload(), 500);
           } catch (err) {
-            console.error("Lỗi khi cập nhật TypeDevice:", err);
-            message.error("Có lỗi xảy ra khi cập nhật TypeDevice!");
+            message.error("Lỗi cập nhật!");
           }
         }}
         okText="Xác nhận"
@@ -676,7 +330,8 @@ const UpdateExportList = ({
       >
         <Select
           style={{ width: "100%" }}
-          placeholder="Chọn loại xuất kho"
+          placeholder="Chọn loại..."
+          value={selectedTypeDevice}
           onChange={(val) => setSelectedTypeDevice(val)}
         >
           <Option value="QLTB">QLTB</Option>

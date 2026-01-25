@@ -554,7 +554,7 @@ const UpdatePurchaseOrderModal = ({ open, onClose, invoice, onUpdateSuccess }) =
         Currency: values.currency, // Lưu loại tiền
       };
 
-      await updateSupplierForm(invoice.id || invoice.documentId, payload);
+      await updateSupplierForm(invoice.documentId, payload);
 
       notification.success({
         message: 'Cập nhật thành công',
@@ -624,7 +624,7 @@ const UpdatePurchaseOrderModal = ({ open, onClose, invoice, onUpdateSuccess }) =
       centered
       footer={[
         <Button key="cancel" onClick={onClose}>Hủy</Button>,
-        <Button key="save" type="primary" onClick={handleSave} disabled={!isEditable && invoice?.Status !== 'Chờ nhập kho'}>
+        <Button key="save" type="primary" onClick={handleSave} >
           Lưu thay đổi
         </Button>,
       ]}
@@ -712,13 +712,13 @@ const UpdatePurchaseOrderModal = ({ open, onClose, invoice, onUpdateSuccess }) =
 
             <Descriptions.Item label="Số hóa đơn">
               <Form.Item name="invoiceNumber" noStyle>
-                <Input disabled={!isEditable} />
+                <Input />
               </Form.Item>
             </Descriptions.Item>
 
             <Descriptions.Item label="Ngày hóa đơn">
               <Form.Item name="invoiceDate" noStyle>
-                <DatePicker format="DD-MM-YYYY" style={{ width: '100%' }} disabled={!isEditable} />
+                <DatePicker format="DD-MM-YYYY" style={{ width: '100%' }} />
               </Form.Item>
             </Descriptions.Item>
 
