@@ -293,7 +293,7 @@ const DeviceList = () => {
       title: "Serial Number",
       dataIndex: "SerialNumber",
       key: "SerialNumber",
-      width: 400,
+      width: 300,
       render: (text) => <Tag color="default" style={{ fontFamily: "monospace" }}>{text}</Tag>,
     },
     { title: "Khách hàng", dataIndex: "Customer", key: "Customer", ellipsis: true },
@@ -325,7 +325,7 @@ const DeviceList = () => {
       key: "detail",
       align: "center",
       width: 120,
-      fixed: "right",
+      // fixed: "right",
       render: (_, record) => (
         <Tooltip title="Xem chi tiết">
           <Button
@@ -438,7 +438,7 @@ const DeviceList = () => {
       {/* --- BẢNG DỮ LIỆU --- */}
       <Card bordered={false} className="shadow-sm" style={{ borderRadius: "8px", overflow: "hidden" }} bodyStyle={{ padding: "0" }}>
         <Table
-          rowKey={(record) => record.id || record.documentId}
+          rowKey={(record) => record.documentId}
           columns={columns}
           dataSource={devices}
           loading={loading}

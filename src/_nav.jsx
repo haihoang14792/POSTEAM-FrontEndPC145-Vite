@@ -19,10 +19,6 @@ import { CNavGroup, CNavItem } from "@coreui/react";
 
 const storedUser = localStorage.getItem("user");
 const parsedUser = storedUser ? JSON.parse(storedUser) : null;
-// const userPurchase = parsedUser?.account?.Purchase || "";
-// const userExportlist = parsedUser?.account?.Exportlist || "";
-// const userAdmin = parsedUser?.account?.Admin || "";
-// const userLeader = parsedUser?.account?.Leader || "";
 const userPurchase = parsedUser?.account?.Purchase;
 const userExportlist = parsedUser?.account?.Exportlist;
 const userAdmin = parsedUser?.account?.Admin;
@@ -41,7 +37,6 @@ const _nav = [
         style={{ color: "#1E90FF" }}
       />
     ),
-    badge: { color: "info", text: "NEW" },
   },
   {
     component: CNavGroup,
@@ -248,20 +243,20 @@ const _nav = [
               />
             ),
           },
+          {
+            component: CNavItem,
+            name: "Nhập Hàng sản phẩm",
+            to: "/dhg/sanpham/nhaphang",
+            icon: (
+              <CIcon
+                icon={cilPlus}
+                customClassName="nav-icon"
+                style={{ color: "#20B2AA" }}
+              />
+            ),
+          },
         ]
         : []),
-      {
-        component: CNavItem,
-        name: "Nhập Hàng sản phẩm",
-        to: "/dhg/sanpham/nhaphang",
-        icon: (
-          <CIcon
-            icon={cilPlus}
-            customClassName="nav-icon"
-            style={{ color: "#20B2AA" }}
-          />
-        ),
-      },
       {
         component: CNavItem,
         name: "Chi tiết sản phẩm",
@@ -276,51 +271,100 @@ const _nav = [
       },
     ],
   },
-  {
-    component: CNavGroup,
-    name: "Nhân sự",
-    icon: (
-      <CIcon
-        icon={cilUser}
-        customClassName="nav-icon"
-        style={{ color: "#FF69B4" }}
-      />
-    ),
-    items: [
-      ...(userAdmin === true
-        ? [
-          {
-            component: CNavItem,
-            name: "Phân quyền",
-            to: "/dhg/user/pq",
-            icon: (
-              <CIcon
-                icon={cilFile}
-                customClassName="nav-icon"
-                style={{ color: "#FF69B4" }}
-              />
-            ),
-          },
-        ]
-        : []),
-      ...(userLeader === true
-        ? [
-          {
-            component: CNavItem,
-            name: "Danh sách nhân sự",
-            to: "/dhg/user/ns",
-            icon: (
-              <CIcon
-                icon={cilList}
-                customClassName="nav-icon"
-                style={{ color: "#FF69B4" }}
-              />
-            ),
-          },
-        ]
-        : []),
-    ],
-  },
+  // {
+  //   component: CNavGroup,
+  //   name: "Nhân sự",
+  //   icon: (
+  //     <CIcon
+  //       icon={cilUser}
+  //       customClassName="nav-icon"
+  //       style={{ color: "#FF69B4" }}
+  //     />
+  //   ),
+  //   items: [
+  //     ...(userAdmin === true
+  //       ? [
+  //         {
+  //           component: CNavItem,
+  //           name: "Phân quyền",
+  //           to: "/dhg/user/pq",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilFile}
+  //               customClassName="nav-icon"
+  //               style={{ color: "#FF69B4" }}
+  //             />
+  //           ),
+  //         },
+  //       ]
+  //       : []),
+  //     ...(userLeader === true
+  //       ? [
+  //         {
+  //           component: CNavItem,
+  //           name: "Danh sách nhân sự",
+  //           to: "/dhg/user/ns",
+  //           icon: (
+  //             <CIcon
+  //               icon={cilList}
+  //               customClassName="nav-icon"
+  //               style={{ color: "#FF69B4" }}
+  //             />
+  //           ),
+  //         },
+  //       ]
+  //       : []),
+  //   ],
+  // },
+  ...(userLeader === true
+    ? [
+      {
+        component: CNavGroup,
+        name: "Nhân sự",
+        icon: (
+          <CIcon
+            icon={cilUser}
+            customClassName="nav-icon"
+            style={{ color: "#FF69B4" }}
+          />
+        ),
+        items: [
+          ...(userAdmin === true
+            ? [
+              {
+                component: CNavItem,
+                name: "Phân quyền",
+                to: "/dhg/user/pq",
+                icon: (
+                  <CIcon
+                    icon={cilFile}
+                    customClassName="nav-icon"
+                    style={{ color: "#FF69B4" }}
+                  />
+                ),
+              },
+            ]
+            : []),
+          ...(userLeader === true
+            ? [
+              {
+                component: CNavItem,
+                name: "Danh sách nhân sự",
+                to: "/dhg/user/ns",
+                icon: (
+                  <CIcon
+                    icon={cilList}
+                    customClassName="nav-icon"
+                    style={{ color: "#FF69B4" }}
+                  />
+                ),
+              },
+            ]
+            : []),
+        ],
+      },
+    ]
+    : []),
   {
     component: CNavGroup,
     name: "POS",

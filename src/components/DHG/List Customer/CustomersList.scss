@@ -1,32 +1,94 @@
-.familymart-container {
-  padding: 10px;
 
-  .ant-form-inline {
-    @media (max-width: 768px) {
-      flex-direction: column;
-      .ant-form-item {
-        width: 100% !important;
+.customers-list-container {
+  padding: 0;
+
+  &.fade-in {
+    animation: fadeIn 0.4s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  // Card bộ lọc
+  .filter-card {
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    .ant-form-item-label > label {
+      font-weight: 600;
+      color: #666;
+    }
+
+    .btn-excel {
+      background-color: #217346;
+      color: #fff;
+      border-color: #217346;
+      &:hover { opacity: 0.9; }
+    }
+  }
+
+  // Card chứa bảng
+  .table-card {
+    border-radius: 8px;
+    overflow: hidden;
+    .ant-table-thead > tr > th {
+      background: #f5f7fa;
+      font-weight: 600;
+    }
+  }
+
+  // Giao diện Mobile
+  .mobile-list-wrapper {
+    padding-bottom: 20px;
+
+    .mobile-item-card {
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+
+      .card-header-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 10px;
-        .ant-select,
-        .ant-input {
-          width: 100% !important;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f0f0f0;
+
+        .store-id {
+          font-size: 16px;
+          font-weight: 700;
+          color: #1890ff;
+        }
+      }
+
+      .card-body-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: #444;
+
+        .icon {
+          color: #888;
+          margin-top: 4px;
+          margin-right: 8px;
+          min-width: 16px;
         }
       }
     }
   }
 
-  .customer-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .text-muted { color: #bfbfbf; }
+}
 
-    .customer-card {
-      background: #fff;
-      padding: 10px;
-      border-radius: 6px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      font-size: 14px;
-      line-height: 1.4;
+// Responsive nút bấm trên mobile
+@media (max-width: 768px) {
+  .customers-list-container {
+    .filter-card button {
+      flex: 1;
     }
   }
 }

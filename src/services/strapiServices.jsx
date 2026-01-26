@@ -115,12 +115,40 @@ const updateDeviceStatus = async (deviceId, data) => {
     }
 };
 
-const fetchListCustomer = async () => {
+// const fetchListCustomer = async () => {
+//     try {
+//         const response = await strapi.get('/api/customerlists');
+//         return response; // Trả dữ liệu về cho các hàm gọi
+//     } catch (error) {
+//         throw new Error('Error fetching project customers');
+//     }
+// };
+
+
+const fetchListCustomer = async (page = 1, pageSize = 10, filters = {}) => {
     try {
-        const response = await strapi.get('/api/customerlists');
-        return response; // Trả dữ liệu về cho các hàm gọi
+        const params = {
+            'pagination[page]': page,
+            'pagination[pageSize]': pageSize,
+            'sort': 'StoreID:asc',
+        };
+
+        if (filters.Customer) {
+            params['filters[Customer][$eq]'] = filters.Customer;
+        }
+        if (filters.Status) {
+            params['filters[Status][$eq]'] = filters.Status === 'Mở';
+        }
+        if (filters.searchText) {
+            params['filters[$or][0][StoreID][$containsi]'] = filters.searchText;
+            params['filters[$or][1][Address][$containsi]'] = filters.searchText;
+        }
+
+        // axiospublic tự return data, nên ở đây response chính là {data: [], meta: {}}
+        const response = await strapi.get('/api/customerlists', { params });
+        return response;
     } catch (error) {
-        throw new Error('Error fetching project customers');
+        throw error;
     }
 };
 
