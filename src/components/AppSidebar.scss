@@ -1,0 +1,107 @@
+/* src/components/AppSidebar.scss */
+
+// --- BẢNG MÀU PREMIUM ---
+$sidebar-bg: #0f172a; // Xanh than đậm (Deep Navy)
+$sidebar-text: #94a3b8; // Xám xanh
+$sidebar-text-hover: #ffffff;
+$primary: #6366f1; // Tím xanh hiện đại
+$active-bg: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 100%);
+$border-color: rgba(255, 255, 255, 0.06);
+
+.sidebar-premium {
+  background-color: $sidebar-bg !important;
+  border-right: 1px solid $border-color;
+  
+  // --- HEADER: LOGO ---
+  .sidebar-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid $border-color !important;
+    height: 64px; // Cố định chiều cao khớp với Header
+    
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+      
+      .brand-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #f1f5f9;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  // --- NAVIGATION LIST ---
+  .sidebar-nav {
+    padding-top: 1rem;
+
+    .nav-title {
+      color: #475569 !important;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 1rem;
+    }
+
+    .nav-item {
+      width: 100%;
+    }
+
+    .nav-link {
+      color: $sidebar-text !important;
+      font-weight: 500;
+      padding: 12px 20px;
+      border-left: 3px solid transparent; // Thanh active bên trái
+      transition: all 0.2s ease;
+
+      .nav-icon {
+        color: #64748b;
+        margin-right: 12px;
+        transition: all 0.2s;
+      }
+
+      // Hover
+      &:hover {
+        background-color: rgba(255,255,255,0.02);
+        color: $sidebar-text-hover !important;
+        .nav-icon { color: #cbd5e1; }
+      }
+
+      // Active
+      &.active {
+        background: $active-bg;
+        color: white !important;
+        border-left-color: $primary; // Chỉ hiện vạch màu khi active
+        
+        .nav-icon {
+          color: $primary;
+        }
+      }
+    }
+
+    // Group items (Menu con)
+    .nav-group.show {
+       background-color: rgba(0,0,0,0.15);
+    }
+  }
+
+  // --- FOOTER ---
+  .sidebar-footer {
+    border-top: 1px solid $border-color !important;
+    background: transparent !important;
+  }
+}

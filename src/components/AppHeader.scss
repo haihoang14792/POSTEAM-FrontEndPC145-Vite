@@ -1,14 +1,94 @@
-/* 1. Ẩn caret của bootstrap dropdown */
-#theme-mode-dropdown.dropdown-toggle::after {
-  display: none !important;
+// /* 1. Ẩn caret của bootstrap dropdown */
+// #theme-mode-dropdown.dropdown-toggle::after {
+//   display: none !important;
+// }
+
+// /* 2. Ép dropdown-toggle / nav-link thành flex để căn giữa nội dung */
+// #theme-mode-dropdown {
+//   display: flex !important;
+//   align-items: center !important;
+//   justify-content: center !important;
+//   margin: 0 !important;
+//   line-height: 1 !important;
+//   height: 80%;
+// }
+
+
+/* src/components/AppHeader.scss */
+
+$header-height: 64px;
+$primary-color: #5856d6; // Hoặc màu chủ đạo của app bạn
+
+.app-header-modern {
+  height: $header-height;
+  transition: all 0.3s ease-in-out;
+  background: rgba(255, 255, 255, 0.8) !important; // Nền trắng mờ
+  backdrop-filter: blur(12px); // Hiệu ứng kính mờ
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  
+  &.header-scrolled {
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); // Đổ bóng mềm
+    border-bottom: none;
+  }
 }
 
-/* 2. Ép dropdown-toggle / nav-link thành flex để căn giữa nội dung */
-#theme-mode-dropdown {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 !important;
-  line-height: 1 !important;
-  height: 80%;
+/* Ẩn caret mặc định của bootstrap */
+.no-caret {
+  .dropdown-toggle::after {
+    display: none !important;
+  }
+}
+
+/* Style cho thanh tìm kiếm */
+.header-search-input {
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 20px;
+  padding-left: 15px;
+  transition: all 0.2s;
+  
+  &:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+}
+
+/* Icon Buttons Action (Chuông, List, Email) */
+.header-action-item {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #64748b;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+
+  /* Chấm đỏ thông báo */
+  .notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #ff3b30;
+    border-radius: 50%;
+    border: 1px solid #fff;
+  }
+}
+
+/* Divider dọc */
+.header-divider {
+  height: 24px;
+  width: 1px;
+  background-color: #e2e8f0;
+  margin: 0 12px;
 }
