@@ -200,14 +200,65 @@ const TicketModal = ({
   const combinedRetrieveData = [...retrieveDevicesData, ...newRetrieveDevices];
 
   // --- Options ---
-  const locationOptions = ["POS01", "POS02", "POS03", "POS04", "POS05", "Server", "KHO", "Quầy", "Bếp", "WIFI01", "WIFI02", "AP01", "RACK", "Manager"];
+  const locationOptions = [
+    "POS01",
+    "POS02",
+    "POS03",
+    "POS04",
+    "POS05",
+    "POS06",
+    "Server",
+    "RACK",
+    "KD01",
+    "KD02",
+    "KP01",
+    "KP02",
+    "KP03",
+    "KP04",
+    "KP05",
+    "AP01",
+    "AP02",
+    "WIFI01",
+    "WIFI02",
+    "Handy01",
+    "Handy02",
+    "Handy03",
+    "Handy04",
+    "Handy05",
+    "Handy06",
+    "Handy07",
+    "Handy08",
+  ];
   const storeOptions = ["DHG", "FMV", "Kohnan", "Sukiya", "Colowide"];
   const deviceOptions = [
-    { value: "POS", label: "POS" }, { value: "Printer", label: "Printer" },
-    { value: "Scanner", label: "Scanner" }, { value: "Monitor", label: "Monitor" },
-    { value: "PC", label: "PC" }, { value: "Laptop", label: "Laptop" },
-    { value: "Handy", label: "Handy" }, { value: "Tablet", label: "Tablet" },
-    { value: "Server", label: "Server" }, { value: "UPS", label: "UPS" }
+    { value: "POS", label: "POS" },
+    { value: "Drawer", label: "Drawer" },
+    { value: "Scanner", label: "Scanner" },
+    { value: "Printer", label: "Printer" },
+    { value: "Keyboard", label: "Keyboard" },
+    { value: "Handy", label: "Handy" },
+    { value: "Switch", label: "Switch" },
+    { value: "Monitor", label: "Monitor" },
+    { value: "UPS", label: "UPS" },
+    { value: "WIFI", label: "WIFI" },
+    { value: "Mouse", label: "Mouse" },
+    { value: "Server", label: "Server" },
+    { value: "Hard Drive", label: "Hard Drive" },
+    { value: "PCC", label: "PCC" },
+    { value: "Laptop", label: "Laptop" },
+    { value: "PDA", label: "PDA" },
+    { value: "KD", label: "KD" },
+    { value: "KP", label: "KP" },
+    { value: "Cisco", label: "Cisco" },
+    { value: "Router", label: "Router" },
+    { value: "AP", label: "AP" },
+    { value: "Firewall", label: "Firewall" },
+    { value: "POE", label: "POE" },
+    { value: "Rack", label: "Rack" },
+    { value: "Arm", label: "Arm" },
+    { value: "Giá treo gỗ", label: "Giá treo gỗ" },
+    { value: "Ổ điện", label: "Ổ điện" },
+    { value: "Tablet", label: "Tablet" }
   ];
   const devicestatusOptions = [{ value: "Thiết bị mới", label: "Thiết bị mới" }, { value: "Thiết bị cũ", label: "Thiết bị cũ" }];
   const devicesoldtatusOptions = [{ value: "Hỏng", label: "Hỏng" }, { value: "Hết hạn sử dụng", label: "Hết hạn sử dụng" }, { value: "Đóng cửa", label: "Đóng cửa" }];
@@ -566,7 +617,10 @@ const TicketModal = ({
       {
         title: "Thao tác", fixed: "right", width: 110,
         render: (_, r) => {
-          const canEdit = ticket?.Person === account?.Name && ticket?.Status === "Đang tạo phiếu";
+          // const canEdit = ticket?.Person === account?.Name && ticket?.Status === "Đang tạo phiếu";
+          const canEdit =
+            (ticket?.Person === account?.Name && ticket?.Status === "Đang tạo phiếu") ||
+            (account?.Leader && ["Đang tạo phiếu", "Đang chờ duyệt"].includes(ticket?.Status));
           if (r.isNew) return <Popconfirm title="Xóa dòng?" onConfirm={() => handleDeleteRow(r.id, type)}><Button type="text" danger icon={<DeleteOutlined />} /></Popconfirm>;
           if (editingRowId === r.id) return <Space size="small"><Button type="primary" size="small" icon={<CheckOutlined />} onClick={() => handleUpdateRow(r.id, type)} /><Button size="small" icon={<CloseOutlined />} onClick={() => setEditingRowId(null)} /></Space>;
           return <Space size="small">

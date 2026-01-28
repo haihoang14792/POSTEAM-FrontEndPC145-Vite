@@ -309,7 +309,7 @@ import {
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { createTicket } from "../../../../services/storeServices";
-import { fetchListCustomer } from "../../../../services/strapiServices";
+import { fetchListCustomer } from "../../../../services/storeServices";
 
 const { Option } = Select;
 

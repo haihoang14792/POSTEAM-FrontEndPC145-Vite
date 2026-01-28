@@ -884,6 +884,15 @@ const fetchListCustomerPage = async (page = 1, pageSize = 10, filters = {}) => {
   }
 };
 
+const fetchListCustomer = async () => {
+  try {
+    const response = await strapiv1Instance.get('/api/customerlists');
+    return response; // Trả dữ liệu về cho các hàm gọi
+  } catch (error) {
+    throw new Error('Error fetching project customers');
+  }
+};
+
 export {
   createNewJob,
   deleteDevices,
@@ -915,5 +924,6 @@ export {
   fetchDevicesByPage,
   fetchDeviceListHandover,
   fetchDeviceListRetrieve,
-  fetchListCustomerPage
+  fetchListCustomerPage,
+  fetchListCustomer
 };

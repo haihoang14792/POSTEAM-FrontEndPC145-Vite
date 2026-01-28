@@ -630,6 +630,12 @@ const ExportList = () => {
         width={850}
         className="modern-detail-modal"
         centered
+        styles={{
+          body: {
+            maxHeight: "70vh",
+            overflowY: "auto",
+          },
+        }}
       >
         {detailModal.record && (
           <div className="detail-modal-content">
@@ -728,6 +734,13 @@ const ExportList = () => {
                   {detailModal.record.SerialNumber || "Không có serial"}
                 </div>
               </div>
+              {detailModal.record.SerialNumberLoan && (
+                <div className="serial-block">
+                  <Text strong>Danh sách Serial Xuất:</Text>
+                  <div className="serial-box main-serial">
+                    {detailModal.record.SerialNumberLoan || "Không có serial"}
+                  </div>
+                </div>)}
 
               {detailModal.record.SerialNumberDHG && (
                 <div className="serial-block" style={{ marginTop: 12 }}>
