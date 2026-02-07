@@ -1,0 +1,477 @@
+// // $h-height: 52px;
+// // $apple-blue: #0071e3;
+// // $apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+// //   Arial, sans-serif;
+
+// // .apple-header-master {
+// //   min-height: $h-height !important;
+// //   height: auto !important;
+// //   padding: 0 !important;
+// //   overflow: visible !important;
+
+// //   font-family: $apple-font;
+
+// //   background-color: rgba(255, 255, 255, 0.8) !important;
+// //   backdrop-filter: blur(20px) saturate(180%);
+// //   -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+// //   border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+
+// //   transition: 0.25s ease;
+
+// //   &.is-scrolled {
+// //     background-color: rgba(255, 255, 255, 0.95) !important;
+// //     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+// //   }
+
+// //   .header-wrapper {
+// //     display: flex;
+// //     align-items: center;
+// //     height: 100%;
+// //     padding: 0 30px !important;
+// //   }
+
+// //   // Logo
+// //   .apple-brand {
+// //     display: flex;
+// //     align-items: center;
+// //     margin-right: 24px;
+// //     text-decoration: none;
+// //     color: #1d1d1f;
+
+// //       .logo-img {
+// //       height: 32px;
+// //       width: auto;
+// //       border-radius: 6px;
+// //       margin-right: 10px;
+// //     }
+    
+// //     .brand-name {
+// //       margin-left: 8px;
+// //       font-size: 17px;
+// //       font-weight: 600;
+// //     }
+// //   }
+
+// //   // Center menu
+// //   .apple-nav-group {
+// //     flex: 1;
+// //     display: flex;
+// //     justify-content: center;
+// //     height: 100%;
+
+// //     .apple-menu-item {
+// //       height: 100%;
+// //       display: flex;
+// //       align-items: center;
+// //       padding: 0 16px;
+// //       font-size: 13px;
+// //       color: #1d1d1f !important;
+// //       opacity: 0.8;
+// //       background: transparent !important;
+// //       border: none !important;
+// //       text-decoration: none;
+
+// //       transition: 0.2s;
+
+// //       &:hover {
+// //         opacity: 1;
+// //         color: $apple-blue !important;
+// //       }
+
+// //       &.active {
+// //         opacity: 1;
+// //         font-weight: 600;
+// //       }
+
+// //       &.dropdown-toggle::after {
+// //         display: none;
+// //       }
+// //     }
+
+// //     .dropdown-menu {
+// //       margin-top: 0 !important;
+// //       border-radius: 0 0 14px 14px;
+// //       border: 1px solid rgba(0, 0, 0, 0.08);
+// //       border-top: none;
+// //       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.07);
+// //       background: rgba(255, 255, 255, 0.98);
+// //       padding: 8px;
+
+// //       .apple-dropdown-item {
+// //         border-radius: 8px;
+// //         font-size: 13px;
+// //         padding: 10px 14px;
+// //         display: flex;
+// //         align-items: center;
+// //         gap: 10px;
+
+// //         &:hover {
+// //           background: $apple-blue;
+// //           color: white;
+// //         }
+// //       }
+// //     }
+// //   }
+
+// //   // Right controls
+// //   .apple-ctrl-group {
+// //     display: flex;
+// //     align-items: center;
+// //     gap: 12px;
+
+// //     .theme-btn {
+// //       width: 32px;
+// //       height: 32px;
+// //       border-radius: 50%;
+// //       display: flex;
+// //       align-items: center;
+// //       justify-content: center;
+// //       cursor: pointer;
+
+// //       &:hover {
+// //         background: rgba(0, 0, 0, 0.05);
+// //         color: $apple-blue;
+// //       }
+// //     }
+
+// //     .divider-v {
+// //       width: 1px;
+// //       height: 16px;
+// //       background: rgba(0, 0, 0, 0.15);
+// //     }
+// //   }
+// // }
+
+// // // Dark mode
+// // [data-coreui-theme="dark"] {
+// //   .apple-header-master {
+// //     background: rgba(29, 29, 31, 0.85) !important;
+// //     border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+
+// //     .apple-brand,
+// //     .apple-menu-item,
+// //     .brand-name,
+// //     .theme-btn {
+// //       color: #f5f5f7 !important;
+// //     }
+
+// //     .dropdown-menu {
+// //       background: rgba(35, 35, 37, 0.98);
+// //     }
+
+// //     .divider-v {
+// //       background: rgba(255, 255, 255, 0.15);
+// //     }
+
+// //     .theme-btn:hover {
+// //       background: rgba(255, 255, 255, 0.1);
+// //     }
+// //   }
+// // }
+
+
+// $h-height: 52px;
+// $apple-blue: #0071e3;
+// $apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+
+// .apple-header-master {
+//   min-height: $h-height !important;
+//   height: auto !important;
+//   padding: 0 !important;
+//   font-family: $apple-font;
+//   background-color: rgba(255, 255, 255, 0.8) !important;
+//   backdrop-filter: blur(20px) saturate(180%);
+//   -webkit-backdrop-filter: blur(20px) saturate(180%);
+//   border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+//   transition: 0.25s ease;
+//   z-index: 1030;
+
+//   &.is-scrolled {
+//     background-color: rgba(255, 255, 255, 0.95) !important;
+//     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+//   }
+
+//   .header-wrapper {
+//     display: flex;
+//     align-items: center;
+//     height: $h-height; // Giữ cố định chiều cao PC
+//     padding: 0 30px !important;
+//   }
+
+//   .mobile-toggle-btn { display: none; } // Mặc định ẩn trên PC
+
+//   // --- PC STYLE (GIỮ NGUYÊN NHƯ CŨ) ---
+//   .apple-brand {
+//     display: flex;
+//     align-items: center;
+//     margin-right: 24px;
+//     text-decoration: none;
+//     color: #1d1d1f;
+//     .logo-img { height: 32px; width: auto; border-radius: 6px; margin-right: 10px; }
+//     .brand-name { font-size: 17px; font-weight: 600; }
+//   }
+
+//   .apple-nav-group {
+//     flex: 1;
+//     display: flex;
+//     justify-content: center;
+//     height: 100%;
+
+//     .apple-menu-item {
+//       height: 100%;
+//       display: flex;
+//       align-items: center;
+//       padding: 0 16px;
+//       font-size: 13px;
+//       color: #1d1d1f !important;
+//       opacity: 0.8;
+//       text-decoration: none;
+//       &:hover { opacity: 1; color: $apple-blue !important; }
+//       &.active { opacity: 1; font-weight: 600; }
+//     }
+
+//     .dropdown-menu {
+//       margin-top: 0 !important;
+//       border-radius: 0 0 14px 14px;
+//       background: rgba(255, 255, 255, 0.98);
+//       padding: 8px;
+//       .apple-dropdown-item {
+//         border-radius: 8px; font-size: 13px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+//         &:hover { background: $apple-blue; color: white; }
+//       }
+//     }
+//   }
+
+//   .apple-ctrl-group {
+//     display: flex;
+//     align-items: center;
+//     gap: 12px;
+//     .theme-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; &:hover { color: $apple-blue; } }
+//     .divider-v { width: 1px; height: 16px; background: rgba(0, 0, 0, 0.15); }
+//   }
+
+//   // --- MOBILE STYLE (CHỈ ÁP DỤNG CHO ĐIỆN THOẠI) ---
+//   @media (max-width: 991px) {
+//     .header-wrapper { padding: 0 15px !important; justify-content: space-between; }
+    
+//     .mobile-toggle-btn { 
+//       display: flex; align-items: center; justify-content: center; width: 40px; height: 100%; cursor: pointer; z-index: 1040;
+//     }
+
+//     .apple-brand {
+//       position: absolute; left: 50%; transform: translateX(-50%); margin-right: 0;
+//       .brand-name { font-size: 15px; }
+//     }
+
+//     .apple-nav-group {
+//       display: none; // Ẩn menu ngang của PC
+//       &.active-mobile {
+//         display: block; position: fixed; top: $h-height; left: 0; width: 100%; height: calc(100vh - #{$h-height});
+//         background: #fff; padding: 20px; overflow-y: auto; z-index: 1035; animation: slideIn 0.3s ease-out;
+//       }
+
+//       .apple-menu-item {
+//         width: 100%; height: auto; padding: 15px 0; font-size: 17px; border-bottom: 1px solid #f2f2f2 !important;
+//         &.dropdown {
+//           flex-direction: column; align-items: flex-start;
+//           .dropdown-menu { position: static !important; width: 100%; border: none; box-shadow: none; background: #f9f9fb; transform: none !important; margin-top: 10px !important; }
+//         }
+//       }
+//     }
+//   }
+// }
+
+// // Dark Mode
+// [data-coreui-theme="dark"] {
+//   .apple-header-master {
+//     background: rgba(29, 29, 31, 0.85) !important;
+//     .apple-brand, .apple-menu-item, .brand-name, .theme-btn, .mobile-toggle-btn { color: #f5f5f7 !important; }
+//     @media (max-width: 991px) {
+//       .apple-nav-group.active-mobile { background: #1d1d1f; .apple-menu-item { border-bottom-color: #333 !important; } .dropdown-menu { background: #2c2c2e; } }
+//     }
+//   }
+// }
+
+// @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+
+
+
+
+$h-height: 52px;
+$marquee-h: 26px; 
+$tet-red: #d32f2f;
+$apple-blue: #0071e3; // Khôi phục màu cũ để dùng khi hover
+$apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+
+.apple-header-master {
+  min-height: $h-height !important;
+  height: auto !important;
+  padding: 0 !important;
+  font-family: $apple-font;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  transition: 0.25s ease;
+  z-index: 1030;
+  display: flex;
+  flex-direction: column;
+
+  &.is-scrolled {
+    background-color: rgba(255, 252, 240, 0.95) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .header-wrapper {
+    display: flex;
+    align-items: center;
+    height: $h-height;
+    padding: 0 30px !important;
+    width: 100%;
+  }
+
+  // --- PHẦN CHỮ CHẠY ---
+  .tet-marquee-bottom {
+    height: $marquee-h;
+    width: 100%;
+    background: #fdf2f2;
+    border-top: 1px solid rgba($tet-red, 0.1);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+
+    .tet-marquee-text {
+      display: flex;
+      white-space: nowrap;
+      animation: tet-marquee-scroll 30s linear infinite;
+      span {
+        color: $tet-red;
+        font-weight: 500;
+        font-size: 13px;
+        padding-right: 100px;
+      }
+    }
+  }
+
+  .apple-brand {
+    display: flex;
+    align-items: center;
+    margin-right: 24px;
+    text-decoration: none;
+    .logo-img { height: 32px; border-radius: 6px; margin-right: 10px; }
+    .brand-name { font-size: 17px; font-weight: 700; color: $tet-red; }
+  }
+
+  // --- KHÔI PHỤC MENU LIST GIỐNG CODE CŨ ---
+  .apple-nav-group {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+
+    .apple-menu-item {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 13px;
+      color: #1d1d1f !important;
+      opacity: 0.8;
+      text-decoration: none;
+      
+      // Fix cho Bootstrap Dropdown Title
+      &.dropdown .nav-link {
+        color: inherit !important;
+        padding: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      &:hover { opacity: 1; color: $tet-red !important; }
+      &.active { opacity: 1; font-weight: 600; color: $tet-red !important; }
+    }
+
+    // Định dạng List bên trong Menu (Dropdown)
+    .dropdown-menu {
+      margin-top: 0 !important;
+      border-radius: 0 0 14px 14px;
+      background: rgba(255, 255, 255, 0.98);
+      padding: 8px;
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+      .apple-dropdown-item {
+        border-radius: 8px;
+        font-size: 13px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1d1d1f !important;
+        text-decoration: none;
+
+        // Fix icon to đùng
+        .sub-icon-wrap {
+          display: flex;
+          align-items: center;
+          width: 18px; // Giới hạn kích thước icon
+          height: 18px;
+          svg { width: 100%; height: 100%; }
+        }
+
+        &:hover { 
+          background: $tet-red; 
+          color: white !important; 
+          .sub-icon-wrap svg { fill: white; }
+        }
+      }
+    }
+  }
+
+  .apple-ctrl-group {
+    display: flex; gap: 12px; align-items: center;
+    .theme-btn { cursor: pointer; &:hover { color: $tet-red; } }
+    .divider-v { width: 1px; height: 16px; background: rgba(0, 0, 0, 0.15); }
+  }
+
+  // --- MOBILE ---
+  @media (max-width: 991px) {
+    .tet-marquee-bottom { display: none !important; }
+    .header-wrapper { padding: 0 15px !important; justify-content: space-between; }
+    .mobile-toggle-btn { display: flex; z-index: 1040; cursor: pointer; }
+    .apple-brand { position: absolute; left: 50%; transform: translateX(-50%); }
+    
+    .apple-nav-group {
+      display: none;
+      &.active-mobile {
+        display: block; position: fixed; top: $h-height; left: 0; width: 100%; 
+        height: calc(100vh - #{$h-height}); background: #fff; padding: 20px; 
+        overflow-y: auto; z-index: 1035;
+      }
+      .apple-menu-item { 
+        width: 100%; height: auto; padding: 15px 0; font-size: 17px; 
+        border-bottom: 1px solid #f2f2f2 !important;
+        &.dropdown .dropdown-menu {
+           position: static !important; transform: none !important;
+           background: #f9f9fb; border: none; box-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+// Dark Mode
+[data-coreui-theme="dark"] {
+  .apple-header-master {
+    background: rgba(29, 29, 31, 0.85) !important;
+    .apple-brand, .apple-menu-item, .brand-name { color: #f5f5f7 !important; }
+    .tet-marquee-bottom { background: #220808; span { color: #ff4d4d; } }
+    .dropdown-menu {
+        background: #2c2c2e;
+        .apple-dropdown-item { color: #f5f5f7 !important; &:hover { background: $tet-red; } }
+    }
+  }
+}
+
+@keyframes tet-marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }

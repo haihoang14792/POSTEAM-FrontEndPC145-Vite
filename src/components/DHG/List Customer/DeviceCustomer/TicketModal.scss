@@ -1,0 +1,195 @@
+/* ==========================================================================
+   TICKET MODAL - DARK MODE (SUPER HIGH CONTRAST)
+   ========================================================================== */
+
+/* 1. LIGHT MODE (Giữ nguyên mặc định) */
+.ticket-modal {
+  /* Tùy chỉnh nhẹ nếu cần cho giao diện sáng */
+}
+
+/* 2. DARK MODE (Chế độ tối - Ép màu toàn diện) */
+html[data-coreui-theme='dark'] {
+  
+  // Khai báo màu
+  $dm-bg-darker: #0b1121; // Đen xanh đậm (Nền chính)
+  $dm-bg-card: #1e293b;   // Xám xanh (Nền card/modal)
+  $dm-border: #334155;    // Viền
+  $dm-white: #ffffff;     // Chữ trắng tinh
+
+  /* --- A. XỬ LÝ DROPDOWN (Menu xổ xuống) --- */
+  // (Phải viết ở ngoài cùng vì Dropdown render vào body)
+  .ant-select-dropdown, 
+  .ant-picker-dropdown, 
+  .ant-dropdown-menu-submenu, 
+  .ant-dropdown-menu {
+    background-color: $dm-bg-card !important;
+    border: 1px solid $dm-border !important;
+
+    // Ép chữ trong menu thành trắng
+    * { color: $dm-white !important; }
+    
+    .ant-select-item-option-selected {
+      background-color: rgba(59, 130, 246, 0.3) !important; // Chọn màu xanh sáng
+      font-weight: bold;
+    }
+    .ant-select-item-option-active {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  /* --- B. MODAL CHÍNH --- */
+  .ticket-modal {
+    
+    // 1. ÉP TOÀN BỘ CHỮ THÀNH MÀU TRẮNG
+    // Dấu * quét sạch mọi thành phần con, đảm bảo không sót chữ đen nào
+    * {
+        color: $dm-white !important;
+        border-color: $dm-border; // Ép viền mặc định
+    }
+
+    // 2. MODAL CONTENT (Khung chính)
+    .ant-modal-content {
+      background-color: $dm-bg-darker !important; 
+      padding: 0; // Để header gradient tràn viền
+    }
+
+    // 3. MODAL HEADER (Giữ gradient xanh cũ hoặc đổi nếu muốn)
+    .ant-modal-header {
+       background: transparent !important;
+       border-bottom: none !important;
+    }
+
+    // 4. OVERRIDE CÁC DIV CÓ STYLE NỘI TUYẾN (Inline Style)
+    // Tìm các div bên trong body modal đang bị set background trắng
+    .ant-modal-body {
+        background-color: $dm-bg-darker !important;
+
+        // Div bao ngoài (Container chính)
+        > div {
+             background-color: $dm-bg-darker !important; 
+        }
+
+        // Tìm cái Card thông tin (User, Store...)
+        .ant-card {
+            background-color: $dm-bg-card !important;
+            border: 1px solid $dm-border !important;
+        }
+
+        // Tìm cái Div chứa Tabs và Table (đang bị trắng)
+        // Trick: Target vào div con trực tiếp thứ 2 (thường là chỗ chứa table)
+        > div > div:last-child {
+            background-color: $dm-bg-card !important;
+            border: 1px solid $dm-border !important;
+            box-shadow: none !important;
+        }
+    }
+
+    // 5. MODAL FOOTER
+    .ant-modal-footer, 
+    .ant-modal-content > div:last-child {
+        background-color: $dm-bg-card !important;
+        border-top: 1px solid $dm-border !important;
+    }
+
+    // 6. INPUTS & SELECTS (Ô nhập liệu)
+    .ant-input,
+    .ant-select-selector,
+    .ant-picker {
+        background-color: #020617 !important; // Nền rất tối
+        border: 1px solid #475569 !important; // Viền xám sáng
+        color: #fff !important; // Chữ khi gõ màu trắng
+        
+        input { color: #fff !important; } // Input con bên trong Select
+    }
+    
+    // Placeholder (Chữ mờ gợi ý)
+    .ant-input::placeholder {
+        color: #94a3b8 !important; // Slate-400 (Xám sáng) - không dùng trắng tinh
+    }
+
+    // 7. TABLE (Bảng dữ liệu)
+    .ant-table {
+        background: transparent !important;
+        
+        // Header
+        .ant-table-thead > tr > th {
+            background-color: #111827 !important; // Header tối
+            color: #ffff00 !important; // Vàng chanh hoặc Trắng để nổi bật header
+            font-weight: bold !important;
+            border-bottom: 1px solid $dm-border !important;
+        }
+        
+        // Body Cells
+        .ant-table-tbody > tr > td {
+            background: transparent !important;
+            color: #e2e8f0 !important; // Trắng xám nhẹ cho dễ đọc
+            border-bottom: 1px solid $dm-border !important;
+        }
+
+        // Hover
+        .ant-table-tbody > tr:hover > td {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        // Selected Row
+        .ant-table-row-selected td {
+            background-color: rgba(37, 99, 235, 0.2) !important;
+        }
+    }
+
+    // 8. TABS (Thẻ Tab)
+    .ant-tabs-nav {
+        &::before { border-bottom: 1px solid $dm-border !important; }
+        
+        .ant-tabs-tab {
+            background: transparent !important;
+            border: 1px solid $dm-border !important;
+            color: #94a3b8 !important; // Tab chưa active màu xám
+        }
+        
+        .ant-tabs-tab-active {
+            background: #2563eb !important; // Active màu xanh
+            border-color: #2563eb !important;
+            
+            .ant-tabs-tab-btn { color: #fff !important; font-weight: bold; }
+        }
+    }
+
+    // 9. TAGS (Trạng thái)
+    // Cần ghi đè màu chữ tag vì * { color: white } ở trên làm mất màu đặc trưng
+    .ant-tag-green { color: #34d399 !important; background: rgba(16, 185, 129, 0.2) !important; border-color: #059669; }
+    .ant-tag-red   { color: #f87171 !important; background: rgba(239, 68, 68, 0.2) !important; border-color: #b91c1c; }
+    .ant-tag-blue  { color: #60a5fa !important; background: rgba(59, 130, 246, 0.2) !important; border-color: #1d4ed8; }
+    .ant-tag-gold  { color: #fbbf24 !important; background: rgba(245, 158, 11, 0.2) !important; border-color: #b45309; }
+    .ant-tag-cyan  { color: #22d3ee !important; background: rgba(34, 211, 238, 0.15) !important; border-color: #0891b2; }
+
+    // 10. BUTTONS (Nút bấm)
+    .ant-btn {
+        // Nút thường (Cancel/Close)
+        &.ant-btn-default {
+            background: transparent !important;
+            border-color: $dm-border !important;
+            color: #fff !important;
+            
+            &:hover { border-color: #60a5fa !important; color: #60a5fa !important; }
+        }
+        
+        // Nút Primary (Lưu/Gửi/Duyệt)
+        &.ant-btn-primary {
+            color: #fff !important;
+            // Giữ màu background gốc của button (xanh/đỏ/lá) không bị override thành đen
+        }
+        
+        // Nút Text Icon (Edit/Delete)
+        &.ant-btn-text {
+            color: #fff !important;
+            &:hover { background: rgba(255,255,255,0.1) !important; }
+        }
+        
+        // Nút Danger (Xóa)
+        &.ant-btn-dangerous, &.ant-btn-danger {
+             color: #f87171 !important;
+        }
+    }
+  }
+}

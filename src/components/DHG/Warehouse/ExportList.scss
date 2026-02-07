@@ -1,0 +1,290 @@
+
+
+
+// --- VARIABLES ---
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$bg-color: #f5f7fa;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$border-radius: 8px;
+
+.export-list-page {
+  padding: 0;
+  background-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  // --- 1. Header Card ---
+  .header-card {
+    border-radius: $border-radius;
+    margin-bottom: 20px;
+    border: 1px solid #f0f0f0;
+    box-shadow: $card-shadow;
+    background: #fff;
+    
+    // Gradient line trên đầu card cho đẹp
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, $primary-color, #69c0ff);
+      border-radius: $border-radius $border-radius 0 0;
+    }
+
+    .header-title-box {
+      h4 { margin-bottom: 4px; }
+    }
+
+    .header-stats-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 24px;
+
+      // Stats style
+      .ant-statistic-title {
+        font-size: 13px;
+        color: #8c8c8c;
+      }
+      .ant-statistic-content {
+        font-size: 20px;
+      }
+      
+      .action-buttons-group {
+        .ant-btn {
+          border-radius: 6px;
+          box-shadow: 0 2px 0 rgba(0, 0, 0, 0.04);
+          font-weight: 500;
+          height: 38px;
+        }
+        .btn-warranty {
+          background-color: #722ed1;
+          border-color: #722ed1;
+          color: white;
+          &:hover {
+             background-color: #9254de;
+             border-color: #9254de;
+          }
+        }
+      }
+    }
+  }
+
+  // --- 2. Main Content Card ---
+  .main-content-card {
+    border-radius: $border-radius;
+    border: none;
+    box-shadow: $card-shadow;
+    min-height: 650px;
+
+    .filter-form {
+      background: #fbfbfb;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #f0f0f0;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .ant-form-item { margin: 0; }
+      
+      .filter-actions-right {
+        margin-left: auto;
+        display: flex;
+        gap: 10px;
+        
+        .btn-excel {
+          color: #389e0d;
+          background: #f6ffed;
+          border-color: #b7eb8f;
+          &:hover { border-color: #389e0d; background: #fff; }
+        }
+      }
+    }
+
+    // Bảng dữ liệu
+    .export-table {
+      .ant-table-thead > tr > th {
+        background: #f0f5ff; // Màu header bảng xanh rất nhạt
+        color: #1f1f1f;
+        font-weight: 600;
+        border-bottom: 2px solid #e6f7ff;
+      }
+
+      .ant-table-tbody > tr > td {
+        padding: 12px 16px;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background-color: #fafafa !important;
+      }
+
+      .product-cell {
+        .product-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: #262626;
+          margin-bottom: 4px;
+        }
+        .product-model {
+           font-family: 'Consolas', monospace;
+           font-size: 12px;
+           color: #595959;
+           background: #f5f5f5;
+           padding: 2px 6px;
+           border-radius: 4px;
+           display: inline-block;
+           border: 1px solid #d9d9d9;
+        }
+      }
+      
+      // Tag trạng thái tròn trịa hơn
+      .ant-tag {
+        border-radius: 12px;
+        padding: 0 10px;
+        font-weight: 500;
+        border: none;
+      }
+    }
+  }
+
+  // --- 3. Responsive ---
+  @media (max-width: 992px) {
+    .header-card .header-stats-actions {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 16px;
+      gap: 16px;
+      
+      .action-buttons-group { width: 100%; margin-top: 10px; }
+      .ant-btn { width: 100%; margin-bottom: 8px; }
+    }
+    
+    .filter-form {
+      flex-direction: column;
+      .ant-form-item, .ant-select, .ant-input-affix-wrapper { width: 100% !important; }
+      .filter-actions-right { width: 100%; justify-content: space-between; margin-top: 10px; }
+    }
+  }
+}
+
+// --- STYLE CHO MODAL CHI TIẾT (Nằm ngoài class .export-list-page vì Modal render ở root) ---
+.modern-detail-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    padding: 0; // Reset padding để custom header đẹp hơn
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    background: #fff;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
+  }
+
+  .ant-modal-body {
+    padding: 24px;
+    background: #fafafa; // Nền body modal màu xám rất nhạt
+  }
+
+  .detail-modal-content {
+    // Info Cards
+    .info-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      height: 100%;
+      border: 1px solid #f0f0f0;
+
+      .ant-card-head {
+        min-height: 40px;
+        padding: 0 16px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: $primary-color;
+        background: #fbfbfb;
+      }
+      
+      .ant-card-body {
+        padding: 16px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 13px;
+        align-items: center;
+
+        &:last-child { margin-bottom: 0; }
+
+        .label {
+          color: #8c8c8c;
+          min-width: 100px;
+        }
+        .value {
+          color: #262626;
+          text-align: right;
+          word-break: break-word;
+          
+          &.highlight { font-weight: 600; color: $primary-color; font-size: 14px; }
+          &.code { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        }
+      }
+    }
+
+    // Serial Box
+    .serial-block {
+      margin-top: 10px;
+      
+      .serial-box {
+        margin-top: 8px;
+        background: #fff;
+        border: 1px dashed #d9d9d9;
+        padding: 12px;
+        border-radius: 6px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        color: #595959;
+        max-height: 120px;
+        overflow-y: auto;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        font-size: 13px;
+
+        &.main-serial { border-color: $primary-color; background: #f0f5ff; color: #003a8c; }
+        &.return-serial { border-color: $success-color; background: #f6ffed; color: #135200; }
+      }
+    }
+
+    // Footer Actions
+    .modal-actions-footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e8e8e8;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .ant-btn {
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        box-shadow: 0 2px 0 rgba(0,0,0,0.02);
+        
+        &.btn-return {
+          background-color: #fff;
+          border-color: #faad14;
+          color: #faad14;
+          &:hover { color: #fff; background-color: #faad14; }
+        }
+      }
+    }
+  }
+}

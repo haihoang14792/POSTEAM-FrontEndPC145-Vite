@@ -1,0 +1,79 @@
+.device-list-container {
+  padding: 16px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+
+  /* Responsive cho Mobile */
+  @media (max-width: 768px) {
+    padding: 8px; /* Giảm lề */
+
+    /* Card bộ lọc */
+    .ant-card {
+      margin-bottom: 12px !important;
+      
+      .ant-card-body {
+        padding: 12px !important;
+      }
+    }
+
+    /* Form tìm kiếm */
+    .ant-form-item {
+      margin-bottom: 12px !important;
+    }
+
+    /* Các nút Import/Export */
+    .action-bar {
+      flex-direction: column; /* Xếp dọc các nút */
+      align-items: stretch; /* Kéo full chiều rộng */
+      gap: 8px !important;
+
+      .action-group {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        
+        /* Chia đều chiều rộng cho các nút con */
+        > span, button {
+          flex: 1;
+        }
+        
+        /* Riêng nút upload cần css sâu hơn vì nó bọc nút button */
+        .ant-upload-wrapper, .ant-upload-select {
+            width: 100% !important;
+            flex: 1;
+            
+            .ant-btn {
+                width: 100%;
+            }
+        }
+      }
+    }
+
+    /* Nút Tìm kiếm / Reset trong form */
+    .search-buttons-col {
+      width: 100%;
+      margin-top: 8px;
+      
+      button {
+        height: 40px; /* Nút to hơn dễ bấm */
+      }
+    }
+  }
+}
+
+/* Tùy chỉnh thanh cuộn bảng cho đẹp hơn */
+.ant-table-body {
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+  }
+}
+
+/* Tag trạng thái đẹp hơn */
+.ant-tag {
+  font-weight: 500;
+  border: none;
+}

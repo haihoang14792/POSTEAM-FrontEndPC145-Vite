@@ -1,0 +1,447 @@
+// /* src/components/DHG/Warehouse/AddExportLoanPOS.scss */
+
+// /* ==========================================================================
+//    STYLE RIÊNG CHO MODAL: ADD EXPORT LOAN POS
+//    ========================================================================== */
+
+// /* --- 1. LIGHT MODE --- */
+// .add-export-loan-modal {
+//   .ant-modal-content {
+//     border-radius: 12px;
+//     overflow: hidden;
+//   }
+  
+//   .ant-input[readonly] {
+//     cursor: default;
+//     &:focus { box-shadow: none; border-color: transparent; }
+//   }
+// }
+
+// /* ==========================================================================
+//    2. DARK MODE OVERRIDES (FULL DARK THEME - HIGH CONTRAST)
+//    ========================================================================== */
+// html[data-coreui-theme='dark'] .add-export-loan-modal {
+
+//   /* --- A. MODAL CONTAINER --- */
+//   .ant-modal-content {
+//     background-color: #1e293b !important; /* Slate-800 */
+//     border: 1px solid #475569; 
+//     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+//   }
+
+//   .ant-modal-header {
+//     background-color: #1e293b !important;
+//     border-bottom: 1px solid #334155;
+    
+//     .ant-modal-title {
+//       .ant-typography { color: #ffffff !important; text-shadow: 0 0 10px rgba(255,255,255,0.1); } 
+//       .ant-typography-secondary { color: #cbd5e1 !important; }
+
+//       div[style*="background-color: #e6f7ff"] {
+//         background-color: rgba(59, 130, 246, 0.2) !important;
+//         border: 1px solid rgba(59, 130, 246, 0.4);
+//         .anticon { color: #60a5fa !important; text-shadow: 0 0 5px #3b82f6; }
+//       }
+//     }
+//   }
+
+//   .ant-modal-footer {
+//     background-color: #0f172a !important; /* Slate-900 */
+//     border-top: 1px solid #334155;
+//   }
+
+//   .ant-modal-close {
+//     color: #cbd5e1;
+//     &:hover { color: #ff4d4f; background-color: rgba(255, 77, 79, 0.15); }
+//   }
+
+//   /* --- B. CARDS --- */
+//   .ant-card {
+//     background-color: #0f172a !important;
+//     border: 1px solid #334155 !important;
+    
+//     .ant-card-head {
+//       border-bottom: 1px solid #334155 !important;
+//       color: #f1f5f9 !important;
+//       font-weight: 600;
+//       .anticon { color: #38bdf8 !important; }
+//     }
+
+//     .ant-card-body {
+//       background-color: transparent !important;
+//     }
+//   }
+
+//   /* --- C. FORM LABELS --- */
+//   .ant-form-item-label > label {
+//     color: #e2e8f0 !important;
+//     font-weight: 500;
+//   }
+
+//   /* --- D. INPUTS CONFIGURATION (QUAN TRỌNG: ĐÃ FIX VIỀN) --- */
+
+//   /* 1. Wrapper Inputs (Inputs có icon) - CHỈ style những cái KHÔNG borderless */
+//   .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-borderless) {
+//     background-color: #1e293b !important;
+//     border: 1px solid #475569 !important;
+    
+//     /* Input con bên trong wrapper luôn trong suốt để lấy nền của wrapper */
+//     > input.ant-input {
+//       background-color: transparent !important;
+//       border: none !important;
+//       color: #ffffff !important;
+//     }
+
+//     &:hover { border-color: #60a5fa !important; }
+//   }
+
+//   /* Focus cho Wrapper */
+//   .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper-focused {
+//      border-color: #3b82f6 !important;
+//      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+//   }
+
+//   /* 2. Standalone Inputs (Inputs trơn, không icon) & Textarea */
+//   /* Chỉ style nếu nó KHÔNG nằm trong wrapper và KHÔNG phải borderless */
+//   .ant-input:not(.ant-input-affix-wrapper > input):not(.ant-input-borderless),
+//   .ant-input-textarea {
+//     background-color: #1e293b !important;
+//     border: 1px solid #475569 !important;
+//     color: #ffffff !important;
+//     font-weight: 500;
+
+//     &:hover { border-color: #60a5fa !important; }
+//   }
+  
+//   /* Focus cho Standalone Inputs */
+//   .ant-input:not(.ant-input-affix-wrapper > input):not(.ant-input-borderless):focus,
+//   .ant-input-textarea:focus {
+//       border-color: #3b82f6 !important;
+//       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+//   }
+  
+//   /* Placeholder color chung */
+//   input::placeholder, textarea::placeholder {
+//     color: #64748b; font-weight: 400;
+//   }
+//   .ant-input-prefix, .anticon { color: #94a3b8 !important; }
+
+//   /* 3. ĐẶC BIỆT: FIX TRẠNG THÁI & NGƯỜI TẠO (Borderless) */
+//   /* Xóa sạch nền và viền cho các trường này */
+//   .ant-input-affix-wrapper-borderless,
+//   .ant-input-borderless {
+//     background-color: transparent !important;
+//     border: none !important;
+//     box-shadow: none !important;
+    
+//     /* Input con bên trong cũng phải trong suốt */
+//     > input.ant-input {
+//         background-color: transparent !important;
+//         border: none !important;
+//         box-shadow: none !important;
+//     }
+//   }
+
+//   /* --- E. SPECIAL FIELDS TEXT COLORS --- */
+  
+//   .ant-input[readonly] {
+//     cursor: default;
+
+//     /* Mã phiếu (PXDHG): Giữ nền nhẹ style riêng để nổi bật */
+//     &[value^="PXDHG"] {
+//        background-color: rgba(255, 255, 255, 0.05) !important;
+//        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+//        color: #ffffff !important; 
+//        font-weight: 700;
+//        border-radius: 4px;
+//        padding: 4px 11px !important;
+//     }
+
+//     /* Người tạo: Màu xanh neon */
+//     &[style*="color: #1890ff"] { 
+//         color: #60a5fa !important; 
+//         font-weight: 600; 
+//         text-shadow: 0 0 12px rgba(96, 165, 250, 0.6);
+//     }
+    
+//     /* Trạng thái: Màu vàng sáng */
+//     &[style*="color: #faad14"] { 
+//         color: #fbbf24 !important;
+//         font-weight: 600;
+//         text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+//     }
+//   }
+
+//   /* --- F. SELECT BOX --- */
+//   .ant-select { color: #fff !important; }
+//   .ant-select-selector {
+//     background-color: #1e293b !important;
+//     border: 1px solid #475569 !important;
+//     color: #ffffff !important;
+//   }
+//   .ant-select-selection-item { color: #ffffff !important; font-weight: 500; }
+//   .ant-select-selection-placeholder { color: #64748b !important; }
+//   .ant-select-arrow { color: #cbd5e1 !important; }
+  
+//   .ant-select-focused .ant-select-selector {
+//     border-color: #3b82f6 !important;
+//     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+//   }
+
+//   /* Dropdown Menu */
+//   .ant-select-dropdown {
+//     background-color: #1e293b !important;
+//     border: 1px solid #475569;
+//     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+    
+//     .ant-select-item {
+//       color: #e2e8f0;
+//       &-option-active { background-color: #334155 !important; color: #fff; }
+//       &-option-selected { background-color: #2563eb !important; color: #fff; font-weight: 600; }
+//     }
+//     .ant-empty-description { color: #94a3b8 !important; }
+//   }
+
+//   /* --- G. BUTTONS --- */
+//   .ant-btn {
+//     border-radius: 6px; font-weight: 500;
+
+//     &:not(.ant-btn-primary) {
+//       background-color: transparent !important;
+//       border: 1px solid #64748b !important;
+//       color: #e2e8f0 !important;
+//       &:hover { border-color: #ff4d4f !important; color: #ff4d4f !important; background-color: rgba(255, 77, 79, 0.1) !important; }
+//     }
+
+//     &.ant-btn-primary {
+//       background-color: #3b82f6 !important;
+//       border-color: #3b82f6 !important;
+//       box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+//       &:hover { background-color: #2563eb !important; box-shadow: 0 0 15px rgba(37, 99, 235, 0.6); }
+//     }
+//   }
+// }
+
+/* src/components/DHG/Warehouse/AddExportLoanPOS.scss */
+
+/* ==========================================================================
+   STYLE RIÊNG CHO MODAL: ADD EXPORT LOAN POS
+   ========================================================================== */
+
+/* --- 1. LIGHT MODE --- */
+.add-export-loan-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .ant-input[readonly] {
+    cursor: default;
+    &:focus { box-shadow: none; border-color: transparent; }
+  }
+}
+
+/* ==========================================================================
+   2. DARK MODE OVERRIDES (FULL DARK THEME - HIGH CONTRAST)
+   ========================================================================== */
+html[data-coreui-theme='dark'] .add-export-loan-modal {
+
+  /* --- A. MODAL CONTAINER --- */
+  .ant-modal-content {
+    background-color: #1e293b !important; /* Slate-800 */
+    border: 1px solid #475569; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+  }
+
+  .ant-modal-header {
+    background-color: #1e293b !important;
+    border-bottom: 1px solid #334155;
+    
+    .ant-modal-title {
+      .ant-typography { color: #ffffff !important; text-shadow: 0 0 10px rgba(255,255,255,0.1); } 
+      .ant-typography-secondary { color: #cbd5e1 !important; }
+
+      div[style*="background-color: #e6f7ff"] {
+        background-color: rgba(59, 130, 246, 0.2) !important;
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        .anticon { color: #60a5fa !important; text-shadow: 0 0 5px #3b82f6; }
+      }
+    }
+  }
+
+  .ant-modal-footer {
+    background-color: #0f172a !important; /* Slate-900 */
+    border-top: 1px solid #334155;
+  }
+
+  .ant-modal-close {
+    color: #cbd5e1;
+    &:hover { color: #ff4d4f; background-color: rgba(255, 77, 79, 0.15); }
+  }
+
+  /* --- B. CARDS --- */
+  .ant-card {
+    background-color: #0f172a !important;
+    border: 1px solid #334155 !important;
+    
+    .ant-card-head {
+      border-bottom: 1px solid #334155 !important;
+      color: #f1f5f9 !important;
+      font-weight: 600;
+      .anticon { color: #38bdf8 !important; }
+    }
+
+    .ant-card-body {
+      background-color: transparent !important;
+    }
+  }
+
+  /* --- C. FORM LABELS --- */
+  .ant-form-item-label > label {
+    color: #e2e8f0 !important;
+    font-weight: 500;
+  }
+
+  /* --- D. INPUTS CONFIGURATION (QUAN TRỌNG: ĐÃ FIX VIỀN) --- */
+
+  /* 1. Wrapper Inputs (Inputs có icon) - CHỈ style những cái KHÔNG borderless */
+  .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-borderless) {
+    background-color: #1e293b !important;
+    border: 1px solid #475569 !important;
+    
+    /* Input con bên trong wrapper luôn trong suốt để lấy nền của wrapper */
+    > input.ant-input {
+      background-color: transparent !important;
+      border: none !important;
+      color: #ffffff !important;
+    }
+
+    &:hover { border-color: #60a5fa !important; }
+  }
+
+  /* Focus cho Wrapper */
+  .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper-focused {
+     border-color: #3b82f6 !important;
+     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+  }
+
+  /* 2. Standalone Inputs (Inputs trơn, không icon) & Textarea */
+  /* Chỉ style nếu nó KHÔNG nằm trong wrapper và KHÔNG phải borderless */
+  .ant-input:not(.ant-input-affix-wrapper > input):not(.ant-input-borderless),
+  .ant-input-textarea {
+    background-color: #1e293b !important;
+    border: 1px solid #475569 !important;
+    color: #ffffff !important;
+    font-weight: 500;
+
+    &:hover { border-color: #60a5fa !important; }
+  }
+  
+  /* Focus cho Standalone Inputs */
+  .ant-input:not(.ant-input-affix-wrapper > input):not(.ant-input-borderless):focus,
+  .ant-input-textarea:focus {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+  }
+  
+  /* Placeholder color chung */
+  input::placeholder, textarea::placeholder {
+    color: #64748b; font-weight: 400;
+  }
+  .ant-input-prefix, .anticon { color: #94a3b8 !important; }
+
+  /* 3. ĐẶC BIỆT: FIX TRẠNG THÁI & NGƯỜI TẠO (Borderless) */
+  /* Xóa sạch nền và viền cho các trường này */
+  .ant-input-affix-wrapper-borderless,
+  .ant-input-borderless {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    
+    /* Input con bên trong cũng phải trong suốt */
+    > input.ant-input {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+  }
+
+  /* --- E. SPECIAL FIELDS TEXT COLORS --- */
+  
+  .ant-input[readonly] {
+    cursor: default;
+
+    /* Mã phiếu (PXDHG): Giữ nền nhẹ style riêng để nổi bật */
+    &[value^="PXDHG"] {
+       background-color: rgba(255, 255, 255, 0.05) !important;
+       border: 1px solid rgba(255, 255, 255, 0.1) !important;
+       color: #ffffff !important; 
+       font-weight: 700;
+       border-radius: 4px;
+       padding: 4px 11px !important;
+    }
+
+    /* Người tạo: Màu xanh neon */
+    &[style*="color: #1890ff"] { 
+        color: #60a5fa !important; 
+        font-weight: 600; 
+        text-shadow: 0 0 12px rgba(96, 165, 250, 0.6);
+    }
+    
+    /* Trạng thái: Màu vàng sáng */
+    &[style*="color: #faad14"] { 
+        color: #fbbf24 !important;
+        font-weight: 600;
+        text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+    }
+  }
+
+  /* --- F. SELECT BOX --- */
+  .ant-select { color: #fff !important; }
+  .ant-select-selector {
+    background-color: #1e293b !important;
+    border: 1px solid #475569 !important;
+    color: #ffffff !important;
+  }
+  .ant-select-selection-item { color: #ffffff !important; font-weight: 500; }
+  .ant-select-selection-placeholder { color: #64748b !important; }
+  .ant-select-arrow { color: #cbd5e1 !important; }
+  
+  .ant-select-focused .ant-select-selector {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+  }
+
+  /* Dropdown Menu */
+  .ant-select-dropdown {
+    background-color: #1e293b !important;
+    border: 1px solid #475569;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+    
+    .ant-select-item {
+      color: #e2e8f0;
+      &-option-active { background-color: #334155 !important; color: #fff; }
+      &-option-selected { background-color: #2563eb !important; color: #fff; font-weight: 600; }
+    }
+    .ant-empty-description { color: #94a3b8 !important; }
+  }
+
+  /* --- G. BUTTONS --- */
+  .ant-btn {
+    border-radius: 6px; font-weight: 500;
+
+    &:not(.ant-btn-primary) {
+      background-color: transparent !important;
+      border: 1px solid #64748b !important;
+      color: #e2e8f0 !important;
+      &:hover { border-color: #ff4d4f !important; color: #ff4d4f !important; background-color: rgba(255, 77, 79, 0.1) !important; }
+    }
+
+    &.ant-btn-primary {
+      background-color: #3b82f6 !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+      &:hover { background-color: #2563eb !important; box-shadow: 0 0 15px rgba(37, 99, 235, 0.6); }
+    }
+  }
+}

@@ -1,0 +1,613 @@
+
+// /* ==========================================================================
+//    DEVICE MANAGERS STYLE - FULL DARK MODE SUPPORT
+//    ========================================================================== */
+
+// /* --------------------------------------------------------------------------
+//    1. LIGHT MODE (GIAO DIỆN SÁNG - MẶC ĐỊNH)
+//    -------------------------------------------------------------------------- */
+// .device-managers-container {
+//   padding: 20px;
+//   background: var(--cui-body-bg);
+//   min-height: 100vh;
+//   transition: all 0.3s ease;
+
+//   /* Card Header & Body */
+//   .header-card,
+//   .body-card {
+//     border-radius: 8px;
+//     margin-bottom: 16px;
+//     background: var(--cui-card-bg);
+//     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+//     border: 1px solid #e5e7eb; // Viền nhẹ cho Light mode
+
+//     .ant-statistic-title {
+//       font-size: 13px;
+//       color: var(--cui-secondary-color);
+//     }
+//     .ant-statistic-content {
+//       font-weight: 600;
+//     }
+//   }
+
+//   .body-card {
+//     .filter-form .ant-form-item {
+//       margin-bottom: 0;
+//     }
+//   }
+
+//   /* Button Success Custom */
+//   .btn-success {
+//     background-color: #10b981; /* Emerald-500: Xanh hiện đại */
+//     border-color: #10b981;
+//     color: #fff;
+//     font-weight: 500;
+//     box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+
+//     &:hover {
+//       background-color: #059669;
+//       border-color: #059669;
+//     }
+//   }
+
+//   /* Table Header (Light Mode) */
+//   .ant-table-thead > tr > th {
+//     background: #f8fafc;
+//     color: #475569;
+//     font-weight: 600;
+//   }
+  
+//   /* Utils */
+//   .hover-row {
+//     cursor: pointer;
+//     transition: all 0.2s ease;
+//   }
+//   .text-muted {
+//     color: var(--cui-secondary-color);
+//   }
+// }
+
+// /* --------------------------------------------------------------------------
+//    2. DARK MODE (GIAO DIỆN TỐI - FIX TOÀN DIỆN)
+//    -------------------------------------------------------------------------- */
+// html[data-coreui-theme='dark'] {
+  
+//   // KHAI BÁO BIẾN MÀU (Slate Palette - Dễ nhìn, đỡ mỏi mắt)
+//   $dm-bg: #0f172a;        // Slate-900 (Nền chính)
+//   $dm-card: #1e293b;      // Slate-800 (Nền card)
+//   $dm-border: #334155;    // Slate-700 (Viền)
+//   $dm-text: #ffffff;      // Trắng tinh (Cho tiêu đề)
+//   $dm-text-sub: #cbd5e1;  // Xám sáng (Cho nội dung phụ)
+//   $dm-input-bg: #020617;  // Nền Input tối hơn Card
+
+//   /* --- A. FIX MENU XỔ XUỐNG (Dropdown, Select, DatePicker) --- 
+//      Phần này bắt buộc phải viết ở đây vì Dropdown render ngoài container chính */
+  
+//   .ant-select-dropdown, 
+//   .ant-picker-dropdown,
+//   .ant-dropdown-menu {
+//     background-color: $dm-card !important;
+//     border: 1px solid $dm-border;
+
+//     .ant-select-item,
+//     .ant-dropdown-menu-item {
+//       color: $dm-text !important; // Chữ trong menu màu trắng
+      
+//       &-option-active, &-active {
+//         background-color: rgba(255, 255, 255, 0.1) !important; // Hover sáng
+//       }
+//       &-option-selected, &-selected {
+//         background-color: rgba(16, 185, 129, 0.2) !important; // Nền xanh nhạt
+//         color: #fff !important;
+//         font-weight: 600;
+//       }
+//     }
+    
+//     // Fix lịch (DatePicker)
+//     .ant-picker-panel { background: transparent !important; }
+//     .ant-picker-header { color: $dm-text !important; border-bottom-color: $dm-border; }
+//     .ant-picker-content th { color: $dm-text-sub !important; }
+//     .ant-picker-cell { color: $dm-text-sub !important; }
+//     .ant-picker-cell-in-view { color: $dm-text !important; }
+    
+//     // Dữ liệu trống
+//     .ant-empty-description { color: $dm-text-sub !important; }
+//   }
+
+//   /* --- B. COMPONENT CHÍNH --- */
+//   .device-managers-container {
+//     background: $dm-bg;
+//     color: $dm-text;
+
+//     // Reset màu mặc định cho các thẻ con
+//     * { color: inherit; border-color: $dm-border; }
+
+//     /* 1. Cards */
+//     .header-card,
+//     .body-card {
+//       background: $dm-card;
+//       border: 1px solid $dm-border;
+//       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); // Shadow đậm tạo độ nổi
+
+//       .ant-statistic-title {
+//         color: #94a3b8 !important; // Slate-400
+//       }
+//       .ant-statistic-content,
+//       .ant-statistic-content-value {
+//         color: #fff !important;
+//         font-weight: 700;
+//       }
+//     }
+
+//     /* 2. Table (Bảng dữ liệu) - QUAN TRỌNG NHẤT */
+//     .ant-table {
+//       background: transparent;
+//       color: $dm-text;
+
+//       // Header Bảng
+//       .ant-table-thead > tr > th {
+//         background: #111827 !important; // Nền header tối hơn card chút
+//         color: #fff !important;         // Chữ trắng tinh
+//         border-bottom: 1px solid $dm-border;
+//         font-weight: 600;
+        
+//         &::before { display: none; } // Bỏ dấu gạch dọc
+//       }
+
+//       // Nội dung Bảng
+//       .ant-table-tbody > tr > td {
+//         background: transparent !important;
+//         color: $dm-text-sub !important; // Màu chữ xám sáng dễ đọc
+//         border-bottom: 1px solid $dm-border;
+        
+//         a { color: #60a5fa !important; text-decoration: none; } // Link màu xanh dương sáng
+//       }
+
+//       // Hiệu ứng Hover dòng
+//       .ant-table-tbody > tr:hover > td {
+//         background: rgba(255, 255, 255, 0.08) !important;
+//       }
+
+//       // Dòng được chọn
+//       .ant-table-row-selected td {
+//         background: rgba(59, 130, 246, 0.2) !important;
+//       }
+      
+//       // Phân trang (Pagination)
+//       .ant-pagination {
+//          .ant-pagination-item a { color: $dm-text-sub; }
+//          .ant-pagination-item-active { 
+//              background: transparent; 
+//              border-color: #10b981; 
+//              a { color: #10b981 !important; }
+//          }
+//          .ant-pagination-prev button, .ant-pagination-next button { 
+//              color: $dm-text-sub; 
+//              background: transparent;
+//          }
+//       }
+//     }
+
+//     /* 3. Inputs & Forms */
+//     .ant-input,
+//     .ant-select-selector,
+//     .ant-picker {
+//       background-color: $dm-input-bg !important;
+//       border: 1px solid #475569 !important; // Viền xám trung tính
+//       color: #fff !important;
+
+//       &:hover, &:focus, &-focused {
+//         border-color: #60a5fa !important; // Hover ra viền xanh
+//       }
+//     }
+
+//     .ant-input::placeholder { color: #64748b; } // Placeholder không bị quá chìm
+//     .ant-select-arrow, .ant-picker-suffix, .anticon-search { color: #94a3b8 !important; }
+    
+//     // Label của form
+//     .ant-form-item-label > label { color: $dm-text !important; }
+
+//     /* 4. TAGS TRẠNG THÁI (FIX LỖI CHỮ BỊ TỐI) */
+//     .ant-tag {
+//         border-color: transparent;
+//         background: rgba(255,255,255,0.1);
+//         color: $dm-text-sub;
+//     }
+    
+//     // Success (Xanh lá)
+//     .ant-tag-success, .ant-tag-green {
+//         background: rgba(16, 185, 129, 0.15) !important;
+//         border: 1px solid #059669 !important;
+//         color: #34d399 !important; // Chữ xanh sáng
+//     }
+    
+//     // Warning (Vàng/Cam)
+//     .ant-tag-warning, .ant-tag-orange, .ant-tag-gold {
+//         background: rgba(245, 158, 11, 0.15) !important;
+//         border: 1px solid #b45309 !important;
+//         color: #fbbf24 !important; // Chữ vàng sáng
+//     }
+    
+//     // Error (Đỏ)
+//     .ant-tag-error, .ant-tag-red {
+//         background: rgba(239, 68, 68, 0.15) !important;
+//         border: 1px solid #b91c1c !important;
+//         color: #f87171 !important; // Chữ đỏ sáng
+//     }
+    
+//     // Processing (Xanh dương)
+//     .ant-tag-processing, .ant-tag-blue {
+//         background: rgba(59, 130, 246, 0.15) !important;
+//         border: 1px solid #1d4ed8 !important;
+//         color: #60a5fa !important; // Chữ xanh dương sáng
+//     }
+
+//     /* 5. ALERTS (CẢNH BÁO) */
+//     .ant-alert {
+//         background-color: $dm-card !important;
+//         border: 1px solid $dm-border !important;
+        
+//         .ant-alert-message { color: #fff !important; }
+//         .ant-alert-description { color: $dm-text-sub !important; }
+        
+//         &-warning { border-color: #a16207 !important; .anticon { color: #fbbf24 !important; } }
+//         &-info { border-color: #1d4ed8 !important; .anticon { color: #60a5fa !important; } }
+//         &-error { border-color: #b91c1c !important; .anticon { color: #f87171 !important; } }
+//     }
+
+//     /* 6. Utility Text */
+//     .text-muted { color: #94a3b8 !important; }
+//   }
+// }
+
+
+
+/* ==========================================================================
+   DEVICE MANAGERS STYLE - FULL DARK MODE SUPPORT
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. LIGHT MODE (GIAO DIỆN SÁNG - MẶC ĐỊNH)
+   -------------------------------------------------------------------------- */
+.device-managers-container {
+  padding: 20px;
+  background: var(--cui-body-bg);
+  min-height: 100vh;
+  transition: all 0.3s ease;
+
+  /* Card Header & Body */
+  .header-card,
+  .body-card {
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: var(--cui-card-bg);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb; // Viền nhẹ cho Light mode
+
+    .ant-statistic-title {
+      font-size: 13px;
+      color: var(--cui-secondary-color);
+    }
+    .ant-statistic-content {
+      font-weight: 600;
+    }
+  }
+
+  .body-card {
+    .filter-form .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Button Success Custom */
+  .btn-success {
+    background-color: #10b981; /* Emerald-500: Xanh hiện đại */
+    border-color: #10b981;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+
+    &:hover {
+      background-color: #059669;
+      border-color: #059669;
+    }
+  }
+
+  /* Table Header (Light Mode) */
+  .ant-table-thead > tr > th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+  }
+  
+  /* Utils */
+  .hover-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .text-muted {
+    color: var(--cui-secondary-color);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. DARK MODE (GIAO DIỆN TỐI - FIX TOÀN DIỆN)
+   -------------------------------------------------------------------------- */
+html[data-coreui-theme='dark'] {
+  
+  // KHAI BÁO BIẾN MÀU (Slate Palette - Dễ nhìn, đỡ mỏi mắt)
+  $dm-bg: #0f172a;        // Slate-900 (Nền chính)
+  $dm-card: #1e293b;      // Slate-800 (Nền card)
+  $dm-border: #334155;    // Slate-700 (Viền)
+  $dm-text: #ffffff;      // Trắng tinh (Cho tiêu đề)
+  $dm-text-sub: #cbd5e1;  // Xám sáng (Cho nội dung phụ)
+  $dm-input-bg: #020617;  // Nền Input tối hơn Card
+
+  /* --- A. FIX MENU XỔ XUỐNG (Dropdown, Select, DatePicker) --- 
+     Phần này bắt buộc phải viết ở đây vì Dropdown render ngoài container chính */
+  
+  .ant-select-dropdown, 
+  .ant-picker-dropdown,
+  .ant-dropdown-menu {
+    background-color: $dm-card !important;
+    border: 1px solid $dm-border;
+
+    .ant-select-item,
+    .ant-dropdown-menu-item {
+      color: $dm-text !important; // Chữ trong menu màu trắng
+      
+      &-option-active, &-active {
+        background-color: rgba(255, 255, 255, 0.1) !important; // Hover sáng
+      }
+      &-option-selected, &-selected {
+        background-color: rgba(16, 185, 129, 0.2) !important; // Nền xanh nhạt
+        color: #fff !important;
+        font-weight: 600;
+      }
+    }
+    
+    // Fix lịch (DatePicker)
+    .ant-picker-panel { background: transparent !important; }
+    .ant-picker-header { color: $dm-text !important; border-bottom-color: $dm-border; }
+    .ant-picker-content th { color: $dm-text-sub !important; }
+    .ant-picker-cell { color: $dm-text-sub !important; }
+    .ant-picker-cell-in-view { color: $dm-text !important; }
+    
+    // Dữ liệu trống
+    .ant-empty-description { color: $dm-text-sub !important; }
+  }
+
+  /* --- B. COMPONENT CHÍNH --- */
+  .device-managers-container {
+    background: $dm-bg;
+    color: $dm-text;
+
+    // Reset màu mặc định cho các thẻ con
+    * { color: inherit; border-color: $dm-border; }
+
+    /* 1. Cards */
+    .header-card,
+    .body-card {
+      background: $dm-card;
+      border: 1px solid $dm-border;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); // Shadow đậm tạo độ nổi
+
+      .ant-statistic-title {
+        color: #94a3b8 !important; // Slate-400
+      }
+      .ant-statistic-content,
+      .ant-statistic-content-value {
+        color: #fff !important;
+        font-weight: 700;
+      }
+    }
+
+    /* 2. Table (Bảng dữ liệu) - QUAN TRỌNG NHẤT */
+    .ant-table {
+      background: transparent;
+      color: $dm-text;
+
+      // Header Bảng
+      .ant-table-thead > tr > th {
+        background: #111827 !important; // Nền header tối hơn card chút
+        color: #fff !important;         // Chữ trắng tinh
+        border-bottom: 1px solid $dm-border;
+        font-weight: 600;
+        
+        &::before { display: none; } // Bỏ dấu gạch dọc
+      }
+
+      // Nội dung Bảng
+      .ant-table-tbody > tr > td {
+        background: transparent !important;
+        color: $dm-text-sub !important; // Màu chữ xám sáng dễ đọc
+        border-bottom: 1px solid $dm-border;
+        
+        a { color: #60a5fa !important; text-decoration: none; } // Link màu xanh dương sáng
+      }
+
+      // Hiệu ứng Hover dòng
+      .ant-table-tbody > tr:hover > td {
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      // Dòng được chọn
+      .ant-table-row-selected td {
+        background: rgba(59, 130, 246, 0.2) !important;
+      }
+      
+      // Phân trang (Pagination)
+      .ant-pagination {
+         .ant-pagination-item a { color: $dm-text-sub; }
+         .ant-pagination-item-active { 
+             background: transparent; 
+             border-color: #10b981; 
+             a { color: #10b981 !important; }
+         }
+         .ant-pagination-prev button, .ant-pagination-next button { 
+             color: $dm-text-sub; 
+             background: transparent;
+         }
+      }
+    }
+
+    /* 3. Inputs & Forms */
+    .ant-input,
+    .ant-select-selector,
+    .ant-picker {
+      background-color: $dm-input-bg !important;
+      border: 1px solid #475569 !important; // Viền xám trung tính
+      color: #fff !important;
+
+      &:hover, &:focus, &-focused {
+        border-color: #60a5fa !important; // Hover ra viền xanh
+      }
+    }
+
+    .ant-input::placeholder { color: #64748b; } // Placeholder không bị quá chìm
+    .ant-select-arrow, .ant-picker-suffix, .anticon-search { color: #94a3b8 !important; }
+    
+    // Label của form
+    .ant-form-item-label > label { color: $dm-text !important; }
+
+    /* 4. TAGS TRẠNG THÁI (FIX LỖI CHỮ BỊ TỐI) */
+    .ant-tag {
+        border-color: transparent;
+        background: rgba(255,255,255,0.1);
+        color: $dm-text-sub;
+    }
+    
+    // Success (Xanh lá)
+    .ant-tag-success, .ant-tag-green {
+        background: rgba(16, 185, 129, 0.15) !important;
+        border: 1px solid #059669 !important;
+        color: #34d399 !important; // Chữ xanh sáng
+    }
+    
+    // Warning (Vàng/Cam)
+    .ant-tag-warning, .ant-tag-orange, .ant-tag-gold {
+        background: rgba(245, 158, 11, 0.15) !important;
+        border: 1px solid #b45309 !important;
+        color: #fbbf24 !important; // Chữ vàng sáng
+    }
+    
+    // Error (Đỏ)
+    .ant-tag-error, .ant-tag-red {
+        background: rgba(239, 68, 68, 0.15) !important;
+        border: 1px solid #b91c1c !important;
+        color: #f87171 !important; // Chữ đỏ sáng
+    }
+    
+    // Processing (Xanh dương)
+    .ant-tag-processing, .ant-tag-blue {
+        background: rgba(59, 130, 246, 0.15) !important;
+        border: 1px solid #1d4ed8 !important;
+        color: #60a5fa !important; // Chữ xanh dương sáng
+    }
+    
+    // Cyan (Vị trí - Mới thêm)
+    .ant-tag-cyan {
+        background: rgba(34, 211, 238, 0.15) !important;
+        border: 1px solid #0891b2 !important;
+        color: #22d3ee !important; // Chữ xanh ngọc sáng
+    }
+
+    /* 5. ALERTS (CẢNH BÁO) */
+    .ant-alert {
+        background-color: $dm-card !important;
+        border: 1px solid $dm-border !important;
+        
+        .ant-alert-message { color: #fff !important; }
+        .ant-alert-description { color: $dm-text-sub !important; }
+        
+        &-warning { border-color: #a16207 !important; .anticon { color: #fbbf24 !important; } }
+        &-info { border-color: #1d4ed8 !important; .anticon { color: #60a5fa !important; } }
+        &-error { border-color: #b91c1c !important; .anticon { color: #f87171 !important; } }
+    }
+
+    /* 6. Utility Text */
+    .text-muted { color: #94a3b8 !important; }
+  }
+
+  /* --- C. FIX RIÊNG CHO MODAL CHI TIẾT & DESCRIPTIONS --- 
+     (Phần này nằm ngoài .device-managers-container vì Modal render ở body) */
+  
+  // 1. STYLE KHUNG MODAL CHUNG (Áp dụng cho tất cả Modal)
+  .ant-modal .ant-modal-content {
+      background-color: $dm-card !important; // Nền modal màu xám xanh
+      border: 1px solid $dm-border;
+      
+      // Header Modal
+      .ant-modal-header {
+          background: transparent !important;
+          border-bottom: 1px solid $dm-border !important;
+          
+          .ant-modal-title {
+              color: $dm-text !important; // Tiêu đề trắng
+          }
+      }
+      
+      // Nút X (Close)
+      .ant-modal-close {
+          color: $dm-text-sub !important;
+          &:hover { color: #f87171 !important; background: rgba(255,255,255,0.1); }
+      }
+      
+      // Body Modal
+      .ant-modal-body {
+          color: $dm-text !important;
+      }
+      
+      // Footer Modal
+      .ant-modal-footer {
+          border-top: 1px solid $dm-border !important;
+          
+          .ant-btn-default {
+              background: transparent;
+              border-color: $dm-border;
+              color: $dm-text;
+              &:hover { border-color: #60a5fa; color: #60a5fa; }
+          }
+      }
+  }
+
+  // 2. STYLE COMPONENT DESCRIPTIONS (Bảng thông tin chi tiết)
+  .ant-descriptions {
+      color: $dm-text !important;
+      
+      // Tiêu đề của Descriptions (nếu có)
+      .ant-descriptions-title {
+          color: $dm-text !important;
+      }
+
+      // Khung viền bao ngoài
+      &-bordered .ant-descriptions-view {
+          border: 1px solid $dm-border !important;
+      }
+      
+      // Ô TIÊU ĐỀ (Label - Bên trái)
+      &-item-label {
+          background-color: #111827 !important; // Màu tối hơn để phân biệt
+          color: #94a3b8 !important;            // Chữ màu xám sáng
+          border-right: 1px solid $dm-border !important;
+          border-bottom: 1px solid $dm-border !important;
+          font-weight: 600;
+      }
+      
+      // Ô NỘI DUNG (Content - Bên phải)
+      &-item-content {
+          background-color: transparent !important;
+          color: #fff !important;               // Chữ trắng tinh
+          border-bottom: 1px solid $dm-border !important;
+          border-right: 1px solid $dm-border !important;
+      }
+      
+      // Fix viền cho dòng cuối cùng
+      &-row:last-child {
+           .ant-descriptions-item-label, 
+           .ant-descriptions-item-content {
+               border-bottom: none !important;
+           }
+      }
+  }
+}

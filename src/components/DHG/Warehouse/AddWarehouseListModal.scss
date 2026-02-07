@@ -1,0 +1,55 @@
+/* AddSupplierModal.css */
+.add-warehouse-modal .ant-modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: none;
+  }
+  
+  .modal-header {
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .modal-header .icon {
+    font-size: 26px;
+    margin-right: 10px;
+  }
+  
+  .modal-header .title {
+    font-size: 22px;
+    font-weight: 500;
+  }
+  
+  .modal-body {
+    padding: 30px;
+    background: #ffffff;
+  }
+  
+  .add-warehouse-modal .ant-modal-footer {
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+    padding: 16px 24px;
+    text-align: right;
+  }
+  
+  .form-item {
+    margin-bottom: 20px;
+  }
+  
+  .input {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .input:focus,
+  .input:hover {
+    border-color: #007bff;
+  }
+  

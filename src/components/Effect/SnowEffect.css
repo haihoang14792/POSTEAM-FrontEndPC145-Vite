@@ -1,0 +1,27 @@
+.effect-container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.mai-flower {
+  position: absolute; /* Thay đổi từ fixed sang absolute */
+  top: -10%;
+  user-select: none;
+  /* Khai báo animation mặc định */
+  animation-name: fall, sway;
+  animation-iteration-count: infinite, infinite;
+  animation-timing-function: linear, ease-in-out;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+@keyframes sway {
+  0%, 100% { margin-left: 0px; }
+  50% { margin-left: 50px; }
+}

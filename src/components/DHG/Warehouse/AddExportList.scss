@@ -1,0 +1,176 @@
+
+
+.add-export-list-modal {
+  /* ===== Modal container ===== */
+  .ant-modal {
+    top: 16px;
+    max-width: 95vw;
+    padding-bottom: 0;
+  }
+
+  .ant-modal-content {
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  /* ===== Header ===== */
+  .ant-modal-header {
+    background: #fff;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0;
+
+    .modal-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #e6f7ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .anticon {
+          font-size: 16px;
+          color: #1890ff;
+        }
+      }
+
+      h5.ant-typography {
+        font-size: 15px;
+        margin: 0;
+      }
+    }
+  }
+
+  /* ===== Body ===== */
+  .ant-modal-body {
+    padding: 16px;
+    background: #f8f9fa;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  /* ===== Card ===== */
+  .section-card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+    &.mt-3 {
+      margin-top: 12px;
+    }
+
+    .ant-card-head {
+      min-height: 36px;
+      padding: 0 14px;
+      border-bottom: 1px solid #f0f0f0;
+
+      .ant-card-head-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #595959;
+        padding: 8px 0;
+      }
+    }
+
+    .ant-card-body {
+      padding: 14px;
+    }
+  }
+
+  /* ===== Form ===== */
+  .ant-form-item {
+    margin-bottom: 10px;
+
+    .ant-form-item-label {
+      padding-bottom: 2px;
+
+      > label {
+        font-size: 12px;
+        color: #595959;
+      }
+    }
+  }
+
+  .ant-input,
+  .ant-input-number,
+  .ant-select-selector {
+    border-radius: 6px !important;
+    font-size: 13px;
+
+    &:hover {
+      border-color: #40a9ff;
+    }
+  }
+
+  .ant-input-textarea textarea {
+    border-radius: 6px;
+    background: #fafafa;
+
+    &:focus {
+      background: #fff;
+    }
+  }
+
+  /* ===== Info box ===== */
+  .info-box {
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border: 1px dashed #d9d9d9;
+
+    .ant-descriptions-item-label {
+      font-size: 11px;
+      color: #8c8c8c;
+    }
+
+    .ant-descriptions-item-content {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .ant-descriptions-row > td {
+      padding-bottom: 4px;
+    }
+  }
+
+  /* ===== Footer actions ===== */
+  .form-actions {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e8e8e8;
+    text-align: right;
+
+    button {
+      height: 32px;
+      padding: 0 16px;
+      font-size: 13px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .ant-modal-body {
+      padding: 12px;
+    }
+
+    .ant-col-12,
+    .ant-col-8 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}

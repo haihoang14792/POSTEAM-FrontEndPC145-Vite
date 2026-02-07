@@ -1,0 +1,244 @@
+// .nav-header {
+//   .bg-header {
+//     background-color: #ffffff; // Màu nền trắng
+//     height: 80px; // Đặt chiều cao cố định cho thanh điều hướng
+//     padding: 0.5rem 1rem;
+//     display: flex;
+//     align-items: center; // Căn giữa theo chiều dọc
+//     justify-content: space-between; // Giữ logo và các liên kết ở hai bên
+//   }
+
+//   .navbar {
+//     width: 100%; // Đảm bảo thanh điều hướng chiếm hết chiều ngang
+//     display: flex;
+//     justify-content: space-between; // Căn đều logo và các liên kết hai bên
+//     align-items: center; // Căn giữa theo chiều dọc
+
+//     .navbar-brand {
+//       display: flex;
+//       align-items: center; // Căn giữa logo và tên thương hiệu theo chiều dọc
+//       color: red !important; // Giữ nguyên màu của tên logo
+//       font-weight: bold;
+//       font-size: 1.5rem;
+
+//       img {
+//         margin-right: 10px; // Khoảng cách giữa logo và tên
+//       }
+//     }
+
+//     .navbar-nav {
+//       display: flex;
+//       margin-left: auto; // Đẩy các liên kết về phía bên phải
+//       align-items: center; // Căn giữa các liên kết theo chiều dọc
+
+//       .nav-link {
+//         color: #000000; // Chữ đen cho các liên kết
+//         margin-right: 15px; // Khoảng cách giữa các liên kết
+//         font-weight: 500;
+
+//         &:hover {
+//           color: #333333; // Đổi màu khi hover
+//         }
+
+//         &.active {
+//           color: black !important;
+//           border-bottom: 2px solid;
+//         }
+//       }
+//     }
+
+//     .dropdown-menu {
+//       background-color: #ffffff !important; // Màu nền trắng cho menu thả xuống
+//       border: none;
+
+//       .dropdown-item {
+//         color: #000000;
+//         &:hover {
+//           background-color: #f0f0f0;
+//         }
+//       }
+//     }
+//   }
+// }
+// .logo-img {
+//   height: 40px;
+//   width: auto;
+// }
+
+
+// @media (max-width: 768px) {
+//   .nav-header {
+//     .bg-header {
+//       height: auto; // Cho phép tự co giãn chiều cao khi menu mở
+//       padding: 0.5rem 0.75rem;
+//     }
+
+//     .navbar {
+//       flex-direction: column;
+//       align-items: flex-start;
+
+//       .navbar-brand {
+//         font-size: 1.2rem;
+
+//         img.logo-img {
+//           height: 32px; // Nhỏ lại cho phù hợp mobile
+//           margin-right: 8px;
+//         }
+
+//         .brand-name {
+//           font-size: 1.2rem;
+//         }
+//       }
+
+//       .navbar-toggler {
+//         align-self: flex-end;
+//       }
+
+//       .navbar-collapse {
+//         width: 100%;
+//         padding-top: 0.5rem;
+
+//         .navbar-nav {
+//           flex-direction: column;
+//           width: 100%;
+
+//           .nav-link {
+//             margin: 8px 0;
+//             text-align: left;
+//             padding-left: 0.5rem;
+//             font-size: 1rem;
+//           }
+//         }
+//       }
+
+//       .nav-link,
+//       .dropdown-menu .dropdown-item {
+//         font-size: 1rem;
+//       }
+
+//       .dropdown-menu {
+//         width: 100%;
+
+//         .dropdown-item {
+//           padding: 0.5rem 1rem;
+//         }
+//       }
+//     }
+//   }
+// }
+
+
+.nav-header-fixed {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.8); // Nền đen trong suốt mặc định
+  backdrop-filter: blur(20px); // Hiệu ứng mờ của Apple
+  -webkit-backdrop-filter: blur(20px);
+
+  &.is-scrolled {
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .apple-navbar {
+    padding: 0.5rem 0;
+    min-height: 48px; // Chiều cao chuẩn Apple nav
+
+    .logo-img {
+      height: 32px;
+      width: auto;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+
+    .brand-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: #f5f5f7;
+    }
+
+    // Menu chính giữa
+    .main-nav {
+      .nav-link-item {
+        color: #cecece;
+        font-size: 14px;
+        padding: 0 18px;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        font-weight: 400;
+
+        &:hover, &.active {
+          color: #fff;
+        }
+
+        &.highlight {
+          color: #0071e3; // Màu xanh nhấn mạnh
+          font-weight: 500;
+        }
+      }
+    }
+
+    // Phần Auth (Login/User)
+    .auth-nav {
+      .login-button {
+        background: #0071e3;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 980px;
+        font-size: 12px;
+        text-decoration: none;
+        transition: all 0.3s;
+        
+        &:hover {
+          background: #0077ed;
+          transform: scale(1.05);
+        }
+      }
+
+      .user-welcome {
+        color: #f5f5f7;
+        font-size: 14px;
+      }
+
+      // Dropdown menu custom
+      .dropdown-menu {
+        background: rgba(255, 255, 255, 0.95);
+        border: none;
+        border-radius: 12px;
+        margin-top: 10px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        
+        .dropdown-item {
+          font-size: 14px;
+          padding: 8px 20px;
+          &:hover {
+            background-color: #f5f5f7;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Mobile responsive
+@media (max-width: 991px) {
+  .nav-header-fixed {
+    .apple-navbar {
+      .main-nav {
+        padding: 20px 0;
+        .nav-link-item {
+          padding: 12px 0;
+          display: block;
+          border-bottom: 1px solid #333;
+        }
+      }
+      .auth-nav {
+        padding-bottom: 20px;
+      }
+    }
+  }
+}

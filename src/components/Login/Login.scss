@@ -1,0 +1,142 @@
+.modern-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f7; // Màu nền Apple
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  .login-glass-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+    text-align: center;
+  }
+
+  .login-header {
+    margin-bottom: 32px;
+    .brand-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #1d1d1f;
+      margin-bottom: 8px;
+    }
+    .welcome-text {
+      color: #86868b;
+      font-size: 16px;
+    }
+  }
+
+  .modern-form {
+    .input-wrapper {
+      margin-bottom: 20px;
+      text-align: left;
+
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+        color: #424245;
+      }
+
+      .label-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        a {
+          font-size: 12px;
+          text-decoration: none;
+          color: #0066cc;
+          &:hover { text-decoration: underline; }
+        }
+      }
+
+      .apple-input {
+        border-radius: 12px;
+        padding: 12px 16px;
+        border: 1px solid #d2d2d7;
+        background: #fff;
+        transition: all 0.2s ease;
+        font-size: 15px;
+
+        &:focus {
+          border-color: #0071e3;
+          box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        }
+
+        &.error { border-color: #ff3b30; }
+      }
+
+      .error-msg {
+        font-size: 12px;
+        color: #ff3b30;
+        margin-top: 4px;
+        display: block;
+      }
+    }
+  }
+
+  .btn-modern-submit {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background-color: #0071e3;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: #0077ed;
+      transform: translateY(-1px);
+    }
+
+    &:active { transform: translateY(0); }
+  }
+
+  .login-footer {
+    margin-top: 24px;
+    font-size: 14px;
+    color: #86868b;
+    a {
+      color: #0066cc;
+      text-decoration: none;
+      font-weight: 500;
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  // Decor circles
+  .bg-blur-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 1;
+    &.circle-1 {
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 113, 227, 0.1);
+      top: -100px;
+      left: -100px;
+    }
+    &.circle-2 {
+      width: 300px;
+      height: 300px;
+      background: rgba(245, 99, 0, 0.05);
+      bottom: -50px;
+      right: -50px;
+    }
+  }
+}

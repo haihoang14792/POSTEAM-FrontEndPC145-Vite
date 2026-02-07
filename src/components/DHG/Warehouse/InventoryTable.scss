@@ -1,0 +1,157 @@
+
+
+$primary-color: #1890ff;
+$bg: #f6f8fb;
+$text: #1f1f1f;
+$muted: #8c8c8c;
+$radius: 12px;
+$card-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+/* Màu sắc chỉ số */
+$color-green: #52c41a;
+$color-orange: #faad14;
+$color-blue: #1890ff;
+$color-red: #ff4d4f;
+$color-purple: #722ed1;
+
+.inventory-table-container {
+  padding: 24px;
+  background: $bg;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* --- HEADER --- */
+  .page-header {
+    background: white;
+    padding: 16px 24px;
+    border-radius: $radius;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    box-shadow: $card-shadow;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .header-left {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+
+      .header-icon-box {
+        width: 48px;
+        height: 48px;
+        background: rgba($color-orange, 0.1); // Màu cam nhạt cho kho
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $color-orange;
+        font-size: 22px;
+      }
+
+      .header-titles {
+        h4.ant-typography {
+          margin: 0;
+          font-weight: 700;
+          line-height: 1.2;
+        }
+        span.ant-typography {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      
+      .search-input {
+        width: 260px;
+        border-radius: 8px;
+        background: #f9f9f9;
+        border: 1px solid #eee;
+        padding: 6px 12px;
+        
+        &:hover, &:focus-within {
+          background: white;
+          border-color: $primary-color;
+        }
+        
+        .ant-input { background: transparent; }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .btn-excel, .btn-lock {
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+      }
+    }
+  }
+
+  /* --- TABLE --- */
+  .table-wrapper {
+    background: white;
+    border-radius: $radius;
+    box-shadow: $card-shadow;
+    padding: 12px;
+    overflow: hidden;
+  }
+}
+
+/* Custom Table Styles */
+.custom-table {
+  .ant-table-thead > tr > th {
+    background: #fafafa;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: $muted;
+  }
+
+  .text-green { color: $color-green; }
+  .text-orange { color: $color-orange; }
+  .text-blue { color: $color-blue; }
+  .text-red { color: $color-red; }
+  .text-purple { color: $color-purple; }
+  .font-bold { font-weight: 600; }
+  
+  // Highlight background column
+  .col-import { background-color: rgba($color-green, 0.02); }
+  .col-export { background-color: rgba($color-orange, 0.02); }
+}
+
+// Responsive tweaks
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        .header-right {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+            
+            .search-input { width: 100%; }
+            .action-buttons { justify-content: flex-end; }
+        }
+    }
+}

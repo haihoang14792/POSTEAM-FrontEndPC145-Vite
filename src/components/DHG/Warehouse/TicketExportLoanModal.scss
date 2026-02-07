@@ -1,0 +1,210 @@
+/* src/components/DHG/Warehouse/TicketExportLoanModal.scss */
+
+/* ==========================================================================
+   STYLE RIÊNG CHO MODAL: TicketExportLoanModal
+   (Cô lập style để không ảnh hưởng global)
+   ========================================================================== */
+
+.ticket-export-loan-modal {
+  /* --- 1. LIGHT MODE (Mặc định) --- */
+  .ant-modal-content {
+    border-radius: 8px;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .ant-modal-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
+  }
+
+  .ant-modal-body {
+    padding: 24px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .ant-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* Style cho bảng nhập liệu bên trong */
+  .ant-table-wrapper {
+    .ant-table-thead > tr > th {
+      background-color: #fafafa;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Hiệu ứng highlight cho dòng mới thêm (isNew) */
+    .bg-new-row {
+      background-color: #f6ffed; /* Xanh lá nhạt */
+      
+      &:hover > td {
+        background-color: #d9f7be !important;
+      }
+    }
+  }
+
+  /* Input & Select trong bảng: Bo góc nhẹ */
+  .ant-input,
+  .ant-input-number,
+  .ant-select-selector {
+    border-radius: 4px;
+  }
+
+}
+
+/* ==========================================================================
+   2. DARK MODE OVERRIDES (QUAN TRỌNG)
+   ========================================================================== */
+html[data-coreui-theme='dark'] .ticket-export-loan-modal {
+  
+  /* Reset nền Modal */
+  .ant-modal-content {
+    background-color: #1e293b !important; /* Slate-800 */
+    border: 1px solid #334155; /* Slate-700 */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .ant-modal-header {
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+
+    .ant-modal-title {
+      div, span { color: #f1f5f9 !important; } /* Slate-100 */
+      .anticon { color: #60a5fa !important; } /* Icon xanh sáng */
+    }
+  }
+
+  .ant-modal-close {
+    color: #94a3b8;
+    &:hover {
+      color: #fff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .ant-modal-footer {
+    background-color: #1e293b;
+    border-top: 1px solid #334155;
+  }
+
+  /* --- Card thông tin phiếu (Header) --- */
+  .ant-card {
+    background-color: rgba(15, 23, 42, 0.5) !important; /* Slate-900 transparent */
+    border-color: #334155 !important;
+
+    .ant-descriptions-item-label {
+      color: #94a3b8; /* Slate-400 */
+    }
+    .ant-descriptions-item-content {
+      color: #e2e8f0; /* Slate-200 */
+    }
+  }
+
+  /* --- Table Styling trong Dark Mode --- */
+  .ant-table-wrapper {
+    background: transparent;
+    border: 1px solid #334155;
+    border-radius: 6px;
+
+    .ant-table {
+      background: transparent;
+      color: #cbd5e1;
+    }
+
+    /* Header Bảng: Màu tối hơn */
+    .ant-table-thead > tr > th {
+      background-color: #0f172a !important; /* Slate-900 */
+      color: #fbbf24 !important; /* Amber-400 (Vàng) */
+      border-bottom: 1px solid #334155;
+      
+      &::before { display: none; } /* Ẩn vạch ngăn cách header */
+    }
+
+    /* Body Bảng */
+    .ant-table-tbody > tr > td {
+      background-color: transparent !important;
+      border-bottom: 1px solid #334155;
+      color: #e2e8f0;
+    }
+
+    /* Hover dòng */
+    .ant-table-tbody > tr:hover > td {
+      background-color: rgba(59, 130, 246, 0.1) !important; /* Blue tint */
+    }
+
+    /* Dòng mới (isNew) ở chế độ tối */
+    .bg-new-row {
+      background-color: rgba(34, 197, 94, 0.1) !important; /* Green tint */
+      
+      &:hover > td {
+        background-color: rgba(34, 197, 94, 0.2) !important;
+      }
+    }
+  }
+
+  /* --- INPUT / SELECT / NUMBER (QUAN TRỌNG NHẤT) --- */
+  /* Đặt nền tối đậm để không bị lẫn vào nền bảng */
+  .ant-input,
+  .ant-input-number,
+  .ant-select-selector {
+    background-color: #020617 !important; /* Slate-950 (Rất tối) */
+    border: 1px solid #475569 !important;
+    color: #fff !important;
+
+    /* Placeholder mờ */
+    &::placeholder, input::placeholder {
+      color: #64748b;
+    }
+
+    &:hover, &:focus {
+      border-color: #3b82f6 !important; /* Blue-500 */
+    }
+  }
+
+  /* Input Number Handler (Nút tăng giảm) */
+  .ant-input-number-handler-wrap {
+    background-color: #334155;
+    .ant-input-number-handler {
+      border-color: #475569;
+      &:hover .ant-input-number-handler-up-inner,
+      &:hover .ant-input-number-handler-down-inner {
+        color: #fff;
+      }
+    }
+  }
+
+  /* Select Dropdown (Menu xổ xuống) */
+  .ant-select-dropdown {
+    background-color: #1e293b !important;
+    border: 1px solid #334155;
+    
+    .ant-select-item {
+      color: #e2e8f0;
+      
+      &-option-active {
+        background-color: #334155 !important;
+      }
+      &-option-selected {
+        background-color: #2563eb !important; /* Blue-600 */
+        color: #fff;
+      }
+    }
+  }
+
+  /* Tag (trong cột SerialNumber) */
+  .ant-tag {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: transparent;
+    color: #e2e8f0;
+  }
+
+  /* Spin loading */
+  .ant-spin-nested-loading {
+    color: #e2e8f0;
+  }
+}

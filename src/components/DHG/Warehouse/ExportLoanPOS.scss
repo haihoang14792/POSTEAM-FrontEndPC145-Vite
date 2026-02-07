@@ -1,0 +1,307 @@
+/* ==========================================================================
+   EXPORT LOAN POS - FINAL FIX (SEARCH INPUT, BUTTONS, TABLE)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. LIGHT MODE (GIỮ NGUYÊN)
+   -------------------------------------------------------------------------- */
+.export-loan-pos-container {
+  padding: 20px;
+  background-color: var(--cui-body-bg, #f0f2f5);
+  min-height: 100vh;
+  transition: all 0.3s ease;
+
+  .header-card,
+  .body-card {
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: var(--cui-card-bg, #ffffff);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+
+    .ant-statistic-title {
+      font-size: 13px;
+      color: #8c8c8c;
+    }
+    .ant-statistic-content {
+      font-weight: 600;
+    }
+  }
+
+  .body-card {
+    .filter-form .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+
+  .btn-success {
+    background-color: #52c41a;
+    border-color: #52c41a;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+
+    &:hover {
+      background-color: #73d13d;
+      border-color: #73d13d;
+    }
+  }
+
+  .hover-row {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .ant-table-row-selected {
+    background-color: #e6f7ff !important;
+    td { background-color: #e6f7ff !important; }
+  }
+
+  .ant-table-thead > tr > th {
+    background: #fafafa;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .text-muted {
+    color: #bfbfbf;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. DARK MODE (CHẾ ĐỘ TỐI - COMPLETE FIX)
+   -------------------------------------------------------------------------- */
+html[data-coreui-theme='dark'] {
+  
+  // BIẾN MÀU
+  $dm-bg: #0f172a;        // Slate-900 (Nền trang)
+  $dm-card: #1e293b;      // Slate-800 (Nền Card - MÀU CHỦ ĐẠO)
+  $dm-border: #334155;    // Slate-700 (Viền)
+  $dm-text: #ffffff;      // Trắng tinh
+  $dm-text-sub: #cbd5e1;  // Xám sáng
+  $dm-input-bg: #020617;  // Đen xanh (Input)
+
+  /* --- A. FIX GLOBAL (MENU, DATEPICKER, MODAL WRAPPER) --- */
+  
+  // 1. Dropdown & DatePicker
+  .ant-select-dropdown, 
+  .ant-picker-dropdown,
+  .ant-dropdown-menu {
+    background-color: $dm-card !important;
+    border: 1px solid $dm-border;
+    z-index: 99999 !important;
+
+    .ant-select-item,
+    .ant-dropdown-menu-item {
+      color: $dm-text !important;
+      &-option-active, &-active { background-color: rgba(255, 255, 255, 0.1) !important; }
+      &-option-selected, &-selected {
+        background-color: #1d4ed8 !important; // Xanh đậm
+        color: #fff !important;
+        font-weight: bold;
+      }
+    }
+    
+    // Fix DatePicker Panel
+    .ant-picker-panel-container { background-color: $dm-card !important; }
+    .ant-picker-panel {
+        .ant-picker-header {
+            color: #fff !important; border-bottom: 1px solid $dm-border;
+            button { color: #94a3b8 !important; &:hover { color: #fff !important; } }
+            .ant-picker-header-view span { color: #fff !important; }
+        }
+        .ant-picker-body {
+            background-color: $dm-card !important;
+            thead tr th { color: #94a3b8 !important; }
+            .ant-picker-cell {
+                color: #64748b !important;
+                &-in-view { color: #fff !important; .ant-picker-cell-inner { color: #fff !important; } }
+                &:hover .ant-picker-cell-inner { background-color: rgba(255, 255, 255, 0.1) !important; }
+                &-selected .ant-picker-cell-inner, &-range-start .ant-picker-cell-inner, &-range-end .ant-picker-cell-inner {
+                    background-color: #10b981 !important; color: #fff !important;
+                }
+                &-in-range::before { background-color: rgba(16, 185, 129, 0.15) !important; }
+                &-today .ant-picker-cell-inner::before { border: 1px solid #10b981 !important; }
+            }
+        }
+    }
+    .ant-picker-footer { background-color: $dm-card !important; border-top: 1px solid $dm-border; }
+    .ant-empty-description { color: $dm-text-sub !important; }
+  }
+
+  // 2. Modal Global Wrapper (Để fix Table trong Modal)
+  .ant-modal .ant-modal-content {
+      background-color: $dm-card !important;
+      border: 1px solid $dm-border;
+      
+      .ant-modal-header { background: transparent !important; border-bottom: 1px solid $dm-border; .ant-modal-title { color: $dm-text !important; } }
+      .ant-modal-close { color: $dm-text-sub; &:hover { color: #fff; background: rgba(255,255,255,0.1); } }
+      .ant-modal-body { background-color: $dm-card !important; color: $dm-text !important; }
+      .ant-modal-footer { 
+          border-top: 1px solid $dm-border; 
+          .ant-btn { background: transparent !important; border-color: $dm-border !important; color: $dm-text !important; &:hover { border-color: #60a5fa !important; color: #60a5fa !important; } &.ant-btn-primary { background-color: #1677ff !important; border: none !important; color: #fff !important; } } 
+      }
+      
+      // Xóa nền trắng của Table trong Modal
+      .ant-table-wrapper, .ant-spin-nested-loading, .ant-spin-container, .ant-table, .ant-table-container {
+          background: transparent !important; background-color: transparent !important; border-color: $dm-border !important;
+      }
+      .ant-table .ant-table-thead > tr > th { background: #111827 !important; color: #fbbf24 !important; border-bottom: 1px solid $dm-border; }
+      .ant-table .ant-table-tbody > tr > td { background: transparent !important; color: $dm-text !important; border-bottom: 1px solid $dm-border; * { color: $dm-text !important; } }
+      .ant-table .ant-table-tbody > tr:hover > td { background: rgba(255, 255, 255, 0.08) !important; }
+      .ant-descriptions .ant-descriptions-item-label { background: #111827 !important; color: #94a3b8 !important; border-color: $dm-border !important; }
+      .ant-descriptions .ant-descriptions-item-content { color: #fff !important; border-color: $dm-border !important; }
+      .ant-divider { color: $dm-text !important; border-top-color: $dm-border !important; .ant-divider-inner-text { color: $dm-text !important; font-weight: 600; } }
+  }
+
+  /* --- B. MÀN HÌNH CHÍNH (EXPORT LOAN POS) --- */
+  .export-loan-pos-container {
+    background: $dm-bg;
+    color: $dm-text;
+
+    * { color: inherit; border-color: $dm-border; }
+
+    /* 1. Cards */
+    .header-card, .body-card {
+      background: $dm-card !important;
+      border: 1px solid $dm-border;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      .ant-card-body { background: transparent !important; } // Fix nền trắng body card
+      .ant-statistic-title { color: #94a3b8 !important; }
+      .ant-statistic-content, .ant-statistic-content-value { color: #fff !important; font-weight: 700; }
+    }
+
+    /* 2. FIX INPUT TÌM KIẾM (CÓ PREFIX ICON) & CÁC INPUT KHÁC */
+    // .ant-input-affix-wrapper là class bao bọc Input có icon search
+    .ant-input,
+    .ant-input-affix-wrapper, 
+    .ant-select-selector,
+    .ant-picker {
+        background-color: $dm-input-bg !important; // Nền đen
+        border: 1px solid #475569 !important;      // Viền xám
+        color: $dm-text !important;                // Chữ trắng
+        box-shadow: none !important;
+
+        // Input con nằm bên trong wrapper phải trong suốt
+        input { 
+            background-color: transparent !important; 
+            color: $dm-text !important; 
+        }
+
+        // Icon Search / Calendar
+        .anticon {
+            color: $dm-text-sub !important; 
+        }
+
+        // Placeholder
+        &::placeholder, input::placeholder {
+            color: #64748b !important;
+        }
+
+        // Focus / Hover state
+        &:hover, &:focus, &-focused {
+            border-color: #60a5fa !important; 
+        }
+    }
+    
+    // Label Form
+    .ant-form-item-label > label { color: $dm-text !important; }
+
+    /* 3. FIX BUTTONS (Làm mới, Excel...) */
+    .ant-btn {
+        // Áp dụng cho nút thường (không phải Primary/Danger)
+        &:not(.ant-btn-primary):not(.ant-btn-dangerous) {
+            background-color: transparent !important;
+            border-color: $dm-border !important;
+            color: $dm-text !important;
+            
+            &:hover {
+                color: #60a5fa !important;
+                border-color: #60a5fa !important;
+            }
+        }
+        .anticon { color: inherit !important; }
+    }
+
+    /* 4. TABLE CHÍNH (Fix vỏ trắng & Dòng chọn) */
+    .ant-table-wrapper,
+    .ant-spin-nested-loading,
+    .ant-spin-container,
+    .ant-table-container {
+        background: transparent !important; // Xóa nền trắng wrapper
+    }
+
+    .ant-table {
+      background: transparent !important;
+      color: $dm-text;
+      border: none !important;
+
+      .ant-table-thead > tr > th {
+        background: #111827 !important;
+        color: #fff !important;
+        border-bottom: 1px solid $dm-border;
+        font-weight: 600;
+        &::before { display: none; }
+      }
+
+      .ant-table-tbody > tr {
+          background: transparent !important;
+          
+          > td {
+            background: transparent !important;
+            color: $dm-text !important;
+            border-bottom: 1px solid $dm-border;
+            a { color: #60a5fa !important; }
+            .text-muted { color: #94a3b8 !important; }
+          }
+          
+          &:hover > td { background: rgba(255, 255, 255, 0.08) !important; }
+
+          // DÒNG ĐƯỢC CHỌN (Màu Xanh Đậm để nổi bật chữ trắng)
+          &.ant-table-row-selected {
+              > td, 
+              > td.ant-table-cell-fix-left, 
+              > td.ant-table-cell-fix-right {
+                  background-color: #172554 !important; // Xanh Đậm (Blue-950)
+                  color: #ffffff !important;
+                  font-weight: 600;
+                  a, span, div { color: #ffffff !important; }
+              }
+              &:hover > td { background-color: #1e3a8a !important; }
+          }
+      }
+      
+      .ant-pagination {
+          .ant-pagination-item a { color: $dm-text-sub; }
+          .ant-pagination-item-active { 
+              background: transparent; border-color: #10b981; a { color: #10b981 !important; }
+          }
+          .ant-pagination-prev button, .ant-pagination-next button { 
+              color: $dm-text-sub; background: transparent; 
+          }
+      }
+      
+      .ant-table-placeholder {
+          background: transparent !important;
+          .ant-empty-description { color: $dm-text-sub !important; }
+      }
+    }
+
+    /* 5. TAGS */
+    .ant-tag {
+        border-color: transparent;
+        background: rgba(255,255,255,0.1);
+        color: $dm-text-sub;
+        &-success, &-green { background: rgba(16, 185, 129, 0.15) !important; color: #34d399 !important; border: 1px solid #059669; }
+        &-warning, &-orange { background: rgba(245, 158, 11, 0.15) !important; color: #fbbf24 !important; border: 1px solid #b45309; }
+        &-error, &-red { background: rgba(239, 68, 68, 0.15) !important; color: #f87171 !important; border: 1px solid #b91c1c; }
+        &-processing, &-blue { background: rgba(59, 130, 246, 0.15) !important; color: #60a5fa !important; border: 1px solid #1d4ed8; }
+        &-cyan { background: rgba(34, 211, 238, 0.15) !important; color: #22d3ee !important; border: 1px solid #0891b2; }
+        &-magenta { background: rgba(235, 47, 150, 0.15) !important; color: #f687b3 !important; border: 1px solid #d53f8c; }
+        &-purple { background: rgba(114, 46, 209, 0.15) !important; color: #a78bfa !important; border: 1px solid #7c3aed; }
+    }
+
+    .text-muted { color: #94a3b8 !important; }
+  }
+}
+

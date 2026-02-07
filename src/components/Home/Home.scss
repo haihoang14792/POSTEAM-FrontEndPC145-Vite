@@ -1,0 +1,438 @@
+// // Biến màu sắc đặc trưng Apple
+// $apple-bg: #f5f5f7;
+// $apple-black: #000000;
+// $apple-white: #ffffff;
+// $apple-blue: #0071e3;
+// $apple-link: #0066cc;
+// $text-gray: #86868b;
+// $text-dark: #1d1d1f;
+
+// .apple-theme-wrapper {
+//   background-color: $apple-white;
+//   font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+//   -webkit-font-smoothing: antialiased;
+
+//   // Mixin cho các nút bấm phong cách Apple
+//   @mixin apple-btn {
+//     font-size: 17px;
+//     line-height: 1.17648;
+//     font-weight: 400;
+//     letter-spacing: -.022em;
+//     padding: 12px 22px;
+//     border-radius: 980px;
+//     border: none;
+//     cursor: pointer;
+//     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+//     &:hover {
+//       opacity: 0.8;
+//       transform: scale(1.02);
+//     }
+//   }
+
+//   .hero-slider-wrapper {
+//   width: 100%;
+//   overflow: hidden;
+//   margin-bottom: 12px;
+
+//   .apple-slider {
+//     display: flex; // Đẩy các item nằm ngang hàng
+//     overflow-x: auto; // Cho phép cuộn ngang
+//     scroll-snap-type: x mandatory; // Hiệu ứng "hít" khung hình của Apple
+//     scroll-behavior: smooth;
+//     -webkit-overflow-scrolling: touch;
+
+//     &::-webkit-scrollbar {
+//       display: none; // Ẩn thanh cuộn cho chuyên nghiệp
+//     }
+
+//     .slider-item {
+//       flex: 0 0 100%; // Mỗi banner chiếm đúng 100% chiều rộng màn hình
+//       scroll-snap-align: start; // Điểm dừng khi cuộn xong
+//     }
+//   }
+// }
+
+//   // Cấu trúc Hero (Tràn màn hình)
+//   .hero-module {
+//     min-height: 85vh;
+//     width: 100%;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     text-align: center;
+//     overflow: hidden;
+//     position: relative;
+//     margin-bottom: 12px;
+//     transition: background 0.5s ease;
+
+//     .unit-copy-wrapper {
+//       padding-top: 55px;
+//       z-index: 5;
+//       max-width: 80%;
+      
+//       .label { 
+//         color: #f56300; 
+//         font-size: 16px; 
+//         font-weight: 600; 
+//         margin-bottom: 4px;
+//         display: block;
+//       }
+      
+//       .headline { 
+//         font-size: 56px; 
+//         font-weight: 600; 
+//         letter-spacing: -0.005em; 
+//         line-height: 1.07143;
+//         margin: 0;
+//       }
+      
+//       .subhead { 
+//         font-size: 28px; 
+//         font-weight: 400; 
+//         margin-top: 6px;
+//         line-height: 1.10722;
+//         letter-spacing: .004em;
+//       }
+      
+//       .cta-wrapper {
+//         margin-top: 18px;
+//         display: flex; 
+//         gap: 20px; 
+//         justify-content: center;
+//         align-items: center;
+
+//         .button-blue { 
+//           @include apple-btn; 
+//           background: $apple-blue; 
+//           color: white; 
+//         }
+
+//         .button-link { 
+//           background: none; 
+//           border: none; 
+//           color: $apple-link; 
+//           font-size: 21px; 
+//           cursor: pointer; 
+//           text-decoration: none;
+          
+//           &:hover { 
+//             text-decoration: underline; 
+//           }
+//         }
+//       }
+//     }
+
+//     .unit-image-wrapper {
+//       margin-top: 40px;
+//       width: 100%;
+//       flex-grow: 1;
+//       display: flex;
+//       justify-content: center;
+//       align-items: flex-end;
+
+//       img { 
+//         max-height: 500px; 
+//         width: auto;
+//         object-fit: contain; 
+//         transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1);
+//       }
+//     }
+
+//     &:hover .unit-image-wrapper img {
+//       transform: scale(1.03);
+//     }
+
+//     &.hero-dark { 
+//       background: $apple-black; 
+//       color: $apple-white; 
+//       .subhead { color: $apple-bg; } 
+//     }
+    
+//     &.hero-light { 
+//       background: #fbfbfd; 
+//       color: $text-dark; 
+//     }
+//   }
+
+//   // Bento Grid (4 ô dịch vụ)
+//   .grid-tiles-container {
+//     display: grid;
+//     grid-template-columns: repeat(2, 1fr);
+//     gap: 12px;
+//     padding: 0 12px 12px;
+
+//     .tile {
+//       background: #fbfbfd;
+//       height: 580px;
+//       position: relative;
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       padding-top: 50px;
+//       overflow: hidden;
+//       cursor: pointer;
+
+//       .tile-copy {
+//         z-index: 2;
+//         text-align: center;
+//         padding: 0 20px;
+
+//         .tile-headline { 
+//           font-size: 32px; 
+//           font-weight: 600; 
+//           line-height: 1.125;
+//           letter-spacing: .004em;
+//           margin: 0;
+//         }
+
+//         .tile-subhead { 
+//           font-size: 19px; 
+//           line-height: 1.21053;
+//           font-weight: 400;
+//           letter-spacing: .012em;
+//           color: $text-dark; 
+//           margin-top: 10px; 
+//           max-width: 320px; 
+//         }
+//       }
+
+//       .tile-image {
+//         position: absolute;
+//         bottom: 0;
+//         width: 100%;
+//         height: 60%;
+//         display: flex;
+//         justify-content: center;
+//         align-items: flex-end;
+
+//         img { 
+//           max-width: 85%; 
+//           max-height: 90%; 
+//           object-fit: contain; 
+//           transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+//         }
+//       }
+
+//       &:hover .tile-image img {
+//         transform: scale(1.05);
+//       }
+
+//       // Ô xen kẽ màu tối
+//       &:nth-child(even) { 
+//         background: $apple-black; 
+//         color: white; 
+//         .tile-subhead { color: $text-gray; } 
+//       }
+//     }
+//   }
+
+//   // Phần Brand Vision cuối trang
+//   .vision-footer {
+//     padding: 150px 20px;
+//     text-align: center;
+//     background: $apple-white;
+
+//     p {
+//       max-width: 900px; 
+//       margin: 0 auto;
+//       font-size: 40px; 
+//       font-weight: 600; 
+//       line-height: 1.1; 
+//       letter-spacing: -0.02em;
+//       color: $text-gray;
+
+//       span { 
+//         color: $text-dark; 
+//       }
+//     }
+//   }
+// }
+
+// // Apple Loader
+// .apple-loader {
+//   height: 100vh; 
+//   display: flex; 
+//   justify-content: center; 
+//   align-items: center;
+//   background-color: $apple-white;
+
+//   span { 
+//     width: 40px; 
+//     height: 40px; 
+//     border: 3px solid rgba(0,0,0,0.1); 
+//     border-top-color: $apple-black; 
+//     border-radius: 50%; 
+//     animation: spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite; 
+//   }
+// }
+
+// @keyframes spin { 
+//   to { transform: rotate(360deg); } 
+// }
+
+// // Cấu hình linh hoạt cho Mobile (Responsive)
+// @media (max-width: 1068px) {
+//   .apple-theme-wrapper {
+//     .hero-module .unit-copy-wrapper .headline { font-size: 48px; }
+//     .hero-module .unit-copy-wrapper .subhead { font-size: 24px; }
+//   }
+// }
+
+// @media (max-width: 734px) {
+//   .apple-theme-wrapper {
+//     .hero-module {
+//       min-height: 70vh;
+//       .unit-copy-wrapper {
+//         padding-top: 40px;
+//         .headline { font-size: 32px; }
+//         .subhead { font-size: 19px; }
+//       }
+//       .unit-image-wrapper img { max-height: 350px; }
+//     }
+    
+//     .grid-tiles-container { 
+//       grid-template-columns: 1fr; 
+//       padding: 0;
+//       gap: 12px;
+      
+//       .tile {
+//         height: 500px;
+//         border-radius: 0;
+//       }
+//     }
+
+//     .vision-footer {
+//       padding: 80px 20px;
+//       p { font-size: 24px; }
+//     }
+//   }
+// }
+
+
+$apple-bg: #f5f5f7;
+$apple-black: #000000;
+$apple-white: #ffffff;
+$apple-blue: #0071e3;
+$text-gray: #86868b;
+
+.apple-main-container {
+  background-color: $apple-white;
+  overflow-x: hidden;
+
+  // Cấu trúc Slider cuộn ngang
+  .hero-slider-wrapper {
+    width: 100%;
+    margin-bottom: 12px;
+    
+    .apple-slider {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      &::-webkit-scrollbar { display: none; }
+
+      .slider-item {
+        flex: 0 0 100%; // Chiếm 100% chiều rộng màn hình
+        scroll-snap-align: start;
+      }
+    }
+  }
+
+  // Kiểu dáng cho từng Section chính
+  .hero-module {
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 55px;
+    position: relative;
+
+    .unit-copy-wrapper {
+      z-index: 5;
+      .label { color: #f56300; font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+      .headline { font-size: 56px; font-weight: 600; letter-spacing: -0.005em; line-height: 1.1; }
+      .subhead { font-size: 28px; font-weight: 400; margin-top: 8px; }
+      .cta-wrapper {
+        margin-top: 20px;
+        display: flex; gap: 25px; justify-content: center;
+        .button-blue { background: $apple-blue; color: white; border: none; padding: 12px 25px; border-radius: 980px; font-size: 17px; cursor: pointer; }
+        .button-link { background: none; border: none; color: #0066cc; font-size: 19px; cursor: pointer; &:hover { text-decoration: underline; } }
+      }
+    }
+
+    .unit-image-wrapper {
+      margin-top: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      img { max-height: 500px; object-fit: contain; transition: transform 1s cubic-bezier(0.2, 0, 0.2, 1); }
+    }
+
+    &.hero-dark { background: $apple-black; color: $apple-white; .subhead { color: #f5f5f7; } }
+    &.hero-light { background: #fbfbfd; color: #1d1d1f; }
+  }
+
+  // Bento Grid 2x2
+  .bento-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 12px 12px;
+
+    .bento-tile {
+      background: #fbfbfd;
+      height: 580px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
+      overflow: hidden;
+
+      .tile-copy {
+        z-index: 2;
+        text-align: center;
+        .tile-headline { font-size: 32px; font-weight: 600; }
+        .tile-subhead { font-size: 19px; color: #1d1d1f; margin-top: 10px; max-width: 320px; }
+      }
+
+      .tile-image {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        img { max-width: 85%; max-height: 380px; object-fit: contain; }
+      }
+
+      // Ô xen kẽ màu đen trắng cho sang
+      &:nth-child(2), &:nth-child(3) { background: $apple-black; color: white; .tile-subhead { color: $text-gray; } }
+    }
+  }
+
+  .apple-vision-footer {
+    padding: 150px 20px;
+    text-align: center;
+    p {
+      max-width: 900px; margin: 0 auto; font-size: 40px; font-weight: 600; line-height: 1.1; color: $text-gray;
+      span { color: #1d1d1f; }
+    }
+  }
+}
+
+// Loader
+.apple-loader {
+  height: 100vh; display: flex; justify-content: center; align-items: center;
+  span { width: 40px; height: 40px; border: 4px solid #d2d2d7; border-top-color: $apple-black; border-radius: 50%; animation: spin 1s linear infinite; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 734px) {
+  .apple-main-container {
+    .hero-module .unit-copy-wrapper .headline { font-size: 36px; }
+    .bento-grid-container { grid-template-columns: 1fr; }
+  }
+}

@@ -1,0 +1,117 @@
+
+
+
+.add-supplier-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  // Header của Modal
+  .ant-modal-header {
+    background-color: #f0f5ff; // Màu xanh nhạt nhẹ nhàng
+    border-bottom: 1px solid #d6e4ff;
+    padding: 20px 24px;
+    margin-bottom: 0;
+
+    .ant-modal-title {
+      background-color: transparent;
+      .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        
+        .icon-header {
+          font-size: 22px;
+          color: #1890ff;
+        }
+
+        .title-text {
+          font-size: 18px;
+          font-weight: 600;
+          color: #003a8c;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+    }
+  }
+
+  .ant-modal-close {
+    top: 20px;
+    color: #595959;
+    &:hover {
+        color: #ff4d4f;
+    }
+  }
+
+  // Phần thân (Body)
+  .ant-modal-body {
+    padding: 24px 30px;
+
+    .form-section-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1890ff;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    .ant-form-item {
+        margin-bottom: 18px;
+        
+        .ant-form-item-label {
+            padding-bottom: 6px;
+            label {
+                font-weight: 500;
+                color: #595959;
+            }
+        }
+
+        .ant-input-affix-wrapper {
+            padding: 8px 11px;
+            border-radius: 6px;
+            border-color: #d9d9d9;
+            
+            &:hover, &:focus-within {
+                border-color: #40a9ff;
+                box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+            }
+
+            .anticon {
+                color: #bfbfbf; // Màu icon trong input
+            }
+        }
+    }
+  }
+
+  // Footer của Modal
+  .ant-modal-footer {
+    padding: 16px 24px;
+    background-color: #fafafa;
+    border-top: 1px solid #f0f0f0;
+    
+    .ant-btn {
+        height: 40px;
+        border-radius: 6px;
+        font-weight: 500;
+        min-width: 100px;
+        
+        &:not(.ant-btn-primary) {
+            &:hover {
+                color: #1890ff;
+                border-color: #1890ff;
+            }
+        }
+    }
+
+    .ant-btn-primary {
+        background-color: #1890ff;
+        box-shadow: 0 2px 0 rgba(24, 144, 255, 0.1);
+        &:hover {
+            background-color: #40a9ff;
+        }
+    }
+  }
+}

@@ -1,0 +1,155 @@
+.apple-customer-page {
+  background-color: #ffffff;
+  color: #1d1d1f;
+  padding-bottom: 100px;
+
+  .loading-state {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #86868b;
+  }
+
+  // Hero Section
+  .customer-hero {
+    position: relative;
+    height: 60vh;
+    background-color: #000;
+    overflow: hidden;
+
+    .hero-banner-wrapper {
+      height: 100%;
+      width: 100%;
+      .hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7;
+      }
+      .hero-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #fff;
+        width: 100%;
+        
+        .display-title {
+          font-size: 56px;
+          font-weight: 700;
+          letter-spacing: -0.02em;
+        }
+        .display-subhead {
+          font-size: 24px;
+          font-weight: 400;
+          color: #a1a1a6;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+
+  // Partners Grid
+  .partners-section {
+    padding: 100px 0;
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 80px;
+      h2 { font-size: 40px; font-weight: 600; }
+      p { font-size: 21px; color: #86868b; margin-top: 10px; }
+    }
+
+    .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+
+      .partner-card {
+        background: #f5f5f7;
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+
+        .partner-link {
+          text-decoration: none;
+          color: inherit;
+          display: block;
+          padding: 40px;
+        }
+
+        .logo-wrapper {
+          height: 120px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+          
+          .partner-logo {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+            filter: grayscale(100%); // Logo mặc định xám
+            opacity: 0.6;
+            transition: all 0.4s ease;
+          }
+        }
+
+        .partner-info {
+          text-align: center;
+          h3 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+          span { font-size: 14px; color: #0066cc; opacity: 0; transition: 0.3s; }
+        }
+
+        &:hover {
+          background: #fff;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+          transform: translateY(-10px);
+          
+          .partner-logo {
+            filter: grayscale(0%); // Hiện màu khi hover
+            opacity: 1;
+            transform: scale(1.1);
+          }
+          .partner-info span { opacity: 1; }
+        }
+      }
+    }
+  }
+
+  // Quote
+  .customer-quote {
+    padding: 100px 20px;
+    text-align: center;
+    border-top: 1px solid #d2d2d7;
+    blockquote {
+      font-size: 32px;
+      font-weight: 600;
+      color: #1d1d1f;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.4;
+      font-style: italic;
+    }
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .apple-customer-page {
+    .customer-hero .hero-overlay .display-title { font-size: 36px; }
+    .partners-section {
+      padding: 60px 0;
+      .partners-grid { grid-template-columns: 1fr; }
+    }
+  }
+}

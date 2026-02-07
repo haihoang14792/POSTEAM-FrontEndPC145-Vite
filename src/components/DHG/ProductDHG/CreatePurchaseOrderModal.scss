@@ -1,0 +1,209 @@
+.create-purchase-order-modal {
+  
+  // --- 1. MODAL STRUCTURE ---
+  .ant-modal-content {
+    border-radius: 12px; // Bo tròn mềm mại hơn
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh; // Tăng chiều cao tối đa lên chút
+  }
+
+  .ant-modal-header {
+    background: linear-gradient(to right, #f0f5ff, #ffffff); // Gradient nhẹ sang trọng
+    padding: 16px 24px;
+    border-bottom: 1px solid #e6f7ff;
+
+    .ant-modal-title {
+      color: #003a8c;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .ant-modal-body {
+    padding: 24px 32px; // Padding rộng hơn cho thoáng
+    overflow-y: auto;
+    background-color: #ffffff;
+
+    // Custom thanh cuộn
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #d9d9d9;
+      border-radius: 4px;
+      &:hover { background-color: #bfbfbf; }
+    }
+  }
+
+  .ant-modal-footer {
+    padding: 16px 24px;
+    background-color: #fafafa;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  // --- 2. TYPOGRAPHY & SECTIONS ---
+  
+  // Tiêu đề các nhóm thông tin
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1890ff;
+    text-transform: uppercase;
+    margin: 8px 0 20px 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 12px;
+
+    // Thanh bar màu xanh bên trái tạo điểm nhấn
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 18px;
+      background-color: #1890ff;
+      border-radius: 2px;
+    }
+  }
+
+  .ant-divider {
+    border-top-color: #f0f0f0;
+    margin: 24px 0;
+  }
+
+  // --- 3. FORM INPUT STYLING ---
+
+  .ant-form-item {
+    margin-bottom: 20px; // Tăng khoảng cách giữa các hàng input
+
+    .ant-form-item-label {
+      padding-bottom: 6px;
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #595959; // Màu chữ label nhạt hơn chút cho tinh tế
+      }
+    }
+  }
+
+  // Input mặc định: Cao hơn, bo góc chuẩn
+  .ant-input,
+  .ant-input-number,
+  .ant-select-selector {
+    height: 38px !important; // Tăng chiều cao input lên 38px (chuẩn hiện đại)
+    border-radius: 6px;
+    border-color: #d9d9d9;
+    box-shadow: none;
+    
+    &:hover, &:focus, &.ant-select-focused {
+      border-color: #40a9ff;
+    }
+  }
+
+  .ant-select-selection-item, .ant-input-number-input {
+    line-height: 36px; // Căn giữa text dọc
+    height: 36px;
+  }
+
+  // --- 4. READONLY & SPECIAL FIELDS ---
+
+  // Input chỉ đọc (Readonly)
+  .ant-input[readonly],
+  .ant-input-number-input[readonly] {
+    background-color: #f7f8fa; // Nền xám rất nhạt
+    color: #595959;
+    border-color: #e8e8e8;
+    cursor: default;
+    font-weight: 500; // Chữ đậm hơn chút để dễ đọc
+    
+    &:hover { border-color: #e8e8e8; }
+  }
+
+  // Input Trạng thái (Góc trên phải)
+  .status-input {
+    text-align: center;
+    color: #096dd9 !important;
+    background-color: #e6f7ff !important;
+    border: 1px solid #91d5ff !important;
+    font-weight: 600;
+    border-radius: 20px; // Bo tròn hẳn như badge
+  }
+
+  // Tổng tiền (Quan trọng nhất)
+  .total-amount-field {
+    .ant-input-number {
+      background-color: #fff1f0; // Nền đỏ rất nhạt
+      border: 1px solid #ffa39e;
+      
+      .ant-input-number-input {
+        color: #cf1322; // Chữ đỏ đậm
+        font-weight: 800;
+        font-size: 16px;
+        text-align: right; // Căn phải số tiền
+        padding-right: 12px;
+      }
+    }
+  }
+
+  // --- 5. PRODUCT DETAIL BOX (Khu vực hiện ra sau khi chọn Model) ---
+  .product-details-container {
+    background-color: #fafafa;
+    border: 1px dashed #d9d9d9;
+    border-radius: 8px;
+    padding: 20px 20px 0 20px; // Padding bao quanh
+    margin-bottom: 24px;
+    position: relative;
+    animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    // Label nhỏ "Thông tin chi tiết" ở góc box
+    &::after {
+      content: 'Chi tiết';
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      background: #fff;
+      padding: 0 8px;
+      font-size: 11px;
+      color: #8c8c8c;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    // Input trong box này nhỏ gọn hơn chút
+    .ant-input {
+      height: 34px !important;
+      background-color: #fff !important; // Nền trắng để nổi trên nền xám
+    }
+  }
+
+  // Animation mượt mà
+  @keyframes slideDown {
+    from { 
+      opacity: 0; 
+      transform: translateY(-10px);
+      max-height: 0;
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0);
+      max-height: 200px;
+    }
+  }
+
+  // --- 6. RESPONSIVE FIXES ---
+  @media (max-width: 768px) {
+    .ant-modal-body {
+      padding: 16px;
+    }
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+  }
+}

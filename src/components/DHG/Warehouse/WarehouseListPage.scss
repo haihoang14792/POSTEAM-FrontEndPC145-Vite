@@ -1,0 +1,14 @@
+/* WarehouseListPage.scss */
+
+// Chỉ cần một số chỉnh sửa nhỏ nếu cần đè style của Antd
+.ant-table-thead > tr > th {
+  background-color: #f0f2f5 !important;
+  font-weight: 600;
+}
+
+.ant-card {
+  transition: all 0.3s;
+  &:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+  }
+}

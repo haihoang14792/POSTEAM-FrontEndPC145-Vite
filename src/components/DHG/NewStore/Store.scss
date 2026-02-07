@@ -1,0 +1,165 @@
+/* Store.scss */
+
+.store-container {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+// Custom Table Styles
+.custom-table {
+  thead {
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      color: #6c757d; // Gray-600
+      padding: 14px 16px; // Tăng padding header
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    td {
+      font-size: 0.875rem;
+      padding: 12px 16px;
+      vertical-align: middle;
+      border-bottom: 1px solid #f1f3f5;
+      
+      // Mặc định là không wrap cho các cột ngắn
+      white-space: nowrap; 
+    }
+    
+    // Class tiện ích để wrap text cho cột Mô tả
+    .text-wrap {
+      white-space: normal !important;
+      line-height: 1.5;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr {
+      transition: background-color 0.2s ease;
+      &:hover {
+        background-color: #f8fbff;
+      }
+    }
+  }
+}
+
+// === NÚT XÁC NHẬN MỚI (ĐẸP HƠN) ===
+.btn-action-confirm {
+  background-color: #e6fcf5; /* Màu nền xanh mint rất nhạt */
+  color: #0ca678; /* Màu chữ xanh lá đậm hiện đại */
+  border: 1px solid #c3fae8;
+  border-radius: 50px; /* Bo tròn dạng viên thuốc */
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* Khoảng cách giữa icon và chữ */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    background-color: #20c997; /* Chuyển sang màu xanh tươi khi hover */
+    color: white;
+    border-color: #20c997;
+    box-shadow: 0 4px 12px rgba(32, 201, 151, 0.25); /* Đổ bóng xanh */
+    transform: translateY(-1px); /* Nổi lên nhẹ */
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+// Status Badges (Soft Style)
+.badge {
+  padding: 0.5em 0.8em;
+  font-weight: 600;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.badge-soft-success {
+  background-color: #d3f9d8;
+  color: #2b8a3e;
+}
+
+.badge-soft-warning {
+  background-color: #fff9db;
+  color: #f08c00;
+}
+
+// Checkbox Styling
+.form-check-input {
+  width: 1.1em;
+  height: 1.1em;
+  margin-top: 0;
+  cursor: pointer;
+  
+  &:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+// Pagination Customization
+.pagination {
+  .page-item {
+    .page-link {
+      border: none;
+      color: #6c757d;
+      border-radius: 6px;
+      margin: 0 3px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      
+      &:hover {
+        background-color: #e9ecef;
+        color: #0d6efd;
+      }
+      
+      &:focus {
+        box-shadow: none;
+      }
+    }
+
+    &.active .page-link {
+      background-color: #0d6efd;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
+    
+    &.disabled .page-link {
+      color: #adb5bd;
+      background-color: transparent;
+    }
+  }
+}
+
+.vh-50 {
+    height: 50vh;
+}

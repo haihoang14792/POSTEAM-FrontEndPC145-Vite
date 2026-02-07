@@ -1,0 +1,269 @@
+// // Định nghĩa biến màu hiện đại
+// $primary-color: #1890ff;
+// $bg-modal: #ffffff;
+// $text-main: #1a3353;
+// $text-label: #4a5568;
+// $border-color: #edf2f7;
+
+// .store-modal-custom {
+//   .ant-modal-content {
+//     border-radius: 16px;
+//     overflow: hidden;
+//     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+//     border: 1px solid rgba(255, 255, 255, 0.8);
+//   }
+
+//   .ant-modal-header {
+//     padding: 20px 24px;
+//     background: linear-gradient(to right, #ffffff, #f7fafc);
+//     border-bottom: 1px solid $border-color;
+//     margin-bottom: 0;
+
+//     .ant-modal-title {
+//       font-size: 20px;
+//       font-weight: 700;
+//       color: $text-main;
+//       letter-spacing: -0.025em;
+//     }
+//   }
+
+//   .ant-modal-body {
+//     padding: 32px 24px;
+//     background-color: #ffffff;
+//   }
+
+//   .ant-modal-footer {
+//     padding: 16px 24px;
+//     background-color: #f8fafc;
+//     border-top: 1px solid $border-color;
+//     margin-top: 0;
+
+//     .ant-btn {
+//       height: 40px;
+//       padding: 0 20px;
+//       border-radius: 8px;
+//       font-weight: 600;
+//       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+//       // Nút Cancel
+//       &.ant-btn-default {
+//         border-color: #cbd5e0;
+//         color: #4a5568;
+//         &:hover {
+//           background: #f1f5f9;
+//           color: $text-main;
+//         }
+//       }
+
+//       // Nút OK (Submit)
+//       &.ant-btn-primary {
+//         background: linear-gradient(135deg, $primary-color 0%, #0077ff 100%);
+//         box-shadow: 0 4px 6px -1px rgba(24, 144, 255, 0.4);
+//         border: none;
+//         &:hover {
+//           transform: translateY(-1px);
+//           box-shadow: 0 10px 15px -3px rgba(24, 144, 255, 0.5);
+//         }
+//       }
+//     }
+//   }
+
+//   // Tùy chỉnh Form Item
+//   .modal-store-form {
+//     .ant-form-item {
+//       margin-bottom: 20px;
+
+//       .ant-form-item-label {
+//         padding-bottom: 8px;
+//         label {
+//           font-weight: 600;
+//           color: $text-label;
+//           font-size: 14px;
+          
+//           &.ant-form-item-required::before {
+//             color: #f56565 !important;
+//           }
+//         }
+//       }
+
+//       // Tùy chỉnh Input & Select
+//       .ant-input, 
+//       .ant-select-selector,
+//       .ant-input-affix-wrapper {
+//         border-radius: 10px !important;
+//         border: 1px solid #e2e8f0 !important;
+//         padding: 8px 12px;
+//         background-color: #fdfdfd;
+//         transition: all 0.2s ease-in-out;
+
+//         &:hover {
+//           border-color: $primary-color !important;
+//           background-color: #fff;
+//         }
+
+//         &:focus, &-focused {
+//           box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15) !important;
+//           border-color: $primary-color !important;
+//           background-color: #fff;
+//         }
+//       }
+
+//       .ant-select-selector {
+//         height: 42px !important;
+//         display: flex;
+//         align-items: center;
+//       }
+//     }
+//   }
+// }
+
+// // Animation khi mở modal
+// .ant-modal-zoom-enter, .ant-modal-zoom-appear {
+//   transform: scale(0.95);
+//   opacity: 0;
+//   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+// }
+
+
+
+
+// Định nghĩa bảng màu
+$primary-gradient: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);
+$text-title: #1a3353;
+$text-label: #4a5568;
+$bg-footer: #f8fafc;
+$border-radius: 12px;
+
+.store-modal-custom {
+    .ant-modal-content {
+        border-radius: $border-radius;
+        overflow: hidden;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .ant-modal-header {
+        padding: 16px 24px;
+        background: #ffffff;
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 0;
+
+        .modal-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: $text-title;
+            font-size: 18px;
+            font-weight: 700;
+
+            .header-icon {
+                color: #1890ff;
+                font-size: 20px;
+            }
+        }
+    }
+
+    .ant-modal-body {
+        padding: 24px;
+        background-color: #ffffff;
+    }
+
+    .ant-modal-footer {
+        padding: 12px 24px;
+        background-color: $bg-footer;
+        border-top: 1px solid #f0f0f0;
+        margin-top: 0;
+
+        .ant-btn {
+            height: 38px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+
+            // Nút Hủy
+            &.ant-btn-default {
+                border-color: #d1d5db;
+                &:hover {
+                    color: #1f2937;
+                    background: #f3f4f6;
+                    border-color: #9ca3af;
+                }
+            }
+
+            // Nút Tạo mới
+            &.ant-btn-primary {
+                background: $primary-gradient;
+                border: none;
+                box-shadow: 0 4px 6px -1px rgba(24, 144, 255, 0.3);
+                
+                &:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 12px -2px rgba(24, 144, 255, 0.4);
+                    opacity: 0.9;
+                }
+            }
+        }
+    }
+
+    // Tùy chỉnh Form
+    .modal-store-form {
+        .ant-divider {
+            margin: 12px 0 20px 0;
+            .ant-divider-inner-text {
+                font-size: 13px;
+                color: #94a3b8;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+        }
+
+        .ant-form-item {
+            margin-bottom: 18px;
+
+            .ant-form-item-label {
+                padding-bottom: 6px;
+                label {
+                    font-weight: 600;
+                    color: $text-label;
+                    font-size: 13.5px;
+                }
+            }
+
+            // Tùy chỉnh ô Input & Select
+            .ant-input, 
+            .ant-select-selector,
+            .ant-input-affix-wrapper {
+                border-radius: 8px !important;
+                border: 1px solid #e2e8f0 !important;
+                padding: 6px 12px;
+                transition: all 0.2s ease;
+
+                &:hover, &:focus, &-focused {
+                    border-color: #1890ff !important;
+                    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1) !important;
+                }
+            }
+
+            .ant-select-selector {
+                height: 38px !important;
+                display: flex;
+                align-items: center;
+            }
+
+            textarea.ant-input {
+                padding: 10px 12px;
+            }
+        }
+    }
+}
+
+// Mobile responsive
+@media (max-width: 576px) {
+    .store-modal-custom {
+        width: 95% !important;
+        .ant-modal-body {
+            padding: 16px;
+        }
+    }
+}

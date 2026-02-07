@@ -1,0 +1,43 @@
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Hiệu ứng hoa mai vàng cao cấp */
+.mai-flower {
+  position: fixed;
+  top: -10%;
+  user-select: none;
+  z-index: 9999;
+  pointer-events: none;
+  /* Tạo màu vàng rực rỡ và đổ bóng cho giống thật */
+  color: #FFD700; 
+  text-shadow: 0 0 5px rgba(255, 215, 0, 0.8), 1px 1px 2px rgba(0,0,0,0.2);
+  filter: drop-shadow(0 0 2px #ffae00);
+  animation: fall-and-sway linear infinite;
+}
+
+@keyframes fall-and-sway {
+  0% {
+    transform: translateY(0) rotate(0deg) translateX(0);
+    opacity: 1;
+  }
+  25% {
+    transform: translateY(25vh) rotate(90deg) translateX(15px);
+  }
+  50% {
+    transform: translateY(50vh) rotate(180deg) translateX(-15px);
+  }
+  75% {
+    transform: translateY(75vh) rotate(270deg) translateX(15px);
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg) translateX(0);
+    opacity: 0.3;
+  }
+}
+
+

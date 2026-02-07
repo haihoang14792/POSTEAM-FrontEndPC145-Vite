@@ -1,0 +1,199 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.card-front,
+.card-back {
+  width: 300px;
+  max-width: 90vw;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  word-wrap: break-word;
+}
+
+.logo-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 40px;
+  object-fit: contain;
+}
+
+.company-info {
+  font-size: 12px;
+  color: #555;
+}
+
+.company-info p {
+  margin: 0;
+}
+
+.user-photo img {
+  width: 100%;
+  height: auto;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.user-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.user-info h3 {
+  color: #0066cc;
+  margin: 8px 0 4px;
+  font-size: 18px;
+  word-break: break-word;
+}
+
+.user-info p {
+  margin: 2px 0;
+  word-break: break-word;
+}
+
+// .footercard {
+//   font-size: 11px;
+//   color: #333;
+//   text-align: center;
+//   border-top: 1px solid #ccc;
+//   padding-top: 8px;
+//   margin-top: 12px;
+//   word-break: break-word;
+// }
+
+// .footercard {
+//   font-size: 11px;
+//   color: #fff; /* chữ trắng */
+//   background-color: #0066cc; /* nền xanh đậm hoặc chọn màu thương hiệu của bạn */
+//   text-align: center;
+//   border-top: none;
+//   padding: 6px;
+//   margin-top: 6px;
+//   word-break: break-word;
+//   border-radius: 6px;
+// }
+
+.footercard {
+  font-size: 11px;
+  color: #060606;
+  text-align: center;
+  background-color: #f2f2f2;
+  padding: 6px;
+  margin-top: 6px;
+  word-break: break-word;
+  border-radius: 6px;
+}
+
+.footer-phone {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+
+
+.card-back {
+  background-color: #0066cc;
+  color: white;
+  align-items: center;
+  text-align: center;
+}
+
+.qr-code {
+  margin: 20px auto;
+  width: 160px;
+  height: 160px;
+}
+
+.logo-back img {
+  width: 100px;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  object-fit: contain;
+}
+
+.logo-back p {
+  font-size: 13px;
+  margin: 0;
+}
+
+.company-info {
+  font-size: 12px;
+  color: red; /* màu đỏ */
+  font-weight: bold; /* in đậm */
+}
+
+.status-active {
+  color: rgb(7, 7, 240);
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: bold;
+}
+
+
+
+.row-inline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 14px;
+
+  p {
+    margin: 0;
+    flex: 1 1 45%; // Cho 2 cột cân đối
+    word-break: break-word;
+  }
+}
+
+
+/* Responsive for mobile */
+@media (max-width: 480px) {
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .card-front,
+  .card-back {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .user-info h3 {
+    font-size: 16px;
+  }
+
+  .qr-code {
+    width: 140px;
+    height: 140px;
+  }
+
+  .logo {
+    height: 36px;
+  }
+}
