@@ -331,6 +331,7 @@ $apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
     width: 100%;
   }
 
+   .mobile-toggle-btn { display: none; } 
   // --- PHẦN CHỮ CHẠY ---
   .tet-marquee-bottom {
     height: $marquee-h;

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import anhHoaMai from '../../assets/images/effect/flower.png';
 import './SnowEffect.css';
 
-const FLOWER_COUNT = 40;
+const FLOWER_COUNT = 10;
 
 export default function NewYearEffect() {
     // Tạo danh sách các thông số ngẫu nhiên một lần duy nhất
